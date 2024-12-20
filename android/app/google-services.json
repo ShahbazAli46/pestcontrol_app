@@ -1,0 +1,97 @@
+{
+  "project_info": {
+    "project_number": "981860004511",
+    "project_id": "citybadmintonclub",
+    "storage_bucket": "citybadmintonclub.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:981860004511:android:4cb92ae359caad378de8aa",
+        "android_client_info": {
+          "package_name": "com.accurate.pestcontrol.dubai"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "981860004511-70d5aljqk32rem3g6gqis0cljv7s920q.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBsILi3tH2vOBEfVFVgsRglcehYiLzj1Kg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "981860004511-70d5aljqk32rem3g6gqis0cljv7s920q.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:981860004511:android:82e5ee4f2dd141d78de8aa",
+        "android_client_info": {
+          "package_name": "com.example.citybadmintonclub"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "981860004511-70d5aljqk32rem3g6gqis0cljv7s920q.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBsILi3tH2vOBEfVFVgsRglcehYiLzj1Kg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "981860004511-70d5aljqk32rem3g6gqis0cljv7s920q.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:981860004511:android:45250bbec9e2aff98de8aa",
+        "android_client_info": {
+          "package_name": "com.gowash.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "981860004511-70d5aljqk32rem3g6gqis0cljv7s920q.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBsILi3tH2vOBEfVFVgsRglcehYiLzj1Kg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "981860004511-70d5aljqk32rem3g6gqis0cljv7s920q.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
