@@ -29,70 +29,76 @@ class OutstandingController extends GetxController {
 
   void getData() async {
     fetchingData.value = true;
-    String url = "${Urls.baseURL}service_invoices";
+    String url = "${Urls.baseURL}outstandings";
     var api = APICall();
     var response = await api.getDataWithToken(url);
-    invoicesResponse = AllInvoicesResponse.fromJson(response);
-    var invoices = invoicesResponse.data!;
+    OutstandingResponse outstandingResponse = OutstandingResponse.fromJson(response);
 
-    thisMonthAmount = 0.0;
-    lastMonthAmount = 0.0;
-    thirdMonthAmount = 0.0;
-    olderThanThreeMonth = 0.0;
-
-    // Clear previous data
-    thisMonthData.clear();
-    lastMonthData.clear();
-    thirdMonthData.clear();
-    olderThanMonthData.clear();
-
-    invoices.forEach((item) {
-      if (item.status == "unpaid") {
-        double amount = double.parse(item.totalAmt ?? "0.0");
-
-        if (isDateInCurrentMonth(item.issuedDate ?? "")) {
-          thisMonthAmount += amount;
-          thisMonthData.add(item);
-        } else if (isDateInLastMonth(item.issuedDate ?? "")) {
-          lastMonthAmount += amount;
-          lastMonthData.add(item);
-        } else if (isDateInThirdPastMonth(item.issuedDate ?? "")) {
-          thirdMonthAmount += amount;
-          thirdMonthData.add(item);
-        } else if (isDateOlderThanThreeMonths(item.issuedDate ?? "")) {
-          olderThanThreeMonth += amount;
-          olderThanMonthData.add(item);
+    outstandingResponse.data?.forEach((item){
+        if (item.title == "This Month"){
+          thisMonthAmount = double.parse(item.totalAmt ?? "");
+        } else if (item.title == "Last Month"){
+          lastMonthAmount = double.parse(item.totalAmt ?? "");
+        } else if (item.title == "Last 3 Months"){
+          thirdMonthAmount = double.parse(item.totalAmt ?? "");
+        } else if (item.title == "Older Than 3 Months"){
+          olderThanThreeMonth = double.parse(item.totalAmt ?? "");
         }
-      }
+
     });
+
+
 
     fetchingData.value = false;
   }
 
-  bool isDateInCurrentMonth(String dateString) {
-    DateTime date = DateFormat('yyyy-MM-dd').parse(dateString);
-    DateTime now = DateTime.now();
-    return date.year == now.year && date.month == now.month;
+}
+
+
+
+
+
+class OutstandingResponse {
+  List<Data>? data;
+
+  OutstandingResponse({this.data});
+
+  OutstandingResponse.fromJson(Map<String, dynamic> json) {
+    if (json['data'] != null) {
+      data = <Data>[];
+      json['data'].forEach((v) {
+        data!.add(new Data.fromJson(v));
+      });
+    }
   }
 
-  bool isDateInLastMonth(String dateString) {
-    DateTime date = DateFormat('yyyy-MM-dd').parse(dateString);
-    DateTime now = DateTime.now();
-    DateTime lastMonth = DateTime(now.year, now.month - 1);
-    return date.year == lastMonth.year && date.month == lastMonth.month;
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    if (this.data != null) {
+      data['data'] = this.data!.map((v) => v.toJson()).toList();
+    }
+    return data;
+  }
+}
+
+class Data {
+  String? title;
+  String? count;
+  String? totalAmt;
+
+  Data({this.title, this.count, this.totalAmt});
+
+  Data.fromJson(Map<String, dynamic> json) {
+    title = "${json['title']}";
+    count = "${json['count']}";
+    totalAmt = "${json['total_amt']}";
   }
 
-  bool isDateInThirdPastMonth(String dateString) {
-    DateTime date = DateFormat('yyyy-MM-dd').parse(dateString);
-    DateTime now = DateTime.now();
-    DateTime thirdPastMonth = DateTime(now.year, now.month - 2);
-    return date.year == thirdPastMonth.year && date.month == thirdPastMonth.month;
-  }
-
-  bool isDateOlderThanThreeMonths(String dateString) {
-    DateTime date = DateFormat('yyyy-MM-dd').parse(dateString);
-    DateTime now = DateTime.now();
-    DateTime threeMonthsAgo = DateTime(now.year, now.month - 3);
-    return date.isBefore(threeMonthsAgo);
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['title'] = this.title;
+    data['count'] = this.count;
+    data['total_amt'] = this.totalAmt;
+    return data;
   }
 }

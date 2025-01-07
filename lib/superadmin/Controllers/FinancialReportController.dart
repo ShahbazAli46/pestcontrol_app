@@ -46,9 +46,11 @@ class FinancialReportController extends GetxController {
   }
 
   void getData(String startDate, String endDate) async{
-    print("******************");
+    totalGeneralExpAmount = 0.0;
+    totalPendingPayment = 0.0;
+    totalVehAmount = 0.0;
     fetchingData.value = true;
-    String financialURL = "${Urls.baseURL}dashboard/monthly_financial_report?start_date=${startDate}&end_date=${endDate}";
+    String financialURL = "${Urls.baseURL}dashboard/monthly_financial_report/${shortDate(startDate)}";
     var response = await api.getDataWithToken(financialURL);
     financialReportResponse = FinancialReportResponse.fromJson(response);
 
@@ -94,14 +96,13 @@ class FinancialReportController extends GetxController {
 
     overAllRecevied += double.parse(cashReceviedResponse.data?.totalCash ?? "0.0");
 
-
-
-
-
-
     fetchingData.value = false;
 
 
+  }
+
+  String shortDate(String dateString) {
+    return dateString.substring(0, 7); // Extracts the first 7 characters (yyyy-MM)
   }
 
 }

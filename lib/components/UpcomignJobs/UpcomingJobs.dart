@@ -102,7 +102,7 @@ class _UpComingJobsState extends State<UpComingJobs> {
                   width: 10,
                 ),
                 AppTextLabels.regularShortText(
-                    label: UiHelper.formatDate(job.jobDate ?? ""),
+                    label: "${UiHelper.formatDateTime(job.rescheduleDates?.last.jobDate ?? "")}",
                     color: AppColors.appBlack),
                 SizedBox(
                   width: 10,

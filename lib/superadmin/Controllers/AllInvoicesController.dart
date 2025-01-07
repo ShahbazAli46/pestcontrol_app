@@ -24,11 +24,6 @@ class AllInvoicesController extends GetxController {
   void onInit() {
     // TODO: implement onInit
     super.onInit();
-    fetchData(
-      startDate: DateFormat('yyyy-MM-dd')
-          .format(DateTime.now()),
-      endDate: DateFormat('yyyy-MM-dd').format(DateTime.now()),
-    );
   }
 
 

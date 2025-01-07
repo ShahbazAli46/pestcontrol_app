@@ -4,7 +4,7 @@ import 'package:accurate/jsonModels/GeneralErrorResponse.dart';
 import 'package:accurate/sales_man/salesManDashboard.dart';
 import 'package:accurate/utils/AlertService.dart';
 import 'package:get/get.dart';
-
+import 'dart:io';
 import '../../components/UpcomignJobs/Controllers/JobDetailsController.dart';
 import '../../jsonModels/CreateReportRequest.dart';
 import '../../utils/APICall.dart';
@@ -22,7 +22,7 @@ class SubmitRequestController extends GetxController {
 
   APICall api = APICall();
 
-  void sendData(String recomendation) async {
+  void sendData(String recomendation, File image) async {
     sendingData.value = true;
     JobDetailsController jobController = Get.find(tag: Constants.jobController);
     VisitController visitController =
@@ -82,14 +82,15 @@ class SubmitRequestController extends GetxController {
         usedProducts: used_products,
         pestFoundIds: pest_found_ids,
         recommendationsAndRemarks: recomendation);
-    Map map = reportRequest.toJson();
-    final response = await api.postDataWithToken(Urls.createServiceReport, map);
+    Map<String, dynamic> map = reportRequest.toJson().cast<String, dynamic>();
+    print(map);
+    final response = await api.postDataWithTokenWithImageAndArrays(Urls.createServiceReport, map, image,);
 
     CreateReportResponse errorResponse = CreateReportResponse.fromJson(response);
     if (errorResponse.status == "success") {
       AlertService.showAlertWithAction("Alert", errorResponse.message ?? "",
           onOkPressed: () {
-        Get.offAll(AddFeedBackScreen(reportID: errorResponse.data?.id ?? 0,));
+        Get.offAll(AddFeedBackScreen(reportID: errorResponse.data?.id ?? "0",));
       });
     } else {
       AlertService.showAlert("Alert", errorResponse.message ?? "");

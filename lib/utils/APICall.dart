@@ -113,6 +113,56 @@ class APICall {
 
 
 
+  Future<dynamic> sendMultipartRequest(
+      String method,
+      String url,
+      File imageFile, {
+        bool useToken = true,
+        Map<String, dynamic>? data,
+        String? imageName,
+      }) async {
+    var request = http.MultipartRequest(method, Uri.parse(url));
+
+    if (useToken) {
+      final token = await LoginResponseStorage.getToken();
+      request.headers['Authorization'] = 'Bearer $token';
+    }
+
+    // Add image file to the request
+    request.files.add(
+      await http.MultipartFile.fromPath(
+        imageName ?? 'image',
+        imageFile.path,
+      ),
+    );
+
+    // Add other form fields if they exist
+    if (data != null) {
+      data.forEach((key, value) {
+        if (value is List) {
+          // Handle array fields differently
+          for (var i = 0; i < value.length; i++) {
+            request.fields['${key}[$i]'] = value[i].toString();
+          }
+        } else {
+          request.fields[key] = value.toString();
+        }
+      });
+    }
+
+    var response = await request.send();
+    final res = await response.stream.bytesToString();
+
+    if (response.statusCode == 200 || response.statusCode == 204) {
+      return jsonDecode(res);
+    } else {
+      print('Error response: $res');
+      return jsonDecode(res);
+    }
+  }
+
+
+
   Future<Map<String, dynamic>> postDataWithTokenWithImage(
       String url,
       Map<String, String> data,
@@ -130,6 +180,94 @@ class APICall {
     );
   }
 
+
+
+
+  Future<Map<String, dynamic>> postDataWithTokenWithImage2(
+      String url,
+      Map<dynamic, dynamic> data,
+      File imageFile,
+      String imageName,
+      ) async {
+    return makeRequest(
+      'POST',
+      url,
+      data: data,
+      useToken: true,
+      isFormData: true,
+      imageFile: imageFile,
+      imageName: imageName,
+    );
+  }
+
+
+  Future<Map<String, dynamic>> postDataWithTokenWithImageAndArrays(
+      String url,
+      Map<String, dynamic> data,
+      File imageFile, {
+        String? imageName,
+      }) async {
+    var request = http.MultipartRequest('POST', Uri.parse(url));
+
+    if (!await checkInternetConnection()) {
+      await showNoInternetDialog();
+      return postDataWithTokenWithImageAndArrays(
+        url,
+        data,
+        imageFile,
+        imageName: imageName,
+      );
+    }
+
+    // Add authorization token
+    final token = await LoginResponseStorage.getToken();
+    request.headers['Authorization'] = 'Bearer $token';
+
+    // Add image file to the request
+    request.files.add(
+      await http.MultipartFile.fromPath(
+        imageName ?? 'signature_img',
+        imageFile.path,
+      ),
+    );
+
+    // Add other form fields if they exist
+    if (data != null) {
+      data.forEach((key, value) {
+        if (value is List) {
+          // Handle arrays of objects
+          if (value.isNotEmpty && value[0] is Map) {
+            for (var i = 0; i < value.length; i++) {
+              Map<String, dynamic> item = value[i];
+              item.forEach((itemKey, itemValue) {
+                request.fields['$key[$i][$itemKey]'] = itemValue.toString();
+              });
+            }
+          }
+          // Handle simple arrays (like tm_ids and pest_found_ids)
+          else {
+            for (var i = 0; i < value.length; i++) {
+              request.fields['$key[$i]'] = value[i].toString();
+            }
+          }
+        } else {
+          request.fields[key] = value.toString();
+        }
+      });
+    }
+
+    print('Request fields: ${request.fields}'); // For debugging
+
+    var response = await request.send();
+    final res = await response.stream.bytesToString();
+
+    if (response.statusCode == 200 || response.statusCode == 204) {
+      return jsonDecode(res);
+    } else {
+      print('Error response: $res');
+      return jsonDecode(res);
+    }
+  }
 
 
 

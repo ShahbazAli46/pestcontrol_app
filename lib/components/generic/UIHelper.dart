@@ -303,5 +303,72 @@ class UiHelper {
       'endDate': endDate
     };
   }
+  static String formatDateTime(String dateTimeStr) {
+    try {
+      // Check if the string is just a date or has time component
+      String dateString = dateTimeStr.trim();
+      DateTime dateTime;
+
+      if (dateString.length <= 10) {  // If only date is provided (YYYY-MM-DD)
+        dateTime = DateTime.parse(dateString);
+        // Set default time to start of day
+        dateTime = DateTime(dateTime.year, dateTime.month, dateTime.day);
+      } else {
+        dateTime = DateTime.parse(dateString);
+      }
+
+      // List of month abbreviations
+      List<String> months = [
+        'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+        'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+      ];
+
+      // Get components
+      int day = dateTime.day;
+      String month = months[dateTime.month - 1];
+      int year = dateTime.year;
+
+      // Convert hour to 12-hour format
+      int hour = dateTime.hour;
+      String period = 'AM';
+      if (hour >= 12) {
+        period = 'PM';
+        if (hour > 12) {
+          hour -= 12;
+        }
+      }
+      if (hour == 0) {
+        hour = 12;
+      }
+
+      // Format minutes with leading zero if needed
+      String minutes = dateTime.minute.toString().padLeft(2, '0');
+
+      // If original string didn't have time, return only date
+      if (dateString.length <= 10) {
+        return '$day $month $year';
+      }
+
+      // Return full date and time
+      return '$day $month $year, $hour:$minutes $period';
+    } catch (e) {
+      // Handle invalid date formats
+      return 'Invalid date format';
+    }
+  }
+  static List<DateTime> getFirstAndLastDateOfMonth(String dateStr) {
+    // Parse the input string into a DateTime object
+    DateFormat dateFormat = DateFormat('yyyy-MM');
+    DateTime date = dateFormat.parse(dateStr);
+
+    // Get the first day of the month
+    DateTime firstDayOfMonth = DateTime(date.year, date.month, 1);
+
+    // Get the last day of the month
+    DateTime lastDayOfMonth = DateTime(date.year, date.month + 1, 0).subtract(Duration(days: 1));
+
+    // Return the first and last dates of the month
+    return [firstDayOfMonth, lastDayOfMonth];
+  }
 
 }

@@ -1,4 +1,10 @@
+import 'dart:io';
+
+import 'package:accurate/components/generic/UIHelper.dart';
+import 'package:accurate/jsonModels/AddPurcahseOrderRequest.dart';
+import 'package:accurate/jsonModels/GeneralErrorResponse.dart';
 import 'package:accurate/jsonModels/ViewAllProductsResponse.dart';
+import 'package:accurate/main.dart';
 import 'package:accurate/utils/APICall.dart';
 import 'package:accurate/utils/AlertService.dart';
 import 'package:accurate/utils/Constants.dart';
@@ -11,10 +17,19 @@ class AddPurchaseController extends GetxController {
   TextEditingController quantity = TextEditingController();
   TextEditingController vat = TextEditingController();
   TextEditingController price = TextEditingController();
+  late File image;
+  bool isImageSelected = false;
+  late String supplierID = "";
   var api = APICall();
+  DateTime currentDate = DateTime.now();
   var selectedProductID = -1;
   String selectedProductName =  "";
-  late DateTime orderData;
+  late String orderData = UiHelper.formatDateForServer(currentDate);
+  late String deliveryData = UiHelper.formatDateForServer(currentDate);
+  late String invNumber = "";
+  var savingBill = false.obs;
+
+
 
 
 
@@ -95,7 +110,72 @@ class AddPurchaseController extends GetxController {
 
   }
 
-  void saveBill(){
+  void saveBill()async{
+
+
+    List<int> ids = [];
+    List<String> qtys = [];
+    List<String> prices = [];
+    List<String> vats = [];
+
+    billItems.forEach((item){
+      ids.add(item.productId);
+      qtys.add(item.qty);
+      prices.add(item.price);
+      vats.add(vat.text);
+    });
+    String idsStrings = ids.join(",");
+    String qtysString = qtys.join(",");
+    String pricesString = prices.join(",");
+
+
+    AddPurcahseOrderRequest  request = AddPurcahseOrderRequest();
+    request.invoiceNo = invoiceNumber.text;
+    request.supplierId = supplierID;
+    request.orderDate = orderData;
+    request.deliveryDate = deliveryData;
+    request.privateNote = "note";
+    request.disPer = "0";
+    request.productId = idsStrings;
+    request.quantity = qtysString;
+    request.price = pricesString;
+    request.vatPer = vats.join(",");
+  savingBill.value = true;
+    if (isImageSelected){
+      var response = await api.postDataWithTokenWithImage("${Urls.baseURL}purchase_order/create", request.toJson(), image, "purchase_invoice");
+      GeneralErrorResponse errorResponse = GeneralErrorResponse.fromJson(response);
+      savingBill.value = false;
+      if (errorResponse.status == "error"){
+          AlertService.showAlert("Error", " ${errorResponse.message ?? ""} Please try later");
+      }
+      else{
+        AlertService.showAlertWithAction("Success", "${errorResponse.message ?? ""}", onOkPressed: (){
+          Get.back();
+        });
+      }
+
+    }
+    else{
+      var response = await api.postDataWithToken("${Urls.baseURL}purchase_order/create", request.toJson());
+      GeneralErrorResponse errorResponse = GeneralErrorResponse.fromJson(response);
+      savingBill.value = false;
+      if (errorResponse.status == "error"){
+        AlertService.showAlert("Error", " ${errorResponse.message ?? ""} Please try later");
+      }
+      else{
+        AlertService.showAlertWithAction("Success", "${errorResponse.message ?? ""}", onOkPressed: (){
+          Get.back();
+        });
+      }
+    }
+
+
+
+
+
+
+
+
 
   }
 }

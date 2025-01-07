@@ -15,6 +15,11 @@ import '../../components/MakePaymentScreen.dart';
 
 class ViewAllInvoicesScreen extends StatefulWidget {
 
+  String? stateDate;
+  String? endDate;
+
+  ViewAllInvoicesScreen({this.stateDate, this.endDate});
+
 
   @override
   State<ViewAllInvoicesScreen> createState() => _ViewAllInvoicesScreenState();
@@ -28,6 +33,16 @@ class _ViewAllInvoicesScreenState extends State<ViewAllInvoicesScreen> {
     // TODO: implement initState
     super.initState();
     controller = Get.put(AllInvoicesController());
+    if (widget.stateDate != null){
+      controller.fetchData(startDate: widget.stateDate ?? "", endDate: widget.endDate ?? "");
+    }
+    else{
+      controller.fetchData(
+        startDate: DateFormat('yyyy-MM-dd')
+            .format(DateTime.now()),
+        endDate: DateFormat('yyyy-MM-dd').format(DateTime.now()),
+      );
+    }
   }
 
   @override

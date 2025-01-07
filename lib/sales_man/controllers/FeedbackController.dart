@@ -8,7 +8,7 @@ import 'package:get/get.dart';
 
 class FeedbackController extends GetxController {
   var sendingData = false.obs;
-  int reportId = 0;
+  String reportId = "0";
   void sendFeedback(String feedback) async{
     sendingData.value = true;
     FeedbackRequest ojb = FeedbackRequest(jobServiceReportId: "${reportId}",forOfficeUse : feedback );

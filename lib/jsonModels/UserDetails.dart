@@ -339,6 +339,7 @@ class CaptainJobs {
   TermAndCondition? termAndCondition;
   List<JobServices>? jobServices;
   ClientAddress? clientAddress;
+  List<RescheduleDates>? rescheduleDates;
 
   CaptainJobs(
       {this.id,
@@ -376,7 +377,9 @@ class CaptainJobs {
         this.user,
         this.termAndCondition,
         this.jobServices,
-        this.clientAddress});
+        this.clientAddress,
+        this.rescheduleDates
+      });
 
   CaptainJobs.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -409,6 +412,15 @@ class CaptainJobs {
     updatedAt = json['updated_at'];
     jobStartTime = json['job_start_time'];
     jobEndTime = json['job_end_time'];
+
+    if (json['reschedule_dates'] != null) {
+      rescheduleDates = <RescheduleDates>[];
+      json['reschedule_dates'].forEach((v) {
+        rescheduleDates!.add(new RescheduleDates.fromJson(v));
+      });
+    }
+
+
     if (json['team_members'] != null) {
       teamMembers = <TeamMembers>[];
       json['team_members'].forEach((v) {
@@ -483,6 +495,44 @@ class CaptainJobs {
     if (this.clientAddress != null) {
       data['client_address'] = this.clientAddress!.toJson();
     }
+    return data;
+  }
+}
+
+
+class RescheduleDates {
+  int? id;
+  int? jobId;
+  String? jobDate;
+  String? reason;
+  String? createdAt;
+  String? updatedAt;
+
+  RescheduleDates(
+      {this.id,
+        this.jobId,
+        this.jobDate,
+        this.reason,
+        this.createdAt,
+        this.updatedAt});
+
+  RescheduleDates.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    jobId = json['job_id'];
+    jobDate = json['job_date'];
+    reason = json['reason'];
+    createdAt = json['created_at'];
+    updatedAt = json['updated_at'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['id'] = this.id;
+    data['job_id'] = this.jobId;
+    data['job_date'] = this.jobDate;
+    data['reason'] = this.reason;
+    data['created_at'] = this.createdAt;
+    data['updated_at'] = this.updatedAt;
     return data;
   }
 }

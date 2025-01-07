@@ -14,4 +14,5 @@ class AppImages {
   static String approve_payment = "images/approve_payment.png";
   static String oustanding = "images/oustanding.png";
   static String report = "images/report.png";
+  static String speed = "images/speed.png";
 }

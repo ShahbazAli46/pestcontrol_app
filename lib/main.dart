@@ -29,8 +29,8 @@ Future<void> main() async {
   );
 
   await NotificationService().init;
-  String? token = await NotificationService().getDeviceToken();
-  print(token);
+  // String? token = await NotificationService().getDeviceToken();
+  // print(token);
   final loginResponse = await LoginResponseStorage.getLoginResponse();
   userObj = loginResponse;
 

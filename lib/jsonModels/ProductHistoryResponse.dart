@@ -28,12 +28,12 @@ class ProductHistoryResponseData {
   String? activeIngredients;
   String? othersIngredients;
   String? moccaeApproval;
-  Null? moccaeStratDate;
+  String? moccaeStratDate;
   String? moccaeExpDate;
   String? perItemQty;
   String? description;
   String? productPicture;
-  Null? deletedAt;
+  String? deletedAt;
   String? createdAt;
   String? updatedAt;
   List<AssignedStockHistory>? assignedStockHistory;
@@ -436,12 +436,12 @@ class Supplier {
   String? itemNotes;
   String? address;
   String? country;
-  Null? state;
+  String? state;
   String? city;
   String? zip;
-  Null? tag;
+  String? tag;
   String? openingBalance;
-  Null? deletedAt;
+  String? deletedAt;
   String? createdAt;
   String? updatedAt;
 

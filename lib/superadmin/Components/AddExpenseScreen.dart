@@ -49,7 +49,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
   var sendingData = false.obs;
   bool isImageSelected = true;
 
-  late File image;
+  File? image;
 
   var api = APICall();
 
@@ -204,7 +204,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
           errorResponse = GeneralErrorResponse.fromJson(response);
         }
         else{
-          var response  = await api.postDataWithTokenWithImage(Urls.addExpense, request.toJson(), image, "expense_file");
+          var response  = await api.postDataWithTokenWithImage(Urls.addExpense, request.toJson(), image!, "expense_file");
           errorResponse = GeneralErrorResponse.fromJson(response);
         }
 
@@ -244,7 +244,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
           errorResponse = GeneralErrorResponse.fromJson(response);
         }
         else{
-          var response  = await api.postDataWithTokenWithImage(Urls.addExpense, request.toJson(), image, "expense_file");
+          var response  = await api.postDataWithTokenWithImage(Urls.addExpense, request.toJson(), image!, "expense_file");
           errorResponse = GeneralErrorResponse.fromJson(response);
         }
 
@@ -285,7 +285,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
           errorResponse = GeneralErrorResponse.fromJson(response);
         }
         else{
-          var response  = await api.postDataWithTokenWithImage(Urls.addExpense, request.toJson(), image, "expense_file");
+          var response  = await api.postDataWithTokenWithImage(Urls.addExpense, request.toJson(), image!, "expense_file");
           errorResponse = GeneralErrorResponse.fromJson(response);
         }
 

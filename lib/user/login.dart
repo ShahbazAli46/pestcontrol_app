@@ -80,6 +80,7 @@ class _LoginState extends State<Login> {
                     );
                   },
                 ),
+                AppTextLabels.regularShortText(label: "2 Jan 2025", color: AppColors.lightTextColor, fontSize: 8)
               ],
             ),
           ),

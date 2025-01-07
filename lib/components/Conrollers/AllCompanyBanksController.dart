@@ -54,8 +54,6 @@ class AllCompanyBanksController extends GetxController {
         if (generalErrorResponse.status == "success"){
           AlertService.showAlertWithAction("Sucess", generalErrorResponse.message ?? "", onOkPressed: (){
             int roleId = userObj?.data?.roleId ?? 0;
-
-
             Navigator.pushAndRemoveUntil(
               context!,
               MaterialPageRoute(builder: (context) => UiHelper.goToUserDashboardAsPerUserRole(int.parse("${roleId}"))),

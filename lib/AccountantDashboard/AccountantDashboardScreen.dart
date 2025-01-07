@@ -1,3 +1,4 @@
+import 'package:accurate/AccountantDashboard/Components/AddVechileFineScreen.dart';
 import 'package:accurate/AccountantDashboard/Components/ApprovePaymentScreen.dart';
 import 'package:accurate/AccountantDashboard/Components/OutstandingScreen.dart';
 import 'package:accurate/components/ViewAllClients.dart';
@@ -211,7 +212,6 @@ class _AccountantDashboardScreenState extends State<AccountantDashboardScreen> {
                   ),
                 ),
 
-
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Row(
@@ -263,6 +263,61 @@ class _AccountantDashboardScreenState extends State<AccountantDashboardScreen> {
                           ),
                         ),
                       )),
+                    ],
+                  ),
+                ),
+
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    children: [
+                      Expanded(child: GestureDetector(
+                        onTap: (){
+                          UiHelper.navigateToNextScreenGetX(AddVechicleFineScreen());
+                        },
+                        child: Container(
+                          height: 100,
+                          decoration: BoxDecoration(
+                              border: Border.all(
+                                  color: AppColors.appGreen,
+                                  width: 2
+                              ),
+                              borderRadius: BorderRadius.circular(10)
+                          ),
+                          child: Column(
+                            children: [
+                              SizedBox(height: 10,),
+                              Image.asset(AppImages.speed, height: 50,),
+                              SizedBox(height: 10,),
+                              AppTextLabels.boldTextShort(label: "Add Vechicle Fine", color: AppColors.appGreen, fontSize: 15)
+                            ],
+                          ),
+                        ),
+                      )),
+                      SizedBox(width: 10,),
+                      // Expanded(child: GestureDetector(
+                      //   onTap: (){
+                      //     UiHelper.navigateToNextScreenGetX(FinancialReportScreen());
+                      //   },
+                      //   child: Container(
+                      //     height: 100,
+                      //     decoration: BoxDecoration(
+                      //         border: Border.all(
+                      //             color: AppColors.appGreen,
+                      //             width: 2
+                      //         ),
+                      //         borderRadius: BorderRadius.circular(10)
+                      //     ),
+                      //     child: Column(
+                      //       children: [
+                      //         SizedBox(height: 10,),
+                      //         Image.asset(AppImages.report, height: 50,),
+                      //         SizedBox(height: 10,),
+                      //         AppTextLabels.boldTextShort(label: "Financial Report", color: AppColors.appGreen, fontSize: 15)
+                      //       ],
+                      //     ),
+                      //   ),
+                      // )),
                     ],
                   ),
                 ),

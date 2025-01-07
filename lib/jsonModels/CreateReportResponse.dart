@@ -23,16 +23,16 @@ class CreateReportResponse {
 }
 
 class Data {
-  int? jobId;
-  int? id;
+  String? jobId;
+  String? id;
 
   Data(
       {this.jobId,
         this.id});
 
   Data.fromJson(Map<String, dynamic> json) {
-    jobId = json['job_id'];
-    id = json['id'];
+    jobId = "${json['job_id']}";
+    id = "${json['id']}";
   }
 
   Map<String, dynamic> toJson() {

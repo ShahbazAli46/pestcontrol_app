@@ -35,23 +35,22 @@ class CreateReportRequest {
       });
     }
   }
-
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['job_id'] = this.jobId;
     data['type_of_visit'] = this.typeOfVisit;
-    data['tm_ids'] = this.tmIds;
-    data['pest_found_ids'] = this.pestFoundIds;
+    data['tm_ids'] = this.tmIds; // This should be a List<int>
+    data['pest_found_ids'] = this.pestFoundIds; // This should be a List<int>
     data['recommendations_and_remarks'] = this.recommendationsAndRemarks;
     if (this.addresses != null) {
-      data['addresses'] = this.addresses!.map((v) => v.toJson()).toList();
+      data['addresses'] = this.addresses!.map((v) => v.toJson()).toList(); // This should be a List<Map<String, dynamic>>
     }
     if (this.usedProducts != null) {
-      data['used_products'] =
-          this.usedProducts!.map((v) => v.toJson()).toList();
+      data['used_products'] = this.usedProducts!.map((v) => v.toJson()).toList(); // This should be a List<Map<String, dynamic>>
     }
     return data;
   }
+
 }
 
 class Addresses {

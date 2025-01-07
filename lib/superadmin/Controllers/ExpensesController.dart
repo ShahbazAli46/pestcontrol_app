@@ -19,7 +19,9 @@ class ExpensesController extends GetxController {
   late VehicleExpenseListResponse vehicleExpenseListResponse;
   var selectedExpCatId = -1;
   var vehicleId = -1;
+  var addingFine = false.obs;
   var api = APICall();
+  String fineDate = "";
 
 
   var submitingvehicleExp = false.obs;
@@ -33,6 +35,7 @@ class ExpensesController extends GetxController {
 
   var total = "0.0".obs;
 
+  TextEditingController fineController = TextEditingController();
 
 
 
@@ -54,6 +57,7 @@ class ExpensesController extends GetxController {
 
   void getCurrentMonthData() {
     DateTime now = DateTime.now();
+    fineDate = UiHelper.formatDateForServer(now);
     String startDate = '${now.year}-${now.month.toString().padLeft(2, '0')}-01';
     String endDate =
         '${now.year}-${now.month.toString().padLeft(2, '0')}-${DateTime(now.year, now.month + 1, 0).day.toString().padLeft(2, '0')}';
@@ -79,7 +83,8 @@ class ExpensesController extends GetxController {
         var vehRes  = await api.getDataWithToken(vehicleUrl);
         vehicleExpenseListResponse = VehicleExpenseListResponse.fromJson(vehRes);
         vehicleExpenseListResponse.data?.forEach((item){
-          vehiclesList.add(item?.vehicleNumber ?? "");
+          String  name = " ${item.user?.name ?? ""}";
+          vehiclesList.add("${item?.vehicleNumber} (${name})");
         });
 
 
@@ -97,7 +102,6 @@ class ExpensesController extends GetxController {
   void setVehicleId(int index){
     vehicleId = vehicleExpenseListResponse.data?[index].id ?? 0;
   }
-
 
   void submitVehicleExp ()async {
     if (vehicleId == -1){
@@ -125,6 +129,7 @@ class ExpensesController extends GetxController {
         oilController.text = "0";
         maintainenceController.text = "0";
         vatController.text = "0";
+        submitingvehicleExp.value = false;
           AlertService.showAlertWithAction("Success", errorResponse.message ?? "", onOkPressed: ()async{
             getCurrentMonthData();
             Get.back();
@@ -136,7 +141,6 @@ class ExpensesController extends GetxController {
     }
   }
 
-
   calculateTotal(String value){
     double fuel = parseDouble(fuelController.text);
     double oil = parseDouble(oilController.text);
@@ -147,9 +151,30 @@ class ExpensesController extends GetxController {
      this.total.value = "${withVat}";
   }
 
-
   double parseDouble(String? text) {
     return double.tryParse(text ?? "0") ?? 0;
+  }
+
+  void addFine() async {
+    if (vehicleId == -1){
+      AlertService.showAlert("Error", "Please select Vehicle ");
+    } else if (fineController.text.isEmpty){
+      AlertService.showAlert("Error", "Enter Fine Amount");
+    } else {
+      addingFine.value = true;
+      AddFineRequest request = AddFineRequest();
+      request.vehicleId = "${vehicleId}";
+      request.fine = fineController.text;
+      request.fineDate = fineDate;
+      
+
+
+
+
+
+
+    }
+
   }
 
 
@@ -239,8 +264,6 @@ class NormalExpense {
   }
 }
 
-
-
 class AddVehicleExpenseRequest {
   String? fuelAmount;
   String? expenseDate;
@@ -286,6 +309,28 @@ class AddVehicleExpenseRequest {
     data['maintenance_amount'] = this.maintenanceAmount ?? "";
     data['payment_type'] = this.paymentType ?? "";
     data['oil_change_limit'] = this.oilChangeLimit ?? "";
+    return data;
+  }
+}
+
+class AddFineRequest {
+  String? fine;
+  String? fineDate;
+  String? vehicleId;
+
+  AddFineRequest({this.fine, this.fineDate, this.vehicleId});
+
+  AddFineRequest.fromJson(Map<String, dynamic> json) {
+    fine = json['fine'];
+    fineDate = json['fine_date'];
+    vehicleId = json['vehicle_id'];
+  }
+
+  Map<String, String> toJson() {
+    final Map<String, String> data = new Map<String, String>();
+    data['fine'] = this.fine ?? "";
+    data['fine_date'] = this.fineDate ?? "";
+    data['vehicle_id'] = this.vehicleId ?? "";
     return data;
   }
 }

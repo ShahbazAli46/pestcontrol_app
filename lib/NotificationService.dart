@@ -8,6 +8,8 @@ import 'package:accurate/AccountantDashboard/AccountantDashboardScreen.dart';
 class NotificationService {
   static final NotificationService _instance = NotificationService._internal();
   factory NotificationService() => _instance;
+  final FirebaseMessaging _fcm = FirebaseMessaging.instance;
+
   NotificationService._internal();
 
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
@@ -114,7 +116,13 @@ class NotificationService {
 
   // Get device token for Firebase messaging
   Future<String?> getDeviceToken() async {
-    return await FirebaseMessaging.instance.getToken();
+    try {
+      String? token = await _fcm.getToken();
+      return token;
+    } catch (e) {
+      print('Error getting token: $e');
+      return null;
+    }
   }
 }
 

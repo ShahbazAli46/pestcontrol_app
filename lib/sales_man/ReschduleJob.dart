@@ -3,6 +3,7 @@ import 'package:accurate/components/generic/AppInput.dart';
 import 'package:accurate/components/generic/AppMultilineInput.dart';
 import 'package:accurate/components/generic/AppTimePicker.dart';
 import 'package:accurate/components/generic/GreenButton.dart';
+import 'package:accurate/components/generic/UIHelper.dart';
 import 'package:accurate/components/generic/navWithBack.dart';
 import 'package:accurate/jsonModels/GeneralErrorResponse.dart';
 import 'package:accurate/jsonModels/ReschduleRequest.dart';
@@ -13,6 +14,7 @@ import 'package:accurate/utils/Constants.dart';
 import 'package:accurate/utils/TextStyle.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 
 class ReschduleJob extends StatefulWidget {
   int jobId;
@@ -28,6 +30,7 @@ class _ReschduleJobState extends State<ReschduleJob> {
 
   var sendingData = false.obs;
   var newDate = DateTime.now();
+  var newTime = "";
 
   @override
   Widget build(BuildContext context) {
@@ -80,23 +83,27 @@ class _ReschduleJobState extends State<ReschduleJob> {
   }
 
   onTimeSelected(timeValue){
-
+  newTime = timeValue;
   }
   onDateSelected(date) {
     newDate = date;
+    print(date);
   }
 
   sendData() async{
     FocusScope.of(context).unfocus();
     if (_descriptionController.text.isEmpty) {
       AlertService.showAlert("Alert", "Please enter reason");
-    } else {
+    } else if (newTime == ""){
+      AlertService.showAlert("Alert", "Please Select Time");
+    }
+    else {
       sendingData.value = true;
 
       ReschduleRequest request = ReschduleRequest();
       request.jobId = "${widget.jobId}";
       request.reason = _descriptionController.text;
-      request.jobDate = newDate.toString();
+      request.jobDate = "${UiHelper.formatDateForServer(newDate)} ${convertTo24HourFormat(newTime)}:00";
       Map map = request.toJson();
       String url = Urls.reschduleJob;
       APICall apiCall = new APICall();
@@ -111,5 +118,23 @@ class _ReschduleJobState extends State<ReschduleJob> {
       }
       sendingData.value = false;
     }
+  }
+
+  String convertTo24HourFormat(String time12) {
+
+    final components = time12.split(' ');
+    final timeComponent = components[0];
+    final period = components[1].toUpperCase();
+    final timeParts = timeComponent.split(':');
+    int hours = int.parse(timeParts[0]);
+    final minutes = timeParts[1];
+    if (period == 'PM' && hours != 12) {
+      hours += 12;
+    } else if (period == 'AM' && hours == 12) {
+      hours = 0;
+    }
+    final formattedHours = hours.toString().padLeft(2, '0');
+
+    return '$formattedHours:$minutes';
   }
 }

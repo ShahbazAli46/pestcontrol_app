@@ -165,7 +165,7 @@ class _QuoteScreenState extends State<QuoteScreen> {
               ),
               GestureDetector(
                 onTap: () async {
-                  final url = 'http://pestcontrol.worldcitizenconsultants.com/quotePdf/?id=58';
+                  final url = 'https://www.apcs.ae/quotePdf/?id=${controller.list?[index].id ?? 0}';
                   if (await canLaunch(url)) {
                   await launch(
                   url, forceSafariVC: false, forceWebView: false,

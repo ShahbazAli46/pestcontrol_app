@@ -212,12 +212,12 @@ class Product {
   String? activeIngredients;
   String? othersIngredients;
   String? moccaeApproval;
-  Null? moccaeStratDate;
+  String? moccaeStratDate;
   String? moccaeExpDate;
   String? perItemQty;
   String? description;
   String? productPicture;
-  Null? deletedAt;
+  String? deletedAt;
   String? createdAt;
   String? updatedAt;
   Brand? brand;
@@ -256,7 +256,7 @@ class Product {
     activeIngredients = json['active_ingredients'];
     othersIngredients = json['others_ingredients'];
     moccaeApproval = json['moccae_approval'];
-    moccaeStratDate = json['moccae_strat_date'];
+    moccaeStratDate = "${json['moccae_strat_date']}";
     moccaeExpDate = json['moccae_exp_date'];
     perItemQty = json['per_item_qty'];
     description = json['description'];

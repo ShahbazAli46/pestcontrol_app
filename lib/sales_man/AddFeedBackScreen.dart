@@ -9,7 +9,7 @@ import '../components/generic/GreenButton.dart';
 import 'controllers/FeedbackController.dart';
 
 class AddFeedBackScreen extends StatefulWidget {
-  int reportID;
+  String reportID;
   AddFeedBackScreen({required this.reportID});
 
   @override

@@ -31,9 +31,6 @@ class AddPurchaseOrderScreen extends StatefulWidget {
 
 class _AddAddPurchaseOrderScreen extends State<AddPurchaseOrderScreen> {
 
-  bool isImageSelected = true;
-  late File image;
-
   late AddPurchaseController controller;
 
 
@@ -43,6 +40,7 @@ class _AddAddPurchaseOrderScreen extends State<AddPurchaseOrderScreen> {
     super.initState();
 
     controller =  Get.put(AddPurchaseController(), tag: Constants.products, permanent: false);
+    controller.supplierID = "${widget.supplierID}";
   }
 
 
@@ -67,7 +65,10 @@ class _AddAddPurchaseOrderScreen extends State<AddPurchaseOrderScreen> {
       children: [
         NavWithBack(),
         SizedBox(height: 20,),
-        AppTextLabels.boldTextShort(label: "Add Purchase from ${widget.supplierName}", color: AppColors.appBlack, fontSize: 20),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: AppTextLabels.boldTextShort(label: "Add Purchase from ${widget.supplierName}", color: AppColors.appBlack, fontSize: 20),
+        ),
         SizedBox(height: 20,),
         Expanded(
           child: SingleChildScrollView(
@@ -211,7 +212,7 @@ class _AddAddPurchaseOrderScreen extends State<AddPurchaseOrderScreen> {
 
         Container(
             margin: EdgeInsets.only(left: 10, right: 10),
-            child: GreenButton(title: "Save Bill", sendingData: false.obs, onTap: (){
+            child: GreenButton(title: "Save Bill", sendingData: controller.savingBill, onTap: (){
               controller.saveBill();
             })),
         SizedBox(height: 20),
@@ -219,16 +220,15 @@ class _AddAddPurchaseOrderScreen extends State<AddPurchaseOrderScreen> {
     )));
   }
   onImageSelected (File image){
-    isImageSelected = true;
-    this.image = image;
+    controller.isImageSelected = true;
+    controller.image = image;
   }
-
   handleOrderDateChanged(DateTime date){
-
+    controller.orderData = UiHelper.formatDateForServer(date);
   }
 
   handleDeliveryDateChanged(DateTime date){
-
+    controller.deliveryData = UiHelper.formatDateForServer(date);
   }
 
   addItem(item){

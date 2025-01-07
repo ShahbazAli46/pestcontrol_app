@@ -1,4 +1,7 @@
+import 'package:accurate/AccountantDashboard/Components/OutstandingScreen.dart';
+import 'package:accurate/NotificationService.dart';
 import 'package:accurate/components/generic/MonthPicker.dart';
+import 'package:accurate/superadmin/Components/FinancialReportScreen.dart';
 import 'package:accurate/superadmin/Components/QuotesScreen.dart';
 import 'package:accurate/superadmin/Components/SalesReport.dart';
 import 'package:accurate/superadmin/Components/StocksScreen.dart';
@@ -28,6 +31,15 @@ class SuperAdminDashboard extends StatefulWidget {
 }
 
 class _SuperAdminDashboardState extends State<SuperAdminDashboard> {
+
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -262,6 +274,61 @@ class _SuperAdminDashboardState extends State<SuperAdminDashboard> {
                           ),
                         )),
 
+                      ],
+                    ),
+                  ),
+
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Row(
+                      children: [
+                        Expanded(child: GestureDetector(
+                          onTap: (){
+                            UiHelper.navigateToNextScreenGetX(OutstadingScreen());
+                          },
+                          child: Container(
+                            height: 100,
+                            decoration: BoxDecoration(
+                                border: Border.all(
+                                    color: AppColors.appGreen,
+                                    width: 2
+                                ),
+                                borderRadius: BorderRadius.circular(10)
+                            ),
+                            child: Column(
+                              children: [
+                                SizedBox(height: 10,),
+                                Image.asset(AppImages.oustanding, height: 50,),
+                                SizedBox(height: 10,),
+                                AppTextLabels.boldTextShort(label: "Outstandings", color: AppColors.appGreen, fontSize: 15)
+                              ],
+                            ),
+                          ),
+                        )),
+                        SizedBox(width: 10,),
+                        Expanded(child: GestureDetector(
+                          onTap: (){
+                            UiHelper.navigateToNextScreenGetX(FinancialReportScreen());
+                          },
+                          child: Container(
+                            height: 100,
+                            decoration: BoxDecoration(
+                                border: Border.all(
+                                    color: AppColors.appGreen,
+                                    width: 2
+                                ),
+                                borderRadius: BorderRadius.circular(10)
+                            ),
+                            child: Column(
+                              children: [
+                                SizedBox(height: 10,),
+                                Image.asset(AppImages.report, height: 50,),
+                                SizedBox(height: 10,),
+                                AppTextLabels.boldTextShort(label: "Financial Report", color: AppColors.appGreen, fontSize: 15)
+                              ],
+                            ),
+                          ),
+                        )),
                       ],
                     ),
                   ),

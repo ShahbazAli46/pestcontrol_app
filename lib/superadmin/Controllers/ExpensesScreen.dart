@@ -549,7 +549,7 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
                       height: 50,
                       child: Row(
                         children: [
-                          AppTextLabels.regularShortText(label: "${controller.vehicleExpenseListResponse.data?[index].modalName ?? ""} - ${controller.vehicleExpenseListResponse.data?[index].vehicleNumber }", color: AppColors.appBlack),
+                          AppTextLabels.regularText(label: "${controller.vehicleExpenseListResponse.data?[index].modalName ?? ""} - ${controller.vehicleExpenseListResponse.data?[index].vehicleNumber }", color: AppColors.appBlack),
                         ],
                       ),
                     ),

@@ -6,6 +6,7 @@ import 'package:accurate/utils/TextStyle.dart';
 import 'package:accurate/utils/appColors.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 
 class FinancialReportScreen extends StatefulWidget {
   const FinancialReportScreen({Key? key}) : super(key: key);
@@ -20,18 +21,16 @@ class _FinancialReportScreenState extends State<FinancialReportScreen> {
   late FinancialReportController controller;
 
 
-@override
+  @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-    controller = Get.put(FinancialReportController());
-
+    controller = Get.put(FinancialReportController(), tag: 'financialReport');
   }
+
   @override
   void dispose() {
-    Get.delete<FinancialReportController>(force: true); // Force delete
+    Get.deleteAll();
     super.dispose();
-
   }
 
   @override
@@ -64,7 +63,10 @@ class _FinancialReportScreenState extends State<FinancialReportScreen> {
   }
 
   onMonthChanged(month){
-    print(month);
+    List<DateTime> dates = UiHelper.getFirstAndLastDateOfMonth(month);
+    String startDate = DateFormat('yyyy-MM-dd').format(dates[0]); // prints: 2024-12-01
+    String endDate = DateFormat('yyyy-MM-dd').format(dates[1]); // prints: 2024-12-31
+    controller.getData(startDate, endDate);
   }
 
 

@@ -53,7 +53,7 @@ class _AddVehicleExpenseScreenState extends State<AddVehicleExpenseScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  AppDropdown(title: "Select Vechile", options: controller.vehiclesList, onChanged: handleVehicleChanged),
+                  AppDropdown(title: "Select Vehicle", options: controller.vehiclesList, onChanged: handleVehicleChanged),
                   AppDatePicker(title: "Expense Date", onDateSelected: handleExpanseDateChanged),
                   AppInput(title: "Fuel", controller: controller.fuelController, inputType: TextInputType.number, onChange: controller.calculateTotal,),
                   AppInput(title: "Oil Expense", controller: controller.oilController, inputType: TextInputType.number, onChange: controller.calculateTotal,),

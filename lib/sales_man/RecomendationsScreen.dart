@@ -1,3 +1,5 @@
+import 'dart:io';
+import 'package:accurate/components/SignaturePad.dart';
 import 'package:accurate/components/generic/AppMultilineInput.dart';
 import 'package:accurate/components/generic/GreenButton.dart';
 import 'package:accurate/components/generic/navWithBack.dart';
@@ -5,8 +7,13 @@ import 'package:accurate/sales_man/TypesOfVisit.dart';
 import 'package:accurate/utils/APICall.dart';
 import 'package:accurate/utils/AlertService.dart';
 import 'package:accurate/utils/TextStyle.dart';
+import 'package:accurate/utils/appColors.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:flutter/material.dart';
+import 'dart:ui' as ui;
+import 'dart:typed_data';
+import 'package:path_provider/path_provider.dart';
 
 import '../components/UpcomignJobs/Controllers/JobDetailsController.dart';
 import '../controllers/generic/GreenButtonController.dart';
@@ -30,6 +37,13 @@ class _RecomendationsScreenState extends State<RecomendationsScreen> {
   TextEditingController textEditingController = TextEditingController();
   SubmitRequestController req  = Get.put(SubmitRequestController());
   var sendingData = false.obs;
+
+  var isSignatureScreen = false;
+
+  final signatureKey = GlobalKey<SignaturePadState>();
+
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -40,8 +54,26 @@ class _RecomendationsScreenState extends State<RecomendationsScreen> {
             NavWithBack(),
             SizedBox(height: 20),
             AppTextLabels.boldTextShort(
-                label: "Recomendations and Note", fontSize: 20),
+                label: isSignatureScreen ? "Add Client Signature":"Recomendations and Note", fontSize: 20),
             SizedBox(height: 20),
+            isSignatureScreen ? Column(
+              children: [
+                SignaturePad(
+                  key: signatureKey,
+                  strokeColor: AppColors.appGreen,
+                  strokeWidth: 1.0,
+                ),
+                SizedBox(height: 20,),
+                Container(
+                    margin: EdgeInsets.only(left: 10, right: 20, bottom: 20),
+                    child: GreenButton(
+                      title: "Submit",
+                      sendingData: req.sendingData,
+                      onTap: makeRequest,
+                    )
+                )
+              ],
+            ) :
             Expanded(child: SingleChildScrollView(
               child: Column(
                 children: [
@@ -49,7 +81,6 @@ class _RecomendationsScreenState extends State<RecomendationsScreen> {
                     title: "Recomendations ",
                     controller: textEditingController,
                   ),
-                  SizedBox(height: 100,),
                   Container(
                     margin: EdgeInsets.only(left: 10, right: 20, bottom: 20),
                     child: GreenButton(
@@ -69,12 +100,35 @@ class _RecomendationsScreenState extends State<RecomendationsScreen> {
   }
 
 
-  makeRequest(){
+  makeRequest()async{
     if (textEditingController.text.isEmpty){
       AlertService.showAlert("Alert", "Please enter Recomedation text");
     }
     else {
-      req.sendData(textEditingController.text!);
+      if (isSignatureScreen){
+        final bytes = await signatureKey.currentState?.captureSignature();
+        if (bytes == null){
+            AlertService.showAlert("Alert", "Please get client Signature");
+        }
+        else{
+          final file = await uint8ListToFile(bytes);
+          req.sendData(textEditingController.text, file);
+        }
+      }
+      else{
+        isSignatureScreen = !isSignatureScreen;
+        setState(() {
+
+        });
+      }
+
     }
+  }
+
+  Future<File> uint8ListToFile(Uint8List uint8list) async {
+    final tempDir = await getTemporaryDirectory();
+    final file = File('${tempDir.path}/signature_${DateTime.now().millisecondsSinceEpoch}.png');
+    await file.writeAsBytes(uint8list as List<int>);
+    return file;
   }
 }
