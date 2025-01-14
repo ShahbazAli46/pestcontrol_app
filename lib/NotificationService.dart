@@ -1,3 +1,4 @@
+import 'package:accurate/utils/Constants.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -118,11 +119,23 @@ class NotificationService {
   Future<String?> getDeviceToken() async {
     try {
       String? token = await _fcm.getToken();
+      if (token != null){
+        updateToken(token ?? "");
+      }
+
       return token;
     } catch (e) {
       print('Error getting token: $e');
       return null;
     }
+  }
+
+  void updateToken(String token){
+    String url = Urls.baseURL + "device/token";
+
+
+
+
   }
 }
 
@@ -159,5 +172,26 @@ class _NotificationInitWrapperState extends State<NotificationInitWrapper> {
   @override
   Widget build(BuildContext context) {
     return widget.child;
+  }
+}
+
+
+
+class UpdateTokenRequest {
+  String? appVersion;
+  String? firebaseToken;
+
+  UpdateTokenRequest({this.appVersion, this.firebaseToken});
+
+  UpdateTokenRequest.fromJson(Map<String, dynamic> json) {
+    appVersion = json['app_version'];
+    firebaseToken = json['firebase_token'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['app_version'] = this.appVersion;
+    data['firebase_token'] = this.firebaseToken;
+    return data;
   }
 }
