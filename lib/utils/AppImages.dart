@@ -15,4 +15,6 @@ class AppImages {
   static String oustanding = "images/oustanding.png";
   static String report = "images/report.png";
   static String speed = "images/speed.png";
+  static String bank = "images/bank.png";
+  static String clients = "images/client.png";
 }

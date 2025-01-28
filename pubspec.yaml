@@ -22,8 +22,10 @@ dependencies:
   image_picker:
   firebase_core:
   firebase_messaging:
+  google_place:
   flutter_local_notifications:
   path_provider:
+  google_places_flutter:
   http_parser:
   cupertino_icons: ^1.0.6
   flutter_launcher_icons: ^0.14.2

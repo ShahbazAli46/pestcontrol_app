@@ -1,3 +1,6 @@
+import 'package:accurate/main.dart';
+import 'package:accurate/utils/APICall.dart';
+import 'package:accurate/utils/AlertService.dart';
 import 'package:accurate/utils/Constants.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -5,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
 import 'package:accurate/AccountantDashboard/AccountantDashboardScreen.dart';
+
 
 class NotificationService {
   static final NotificationService _instance = NotificationService._internal();
@@ -116,7 +120,8 @@ class NotificationService {
   }
 
   // Get device token for Firebase messaging
-  Future<String?> getDeviceToken() async {
+  Future<String?> updateTokenOnServer() async {
+    print("I am here in update token");
     try {
       String? token = await _fcm.getToken();
       if (token != null){
@@ -130,11 +135,48 @@ class NotificationService {
     }
   }
 
-  void updateToken(String token){
+  void updateToken(String token) async{
     String url = Urls.baseURL + "device/token";
+    String appVersion = "1.0.1";
+
+    if(userObj != null){
+      UpdateTokenRequest request = UpdateTokenRequest();
+      request.appVersion = appVersion ?? "";
+      request.firebaseToken = token;
+      var api = APICall();
+      var response = await api.postDataWithToken(url, request.toJson());
+      try {
+        UpdateTokenResponse updateTokenResponse = UpdateTokenResponse.fromJson(response);
+        // if (updateTokenResponse.isAppActive == 1){
+        //   AlertService.showUpdateAppAlert(
+        //     title: "Alert",
+        //     message: "App is inactive due to maintenance, please try later",
+        //     onUpdatePressed: () {
+        //       // Handle the "Update App" button action
+        //       _launchAppStore(); // You need to implement this function to open the app store
+        //     },
+        //   );
+        // }
+        if (updateTokenResponse.appVersion != appVersion) {
+          // Show an un-dismissible alert with an "Update App" button
+          AlertService.showUpdateAppAlert(
+            title: "Update Required",
+            message: "A new version of the app is available. Please update to continue using the app.",
+            onUpdatePressed: () {
+              // Handle the "Update App" button action
+              _launchAppStore(); // You need to implement this function to open the app store
+            },
+          );
+        }
 
 
 
+      } catch (e) {
+        AlertService.showAlert("Alert", e.toString());
+      }
+    }
+  }
+  _launchAppStore(){
 
   }
 }
@@ -192,6 +234,40 @@ class UpdateTokenRequest {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['app_version'] = this.appVersion;
     data['firebase_token'] = this.firebaseToken;
+    return data;
+  }
+}
+
+
+class UpdateTokenResponse {
+  String? status;
+  String? message;
+  String? appVersion;
+  int? isAppActive;
+  String? disableAppReason;
+
+  UpdateTokenResponse(
+      {this.status,
+        this.message,
+        this.appVersion,
+        this.isAppActive,
+        this.disableAppReason});
+
+  UpdateTokenResponse.fromJson(Map<String, dynamic> json) {
+    status = json['status'];
+    message = json['message'];
+    appVersion = json['app_version'];
+    isAppActive = json['is_app_active'];
+    disableAppReason = json['disable_app_reason'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['status'] = this.status;
+    data['message'] = this.message;
+    data['app_version'] = this.appVersion;
+    data['is_app_active'] = this.isAppActive;
+    data['disable_app_reason'] = this.disableAppReason;
     return data;
   }
 }

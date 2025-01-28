@@ -70,4 +70,26 @@ class AlertService {
     );
   }
 
+  static void showUpdateAppAlert({
+    required String title,
+    required String message,
+    required Function onUpdatePressed,
+  }) {
+    Get.dialog(
+      AlertDialog(
+        title: Text(title),
+        content: Text(message),
+        actions: [
+          TextButton(
+            onPressed: () {
+              onUpdatePressed(); // Trigger the update action
+            },
+            child: const Text('Update App'),
+          ),
+        ],
+      ),
+      barrierDismissible: false, // Prevent dismissing the alert by tapping outside
+    );
+  }
+
 }

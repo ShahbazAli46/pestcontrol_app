@@ -1,3 +1,4 @@
+import 'package:accurate/components/generic/AppInput.dart';
 import 'package:accurate/components/generic/CustomListView.dart';
 import 'package:accurate/components/generic/MonthPicker.dart';
 import 'package:accurate/components/generic/UIHelper.dart';
@@ -40,52 +41,53 @@ class _SalesReportState extends State<SalesReport> {
                 padding: const EdgeInsets.all(8.0),
                 child: MonthPicker(onMonthChanged: onMonthChanged),
               ),
+              AppInput(title: "Filter By Name", controller: controller.filterController, onChange: controller.onFilterChange,),
               SizedBox(height: 10,),
               Obx(() => controller.fetchingData.value
                   ? Container(
                       height: 200,
                       child: Center(child: CircularProgressIndicator()))
-                  : Column(
-                    children: [
-                      Row(
-                        children: [
-                         Container(
-                           height: 50,
-                           width: 50,
-                           child: Center(
-                             child: AppTextLabels.boldTextShort(label: "Sr", color: AppColors.appBlack, fontSize: 15),
+                  : Expanded(
+                    child: Column(
+                      children: [
+                        Row(
+                          children: [
+                           Container(
+                             height: 50,
+                             width: 50,
+                             child: Center(
+                               child: AppTextLabels.boldTextShort(label: "Sr", color: AppColors.appBlack, fontSize: 15),
+                             ),
                            ),
-                         ),
-                          Expanded(child: Container(
-                            height: 50,
-                            child: Center(
-                              child: AppTextLabels.boldTextShort(label: "Name", color: AppColors.appBlack, fontSize: 15),
-                            ),
-                          )),
-                          Expanded(child: Container(
-                            height: 50,
-                            child: Center(
-                              child: AppTextLabels.boldTextShort(label: "Target", color: AppColors.appBlack, fontSize: 15),
-                            ),
-                          )),
-                          Expanded(child: Container(
-                            height: 50,
-                            child: Center(
-                              child: AppTextLabels.boldTextShort(label: "Sales", color: AppColors.appBlack, fontSize: 15),
-                            ),
-                          ))
-                        ],
-                      ),
-                      UiHelper.dashedBoarder(),
-                      Container(
-                        height: 400,
-                        child: CustomListView(
-                          physics: NeverScrollableScrollPhysics(),
-                          items: controller.data ?? [],
-                          itemBuilder: (context, item, index)=> salesItem(index),
+                            Expanded(child: Container(
+                              height: 50,
+                              child: Center(
+                                child: AppTextLabels.boldTextShort(label: "Name", color: AppColors.appBlack, fontSize: 15),
+                              ),
+                            )),
+                            Expanded(child: Container(
+                              height: 50,
+                              child: Center(
+                                child: AppTextLabels.boldTextShort(label: "Target", color: AppColors.appBlack, fontSize: 15),
+                              ),
+                            )),
+                            Expanded(child: Container(
+                              height: 50,
+                              child: Center(
+                                child: AppTextLabels.boldTextShort(label: "Sales", color: AppColors.appBlack, fontSize: 15),
+                              ),
+                            ))
+                          ],
                         ),
-                      ),
-                    ],
+                        UiHelper.dashedBoarder(),
+                        Expanded(
+                          child: CustomListView(
+                            items: controller.data ?? [],
+                            itemBuilder: (context, item, index)=> salesItem(index),
+                          ),
+                        ),
+                      ],
+                    ),
                   ))
             ],
           ),
@@ -132,7 +134,10 @@ class _SalesReportState extends State<SalesReport> {
                   ),
                   Container(
                     child: Center(
-                      child: AppTextLabels.regularShortText(label: "${double.parse(controller.data?[index].sale ?? "") / double.parse(controller.data?[index].target ?? "") * 100 } %", color: AppColors.appBlack),
+                      child: AppTextLabels.regularShortText(
+                        label: "${_calculatePercentage(controller.data?[index].sale, controller.data?[index].target)}%",
+                        color: AppColors.appBlack,
+                      ),
                     ),
                   ),
                 ],
@@ -143,6 +148,20 @@ class _SalesReportState extends State<SalesReport> {
         ],
       ),
     );
+  }
 
+  String _calculatePercentage(String? sale, String? target) {
+    // Parse sale and target, defaulting to 0 if null or invalid
+    double saleValue = double.tryParse(sale ?? "") ?? 0;
+    double targetValue = double.tryParse(target ?? "") ?? 0;
+
+    // Avoid division by zero
+    if (targetValue == 0) {
+      return "0.00";
+    }
+
+    // Calculate percentage and format to 2 decimal places
+    double percentage = (saleValue / targetValue) * 100;
+    return percentage.toStringAsFixed(2);
   }
 }

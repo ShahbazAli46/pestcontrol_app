@@ -13,6 +13,9 @@ class QuotesController extends GetxController {
 
   List<AllQuotesResponseData>? pending = [];
 
+  double approvedTotal = 0.0;
+  double pendingTotal = 0.0;
+
   @override
   void onInit() {
     // TODO: implement onInit
@@ -25,6 +28,8 @@ class QuotesController extends GetxController {
   }
 
   void fetchQuotes({required String startDate, required String endDate}) async {
+    approvedTotal = 0.0;
+    pendingTotal = 0.0;
     fetchingData.value = true;
     list?.clear();
     approved?.clear();
@@ -37,9 +42,11 @@ class QuotesController extends GetxController {
 
     data.data?.forEach((item){
       if (item.isContracted == 0){
+        pendingTotal += double.parse(item.grandTotal ?? "0");
         pending!.add(item);
       }
       else{
+        approvedTotal += double.parse(item.grandTotal ?? "0");
         approved!.add(item);
       }
     });

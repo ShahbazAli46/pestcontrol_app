@@ -3,6 +3,7 @@ import 'package:accurate/components/generic/AppSearchInput.dart';
 import 'package:accurate/components/generic/CustomListView.dart';
 import 'package:accurate/components/generic/UIHelper.dart';
 import 'package:accurate/components/generic/navWithBack.dart';
+import 'package:accurate/superadmin/Components/AddClientScreen.dart';
 import 'package:accurate/utils/Constants.dart';
 import 'package:accurate/utils/TextStyle.dart';
 import 'package:accurate/utils/appColors.dart';
@@ -36,6 +37,7 @@ class _ViewAllClientsState extends State<ViewAllClients> {
     clientsController =
         Get.put(ViewAllClientsController(), tag: Constants.allClients);
     return Scaffold(
+      floatingActionButton: addButton(),
       backgroundColor: Colors.white,
       body: SafeArea(
         child: Column(
@@ -210,9 +212,27 @@ class _ViewAllClientsState extends State<ViewAllClients> {
           )),
     );
   }
+
+  Widget addButton (){
+    return GestureDetector(
+      onTap: (){
+        UiHelper.navigateToNextScreen(context, AddClientScreen());
+      },
+      child: Container(
+        height: 50,
+        width: 50,
+        decoration: BoxDecoration(
+          color: AppColors.appGreen,
+          borderRadius: BorderRadius.circular(25)
+        ),
+        child: Center(child: Text("+", style: TextStyle(color: Colors.white, fontSize: 30),),),
+      ),
+    );
+  }
 }
 
 // enum is to handle different stats to move from Client screen to forward
 enum ClientScreenViewTypes {
   forPayment,
+  forView
 }

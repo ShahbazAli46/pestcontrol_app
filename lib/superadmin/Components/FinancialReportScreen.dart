@@ -169,7 +169,7 @@ class _FinancialReportScreenState extends State<FinancialReportScreen> {
           SizedBox(height: 5,),
           UiHelper.dashedBoarder(),
           SizedBox(height: 5,),
-          UiHelper.buildRow("Pending Payments ", "${UiHelper.formatUAECurrency(controller.totalPendingPayment)}"),
+          UiHelper.buildRow("Un Approved Payments ", "${UiHelper.formatUAECurrency(controller.totalPendingPayment)}"),
           Container(
             height: 50,
             padding: EdgeInsets.only(left: 10, right: 10),

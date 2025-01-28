@@ -1,4 +1,5 @@
 import 'package:accurate/AccountantDashboard/AccountantDashboardScreen.dart';
+import 'package:accurate/NotificationService.dart';
 import 'package:accurate/UserRepository.dart';
 import 'package:accurate/components/generic/UIHelper.dart';
 import 'package:accurate/jsonModels/GeneralErrorResponse.dart';
@@ -41,6 +42,9 @@ class LoginController extends GetxController {
       else{
         final loginResponse = LoginResponse.fromJson(response);
         userObj = loginResponse;
+
+        await NotificationService().init;
+        await NotificationService().updateTokenOnServer();
         await LoginResponseStorage.saveLoginResponse(loginResponse);
         Navigator.pushAndRemoveUntil(
           context!,

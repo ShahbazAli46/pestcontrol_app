@@ -308,6 +308,56 @@ class APICall {
     return makeRequest('POST', url, data: data, useToken: true, isFormData : false);
   }
 
+  Future<List<Map<String, dynamic>>> fetchArrayData(
+      String url, {
+        bool useToken = false,
+      }) async {
+    if (!await checkInternetConnection()) {
+      await showNoInternetDialog();
+      return fetchArrayData(url, useToken: useToken);
+    }
+
+    var headers = {
+      'Content-Type': 'application/json',
+    };
+
+    if (useToken) {
+      final token = await LoginResponseStorage.getToken();
+      headers['Authorization'] = 'Bearer $token';
+    }
+
+    try {
+      var request = http.Request('GET', Uri.parse(url));
+      request.headers.addAll(headers);
+
+      var response = await request.send();
+      final responseString = await response.stream.bytesToString();
+
+      if (response.statusCode == 200 || response.statusCode == 204) {
+        // Parse the response string into a List<dynamic>
+        final List<dynamic> decodedResponse = jsonDecode(responseString);
+
+        // Convert each item in the list to Map<String, dynamic>
+        return decodedResponse.map((item) =>
+        Map<String, dynamic>.from(item)
+        ).toList();
+      } else {
+        print('Error response: $responseString');
+        throw HttpException('Failed to fetch data: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error fetching array data: $e');
+      throw HttpException('Failed to fetch data: $e');
+    }
+  }
+
+  /// Fetches data with authentication from an API endpoint that returns an array
+  Future<List<Map<String, dynamic>>> getArrayDataWithToken(String url) async {
+    return fetchArrayData(url, useToken: true);
+  }
+
+
+
   Future<void> showNoInternetDialog() async {
     return showDialog(
       context: navigatorKey.currentContext!,

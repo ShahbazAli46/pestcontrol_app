@@ -65,53 +65,109 @@ class _QuoteScreenState extends State<QuoteScreen> {
             SizedBox(
               height: 20,
             ),
-            SelectableButtonGroup(titles: ["Approved", "Pending"], onSelect: buttonTypeChanged),
+            SelectableButtonGroup(
+                titles: ["Approved", "Pending"], onSelect: buttonTypeChanged),
             Container(
               child: Row(
                 children: [
                   Container(
                     height: 50,
                     width: 50,
-                    child: Center(child: AppTextLabels.regularShortText(label: "Sr", color: AppColors.appBlack),),
+                    child: Center(
+                      child: AppTextLabels.regularShortText(
+                          label: "Sr", color: AppColors.appBlack),
+                    ),
                   ),
-                  Expanded(child: Container(
+                  Expanded(
+                      child: Container(
                     height: 50,
-                    child: Center(child: AppTextLabels.regularShortText(label: "Client Name", color: AppColors.appBlack),),
+                    child: Center(
+                      child: AppTextLabels.regularShortText(
+                          label: "Client Name", color: AppColors.appBlack),
+                    ),
                   )),
-                  Expanded(child: Container(
+                  Expanded(
+                      child: Container(
                     height: 50,
-                    child: Center(child: AppTextLabels.regularShortText(label: "Amount", color: AppColors.appBlack),),
+                    child: Center(
+                      child: AppTextLabels.regularShortText(
+                          label: "Amount", color: AppColors.appBlack),
+                    ),
                   )),
-
-                  Expanded(child: Container(
+                  Expanded(
+                      child: Container(
                     height: 50,
-                    child: Center(child: AppTextLabels.regularShortText(label: "Reference", color: AppColors.appBlack),),
+                    child: Center(
+                      child: AppTextLabels.regularShortText(
+                          label: "Reference", color: AppColors.appBlack),
+                    ),
                   )),
                   Container(
                     height: 50,
                     width: 50,
-                    child: Center(child: AppTextLabels.regularShortText(label: "Status", color: AppColors.appBlack),),
+                    child: Center(
+                      child: AppTextLabels.regularShortText(
+                          label: "Status", color: AppColors.appBlack),
+                    ),
                   ),
-
                   Container(
                     height: 50,
                     width: 30,
-                    child: Center(child: AppTextLabels.regularShortText(label: "", color: AppColors.appGreen, fontSize: 10)),
+                    child: Center(
+                        child: AppTextLabels.regularShortText(
+                            label: "",
+                            color: AppColors.appGreen,
+                            fontSize: 10)),
                   ),
-
-                  SizedBox(width: 10,)
+                  SizedBox(
+                    width: 10,
+                  )
                 ],
               ),
             ),
-
             Obx(() => controller.fetchingData.value
                 ? UiHelper.loader()
                 : Expanded(
                     child: CustomListView(
                       items: controller.list ?? [],
-                      itemBuilder: (context, item, index)=> dataItem(index),
-                      ),
-                    ))
+                      itemBuilder: (context, item, index) => dataItem(index),
+                    ),
+                  )),
+            Obx(() => controller.fetchingData.value
+                ? UiHelper.loader()
+                : Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Column(
+                            children: [
+                              AppTextLabels.regularShortText(
+                                  label: "Pending Total Amount",
+                                  fontSize: 12,
+                                  color: AppColors.lightTextColor),
+                              AppTextLabels.boldTextShort(
+                                  label: "${controller.pendingTotal}",
+                                  fontSize: 20)
+                            ],
+                          ),
+                        ),
+                        Expanded(
+                          child: Column(
+                            children: [
+                              AppTextLabels.regularShortText(
+                                  label: "Approved Total Amount",
+                                  fontSize: 12,
+                                  color: AppColors.lightTextColor),
+                              AppTextLabels.boldTextShort(
+                                  label: "${controller.pendingTotal}",
+                                  fontSize: 20)
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  )),
           ],
         )));
   }
@@ -124,8 +180,7 @@ class _QuoteScreenState extends State<QuoteScreen> {
     }
   }
 
-
-  buttonTypeChanged(index){
+  buttonTypeChanged(index) {
     controller.changeType(index);
   }
 
@@ -136,51 +191,79 @@ class _QuoteScreenState extends State<QuoteScreen> {
           Row(
             children: [
               Container(
-
                 width: 50,
-                child: Center(child: AppTextLabels.regularShortText(label: "${index + 1}", color: AppColors.appBlack),),
+                child: Center(
+                  child: AppTextLabels.regularShortText(
+                      label: "${index + 1}", color: AppColors.appBlack),
+                ),
               ),
-              Expanded(child: Container(
+              Expanded(
+                  child: Container(
                 child: Row(
                   children: [
-                    AppTextLabels.regularText(label: "${controller.list?[index].user?.name}", color: AppColors.appBlack),
+                    AppTextLabels.regularText(
+                        label: "${controller.list?[index].user?.name}",
+                        color: AppColors.appBlack),
                   ],
                 ),
               )),
-
-
-              Expanded(child: Container(
-
-                child: Center(child: AppTextLabels.regularShortText(label: "${controller.list?[index].subTotal}", color: AppColors.appBlack),),
+              Expanded(
+                  child: Container(
+                child: Center(
+                  child: AppTextLabels.regularShortText(
+                      label: "${controller.list?[index].subTotal}",
+                      color: AppColors.appBlack),
+                ),
               )),
-
-              Expanded(child: Container(
-
-                child: Center(child: AppTextLabels.regularShortText(label: "${controller.list?[index].user?.client?.referencable?.name }", color: AppColors.appBlack),),
+              Expanded(
+                  child: Container(
+                child: Center(
+                  child: AppTextLabels.regularShortText(
+                      label:
+                          "${controller.list?[index].user?.client?.referencable?.name}",
+                      color: AppColors.appBlack),
+                ),
               )),
               Container(
                 height: 50,
                 width: 50,
-                child: Center(child: AppTextLabels.regularShortText(label: "${controller.list?[index].isContracted == 0 ? "Pending":"Approved"}", color: controller.list?[index].isContracted == 0 ? AppColors.appBlack: AppColors.appGreen, fontSize: 10),),
+                child: Center(
+                  child: AppTextLabels.regularShortText(
+                      label:
+                          "${controller.list?[index].isContracted == 0 ? "Pending" : "Approved"}",
+                      color: controller.list?[index].isContracted == 0
+                          ? AppColors.appBlack
+                          : AppColors.appGreen,
+                      fontSize: 10),
+                ),
               ),
               GestureDetector(
                 onTap: () async {
-                  final url = 'https://www.apcs.ae/quotePdf/?id=${controller.list?[index].id ?? 0}';
+                  final url =
+                      'https://www.apcs.ae/quotePdf/?id=${controller.list?[index].id ?? 0}';
                   if (await canLaunch(url)) {
-                  await launch(
-                  url, forceSafariVC: false, forceWebView: false,
-                  );
+                    await launch(
+                      url,
+                      forceSafariVC: false,
+                      forceWebView: false,
+                    );
                   } else {
-                  throw 'Could not launch $url';
+                    throw 'Could not launch $url';
                   }
                 },
                 child: Container(
                   height: 50,
                   width: 30,
-                  child: Center(child: AppTextLabels.regularShortText(label: "View", color: AppColors.appGreen, fontSize: 10)),
+                  child: Center(
+                      child: AppTextLabels.regularShortText(
+                          label: "View",
+                          color: AppColors.appGreen,
+                          fontSize: 10)),
                 ),
               ),
-              SizedBox(width: 10,)
+              SizedBox(
+                width: 10,
+              )
             ],
           ),
           UiHelper.dashedBoarder()

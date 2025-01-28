@@ -27,12 +27,13 @@ Future<void> main() async {
     badge: true,
     sound: true,
   );
-
-  await NotificationService().init;
-  // String? token = await NotificationService().getDeviceToken();
-  // print(token);
   final loginResponse = await LoginResponseStorage.getLoginResponse();
   userObj = loginResponse;
+
+
+  await NotificationService().init;
+  await NotificationService().updateTokenOnServer();
+
 
   Widget home;
   home = Login();
@@ -48,8 +49,6 @@ Future<void> main() async {
   } else {
     home = NotificationInitWrapper(child: Login());
   }
-
-
 
   runApp(
     GetMaterialApp(

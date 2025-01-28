@@ -1,6 +1,7 @@
 import 'package:accurate/AccountantDashboard/Components/OutstandingScreen.dart';
 import 'package:accurate/NotificationService.dart';
 import 'package:accurate/components/generic/MonthPicker.dart';
+import 'package:accurate/superadmin/Components/BanksScreen.dart';
 import 'package:accurate/superadmin/Components/FinancialReportScreen.dart';
 import 'package:accurate/superadmin/Components/QuotesScreen.dart';
 import 'package:accurate/superadmin/Components/SalesReport.dart';
@@ -325,6 +326,61 @@ class _SuperAdminDashboardState extends State<SuperAdminDashboard> {
                                 Image.asset(AppImages.report, height: 50,),
                                 SizedBox(height: 10,),
                                 AppTextLabels.boldTextShort(label: "Financial Report", color: AppColors.appGreen, fontSize: 15)
+                              ],
+                            ),
+                          ),
+                        )),
+                      ],
+                    ),
+                  ),
+
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Row(
+                      children: [
+                        Expanded(child: GestureDetector(
+                          onTap: (){
+                            UiHelper.navigateToNextScreenGetX(BanksScreen());
+                          },
+                          child: Container(
+                            height: 100,
+                            decoration: BoxDecoration(
+                                border: Border.all(
+                                    color: AppColors.appGreen,
+                                    width: 2
+                                ),
+                                borderRadius: BorderRadius.circular(10)
+                            ),
+                            child: Column(
+                              children: [
+                                SizedBox(height: 10,),
+                                Image.asset(AppImages.bank, height: 50,),
+                                SizedBox(height: 10,),
+                                AppTextLabels.boldTextShort(label: "Banks", color: AppColors.appGreen, fontSize: 15)
+                              ],
+                            ),
+                          ),
+                        )),
+                        SizedBox(width: 10,),
+                        Expanded(child: GestureDetector(
+                          onTap: (){
+                            UiHelper.navigateToNextScreenGetX(ViewAllClients(type: ClientScreenViewTypes.forView));
+                          },
+                          child: Container(
+                            height: 100,
+                            decoration: BoxDecoration(
+                                border: Border.all(
+                                    color: AppColors.appGreen,
+                                    width: 2
+                                ),
+                                borderRadius: BorderRadius.circular(10)
+                            ),
+                            child: Column(
+                              children: [
+                                SizedBox(height: 10,),
+                                Image.asset(AppImages.clients, height: 50,),
+                                SizedBox(height: 10,),
+                                AppTextLabels.boldTextShort(label: "Clients", color: AppColors.appGreen, fontSize: 15)
                               ],
                             ),
                           ),
