@@ -1,4 +1,5 @@
 import 'package:accurate/AccountantDashboard/AccountantDashboardScreen.dart';
+import 'package:accurate/RecoveryOfficeDashboard/RecoverOfficerDashboard.dart';
 import 'package:accurate/components/generic/DashedSeparatorPainter.dart';
 import 'package:accurate/sales_man/salesManDashboard.dart';
 import 'package:accurate/superadmin/SuperAdminDashboard.dart';
@@ -276,6 +277,8 @@ class UiHelper {
       home = const SuperAdminDashboard();
     } else if (roleId == 6){
       home =  AccountantDashboardScreen();
+    } else if (roleId == 7){
+      home = RecoverOfficerDashboard();
     }
     return home;
   }

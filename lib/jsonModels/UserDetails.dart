@@ -29,6 +29,8 @@ class UserData {
   List<Stocks>? stocks;
   Employee? employee;
   List<CaptainJobs>? captainJobs;
+  List<AssignedInvoices>? assignedInvoices;
+
 
   UserData(
       {this.id,
@@ -42,6 +44,7 @@ class UserData {
         this.updatedAt,
         this.stocks,
         this.employee,
+        this.assignedInvoices,
         this.captainJobs});
 
   UserData.fromJson(Map<String, dynamic> json) {
@@ -67,6 +70,12 @@ class UserData {
       captainJobs = <CaptainJobs>[];
       json['captain_all_jobs'].forEach((v) {
         captainJobs!.add(new CaptainJobs.fromJson(v));
+      });
+    }
+    if (json['assigned_invoices'] != null) {
+      assignedInvoices = <AssignedInvoices>[];
+      json['assigned_invoices'].forEach((v) {
+        assignedInvoices!.add(new AssignedInvoices.fromJson(v));
       });
     }
   }
@@ -959,6 +968,162 @@ class ClientAddress {
     data['deleted_at'] = this.deletedAt;
     data['created_at'] = this.createdAt;
     data['updated_at'] = this.updatedAt;
+    return data;
+  }
+}
+
+
+class AssignedInvoices {
+  int? id;
+  String? serviceInvoiceId;
+  String? userInvoiceId;
+  int? invoiceableId;
+  String? invoiceableType;
+  int? userId;
+  String? issuedDate;
+  String? totalAmt;
+  String? paidAmt;
+  String? status;
+  String? createdAt;
+  String? updatedAt;
+  String? jobIds;
+  int? addressId;
+  Null? promiseDate;
+  int? assignedUserId;
+  User? user;
+  Address? address;
+
+  AssignedInvoices(
+      {this.id,
+        this.serviceInvoiceId,
+        this.userInvoiceId,
+        this.invoiceableId,
+        this.invoiceableType,
+        this.userId,
+        this.issuedDate,
+        this.totalAmt,
+        this.paidAmt,
+        this.status,
+        this.createdAt,
+        this.updatedAt,
+        this.jobIds,
+        this.addressId,
+        this.promiseDate,
+        this.assignedUserId,
+        this.user,
+        this.address});
+
+  AssignedInvoices.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    serviceInvoiceId = json['service_invoice_id'];
+    userInvoiceId = json['user_invoice_id'];
+    invoiceableId = json['invoiceable_id'];
+    invoiceableType = json['invoiceable_type'];
+    userId = json['user_id'];
+    issuedDate = json['issued_date'];
+    totalAmt = json['total_amt'];
+    paidAmt = json['paid_amt'];
+    status = json['status'];
+    createdAt = json['created_at'];
+    updatedAt = json['updated_at'];
+    jobIds = json['job_ids'];
+    addressId = json['address_id'];
+    promiseDate = json['promise_date'];
+    assignedUserId = json['assigned_user_id'];
+    user = json['user'] != null ? new User.fromJson(json['user']) : null;
+    address =
+    json['address'] != null ? new Address.fromJson(json['address']) : null;
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['id'] = this.id;
+    data['service_invoice_id'] = this.serviceInvoiceId;
+    data['user_invoice_id'] = this.userInvoiceId;
+    data['invoiceable_id'] = this.invoiceableId;
+    data['invoiceable_type'] = this.invoiceableType;
+    data['user_id'] = this.userId;
+    data['issued_date'] = this.issuedDate;
+    data['total_amt'] = this.totalAmt;
+    data['paid_amt'] = this.paidAmt;
+    data['status'] = this.status;
+    data['created_at'] = this.createdAt;
+    data['updated_at'] = this.updatedAt;
+    data['job_ids'] = this.jobIds;
+    data['address_id'] = this.addressId;
+    data['promise_date'] = this.promiseDate;
+    data['assigned_user_id'] = this.assignedUserId;
+    if (this.user != null) {
+      data['user'] = this.user!.toJson();
+    }
+    if (this.address != null) {
+      data['address'] = this.address!.toJson();
+    }
+    return data;
+  }
+}
+
+class Address {
+  int? id;
+  int? clientId;
+  int? userId;
+  String? address;
+  String? city;
+  String? lat;
+  String? lang;
+  String? country;
+  String? state;
+  Null? deletedAt;
+  String? createdAt;
+  String? updatedAt;
+  String? area;
+
+  Address(
+      {this.id,
+        this.clientId,
+        this.userId,
+        this.address,
+        this.city,
+        this.lat,
+        this.lang,
+        this.country,
+        this.state,
+        this.deletedAt,
+        this.createdAt,
+        this.updatedAt,
+        this.area});
+
+  Address.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    clientId = json['client_id'];
+    userId = json['user_id'];
+    address = json['address'];
+    city = json['city'];
+    lat = json['lat'];
+    lang = json['lang'];
+    country = json['country'];
+    state = json['state'];
+    deletedAt = json['deleted_at'];
+    createdAt = json['created_at'];
+    updatedAt = json['updated_at'];
+    area = json['area'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['id'] = this.id;
+    data['client_id'] = this.clientId;
+    data['user_id'] = this.userId;
+    data['address'] = this.address;
+    data['city'] = this.city;
+    data['lat'] = this.lat;
+    data['lang'] = this.lang;
+    data['country'] = this.country;
+    data['state'] = this.state;
+    data['deleted_at'] = this.deletedAt;
+    data['created_at'] = this.createdAt;
+    data['updated_at'] = this.updatedAt;
+    data['area'] = this.area;
     return data;
   }
 }

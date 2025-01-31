@@ -557,14 +557,6 @@ class _JobDetailsState extends State<JobDetails> {
 
   Future<void> _openGoogleMaps(double lat, double long) async {
     MyMapLauncher.openMapsWithLocation(latitude: lat, longitude: long);
-    //
-    // final url = 'https://www.google.com/maps/search/?api=1&query=$lat,$long';
-    // final Uri uri = Uri.parse(url);
-    // if (await canLaunchUrl(uri)) {
-    //   await launchUrl(uri, mode: LaunchMode.externalApplication);
-    // } else {
-    //   throw 'Could not launch $url';
-    // }
   }
 
   void requestToStartJob() async {

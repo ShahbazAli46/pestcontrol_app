@@ -18,6 +18,7 @@ class UpcomingJobsController extends GetxController {
   List<CaptainJobs> upcomingJobs = [];
   List<CaptainJobs> previousJobs = [];
   var currentStock = 0.0.obs;
+  List<AssignedInvoices>? assignedInvoices = [];
 
 
 
@@ -32,6 +33,7 @@ class UpcomingJobsController extends GetxController {
     String url = "${Urls.upcomingJobs}$userID";
     var response = await APICall().getDataWithToken(url);
     details = UserDetails.fromJson(response);
+    assignedInvoices = details.data?.assignedInvoices ?? [];
     List<String> items = [];
     stocks = details.data?.stocks;
     details.data?.stocks?.forEach((item) {
