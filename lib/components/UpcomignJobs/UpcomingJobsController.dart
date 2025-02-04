@@ -4,6 +4,7 @@ import 'package:accurate/main.dart';
 import 'package:accurate/utils/APICall.dart';
 import 'package:accurate/utils/Constants.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 
 class UpcomingJobsController extends GetxController {
   var fetchingData = false.obs;
@@ -96,6 +97,64 @@ class UpcomingJobsController extends GetxController {
     setChemicalsUnit(index);
     return details.data?.stocks?[index].product?.id ?? 0;
   }
+
+  void getTodayData() {
+    String start = formatDate(DateTime.now());
+    String end = formatDate(DateTime.now());
+    getData(start, end);
+  }
+
+  void getData(start, end) async {
+    fetchingData.value = true;
+    int userID = userObj?.data?.id ?? 0;
+    String url = "${Urls.upcomingJobs}$userID" + "?start_date=${start}&end_date=${end}";
+    var response = await APICall().getDataWithToken(url);
+    details = UserDetails.fromJson(response);
+    assignedInvoices = details.data?.assignedInvoices ?? [];
+    List<String> items = [];
+    stocks = details.data?.stocks;
+    details.data?.stocks?.forEach((item) {
+      items.add(item.product?.productName ?? "");
+    });
+    stocksList = items.map((e) => e as String).toList();
+    if (details.data?.captainJobs != null) {
+      captainJobs = details.data!.captainJobs!;
+
+      DateTime now = DateTime.now();
+      DateTime today = DateTime(now.year, now.month, now.day);
+
+      for (var job in captainJobs) {
+        if (job.jobDate == null) continue;
+        DateTime? jobDateTime;
+        try {
+          jobDateTime = DateTime.parse(job.jobDate!);
+        } catch (e) {
+          print('Error parsing date: ${job.jobDate}');
+          continue;
+        }
+        if (jobDateTime.isAfter(today) || jobDateTime.isAtSameMomentAs(today)) {
+          upcomingJobs.add(job);
+        } else {
+          previousJobs.add(job);
+        }
+      }
+    }
+    else{
+      captainJobs = [];
+    }
+
+    captainJobs = upcomingJobs;
+
+    fetchingData.value = false;
+  }
+
+
+  String formatDate(DateTime date) {
+    final DateFormat formatter = DateFormat('yyyy-MM-dd');
+    return formatter.format(date);
+  }
+
+
 }
 
 class SharedStringController extends GetxController {
@@ -104,4 +163,5 @@ class SharedStringController extends GetxController {
   void updateString(String newString) {
     sharedString.value = newString;
   }
+
 }

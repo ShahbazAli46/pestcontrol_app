@@ -37,5 +37,8 @@ class Constants {
   static String allJobs = "allClients";
   static String expensesController = "expensesController";
   static String products = "products";
+  static String createQuote = "createQuote";
+  static String monthly = "Monthly";
+  static String quarterly = "Quarterly";
 
 }

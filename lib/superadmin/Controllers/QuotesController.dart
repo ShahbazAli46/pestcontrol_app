@@ -7,7 +7,7 @@ import 'package:intl/intl.dart';
 class QuotesController extends GetxController {
   var fetchingData = false.obs;
   var api = APICall();
-  List<AllQuotesResponseData>? list;
+  List<AllQuotesResponseData>? list = [];
 
   List<AllQuotesResponseData>? approved = [];
 

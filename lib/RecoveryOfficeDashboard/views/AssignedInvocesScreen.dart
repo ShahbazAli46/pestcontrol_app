@@ -28,7 +28,7 @@ class _AssignedInvoicesScreenState extends State<AssignedInvoicesScreen> {
     super.initState(); // Always call super.initState() first
     controller =
         Get.put(UpcomingJobsController(), tag: "recInvoices", permanent: false);
-    controller.fetchJob();
+    controller.getTodayData();
   }
 
   @override
@@ -102,34 +102,42 @@ class _AssignedInvoicesScreenState extends State<AssignedInvoicesScreen> {
           UiHelper.buildRow("Address", controller.assignedInvoices?[index].address?.address ?? "N/A"),
           UiHelper.buildRow("Amount", controller.assignedInvoices?[index].totalAmt ?? "N/A"),
           UiHelper.buildRow("Status", controller.assignedInvoices?[index].status ?? "N/A"),
-          SizedBox(height: 10,),
-          controller.assignedInvoices?[index].status == "paid"? Container():
-          Row(
+
+          controller.assignedInvoices?[index].promiseDate != null  ? UiHelper.buildRow("Promise Date", controller.assignedInvoices?[index].promiseDate ?? "N/A") :
+          controller.assignedInvoices?[index].status == "paid" ? Container():
+          Column(
             children: [
-              Expanded(child: GreenButton(
-                  title: "open location",
-                  sendingData: false.obs,
-                  onTap: () {
-                    double lat = double.parse(
-                        controller.assignedInvoices?[index].address?.lat ?? "0.0");
-                    double long = double.parse(
-                        controller.assignedInvoices?[index].address?.lang ?? "0.0");
-                    _openGoogleMaps(lat, long);
-                  })),
-              SizedBox(width: 10,),
-              Expanded(child: GreenButton(
-                  title: "Process",
-                  sendingData: false.obs,
-                  onTap: () {
-                    UiHelper.navigateToNextScreen(context, ProcessInvoiceScreen(invoices: controller.assignedInvoices![index],));
-                  }))
+              SizedBox(height: 20,),
+              Row(
+                children: [
+                  Expanded(child: GreenButton(
+                      title: "open location",
+                      sendingData: false.obs,
+                      onTap: () {
+                        double lat = double.parse(
+                            controller.assignedInvoices?[index].address?.lat ?? "0.0");
+                        double long = double.parse(
+                            controller.assignedInvoices?[index].address?.lang ?? "0.0");
+                        _openGoogleMaps(lat, long);
+                      })),
+                  SizedBox(width: 10,),
+                  Expanded(child: GreenButton(
+                      title: "Process",
+                      sendingData: false.obs,
+                      onTap: () {
+                        UiHelper.navigateToNextScreen(context, ProcessInvoiceScreen(invoices: controller.assignedInvoices![index],));
+                      }))
+                ],
+              ),
             ],
           )
         ],
       ),
     );
   }
-  onOptionChange(option, start, end) {}
+  onOptionChange(option, start, end) {
+    controller.getData(UiHelper.formatDateForServer(start), UiHelper.formatDateForServer(end));
+  }
   Future<void> _openGoogleMaps(double lat, double long) async {
     MyMapLauncher.openMapsWithLocation(latitude: lat, longitude: long);
   }

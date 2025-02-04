@@ -988,8 +988,8 @@ class AssignedInvoices {
   String? updatedAt;
   String? jobIds;
   int? addressId;
-  Null? promiseDate;
-  int? assignedUserId;
+  String? promiseDate;
+  String? assignedUserId;
   User? user;
   Address? address;
 
@@ -1029,7 +1029,7 @@ class AssignedInvoices {
     jobIds = json['job_ids'];
     addressId = json['address_id'];
     promiseDate = json['promise_date'];
-    assignedUserId = json['assigned_user_id'];
+    assignedUserId = "${json['assigned_user_id']}";
     user = json['user'] != null ? new User.fromJson(json['user']) : null;
     address =
     json['address'] != null ? new Address.fromJson(json['address']) : null;
@@ -1052,7 +1052,7 @@ class AssignedInvoices {
     data['job_ids'] = this.jobIds;
     data['address_id'] = this.addressId;
     data['promise_date'] = this.promiseDate;
-    data['assigned_user_id'] = this.assignedUserId;
+    data['assigned_user_id'] = "${this.assignedUserId}";
     if (this.user != null) {
       data['user'] = this.user!.toJson();
     }

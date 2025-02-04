@@ -5,6 +5,7 @@ import 'package:accurate/components/generic/GreenButton.dart';
 import 'package:accurate/components/generic/SelectableButtonGroup.dart';
 import 'package:accurate/components/generic/UIHelper.dart';
 import 'package:accurate/components/generic/navWithBack.dart';
+import 'package:accurate/superadmin/Components/CreateQuoteScreen.dart';
 import 'package:accurate/superadmin/Controllers/QuotesController.dart';
 import 'package:accurate/utils/TextStyle.dart';
 import 'package:flutter/material.dart';
@@ -39,6 +40,13 @@ class _QuoteScreenState extends State<QuoteScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: Colors.white,
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            UiHelper.navigateToNextScreen(context, CreateQuoteScreen());
+          },
+          child: Icon(Icons.add, color: Colors.white,),
+          backgroundColor: Colors.blue,
+        ),
         body: SafeArea(
             child: Column(
           children: [
