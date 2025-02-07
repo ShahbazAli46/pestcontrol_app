@@ -1,30 +1,22 @@
-class AllQuotesResponse {
-  String? type;
-  List<AllQuotesResponseData>? data;
+class EditQuoteResponse {
+  EditQuoteResponseData? data;
 
-  AllQuotesResponse({this.type, this.data});
+  EditQuoteResponse({this.data});
 
-  AllQuotesResponse.fromJson(Map<String, dynamic> json) {
-    type = json['type'];
-    if (json['data'] != null) {
-      data = <AllQuotesResponseData>[];
-      json['data'].forEach((v) {
-        data!.add(new AllQuotesResponseData.fromJson(v));
-      });
-    }
+  EditQuoteResponse.fromJson(Map<String, dynamic> json) {
+    data = json['data'] != null ? new EditQuoteResponseData.fromJson(json['data']) : null;
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['type'] = this.type;
     if (this.data != null) {
-      data['data'] = this.data!.map((v) => v.toJson()).toList();
+      data['data'] = this.data!.toJson();
     }
     return data;
   }
 }
 
-class AllQuotesResponseData {
+class EditQuoteResponseData {
   int? id;
   int? userId;
   String? quoteTitle;
@@ -52,13 +44,15 @@ class AllQuotesResponseData {
   String? createdAt;
   String? updatedAt;
   int? clientId;
+  String? licenseNo;
   String? contractCancelledAt;
   String? contractCancelReason;
   List<TreatmentMethods>? treatmentMethods;
   User? user;
-  List<QuoteServices>? quoteServices;
+  TermAndCondition? termAndCondition;
+  List<EditQuoteResponseQuoteServices>? quoteServices;
 
-  AllQuotesResponseData(
+  EditQuoteResponseData(
       {this.id,
         this.userId,
         this.quoteTitle,
@@ -86,13 +80,15 @@ class AllQuotesResponseData {
         this.createdAt,
         this.updatedAt,
         this.clientId,
+        this.licenseNo,
         this.contractCancelledAt,
         this.contractCancelReason,
         this.treatmentMethods,
         this.user,
+        this.termAndCondition,
         this.quoteServices});
 
-  AllQuotesResponseData.fromJson(Map<String, dynamic> json) {
+  EditQuoteResponseData.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     userId = json['user_id'];
     quoteTitle = json['quote_title'];
@@ -120,74 +116,81 @@ class AllQuotesResponseData {
     createdAt = json['created_at'];
     updatedAt = json['updated_at'];
     clientId = json['client_id'];
+    licenseNo = json['license_no'];
     contractCancelledAt = json['contract_cancelled_at'];
     contractCancelReason = json['contract_cancel_reason'];
     if (json['treatment_methods'] != null) {
       treatmentMethods = <TreatmentMethods>[];
       json['treatment_methods'].forEach((v) {
-        treatmentMethods!.add(TreatmentMethods.fromJson(v));
+        treatmentMethods!.add(new TreatmentMethods.fromJson(v));
       });
     }
-    user = json['user'] != null ? User.fromJson(json['user']) : null;
+    user = json['user'] != null ? new User.fromJson(json['user']) : null;
+    termAndCondition = json['term_and_condition'] != null
+        ? new TermAndCondition.fromJson(json['term_and_condition'])
+        : null;
     if (json['quote_services'] != null) {
-      quoteServices = <QuoteServices>[];
+      quoteServices = <EditQuoteResponseQuoteServices>[];
       json['quote_services'].forEach((v) {
-        quoteServices!.add(QuoteServices.fromJson(v));
+        quoteServices!.add(new EditQuoteResponseQuoteServices.fromJson(v));
       });
     }
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['id'] = id;
-    data['user_id'] = userId;
-    data['quote_title'] = quoteTitle;
-    data['client_address_id'] = clientAddressId;
-    data['subject'] = subject;
-    data['service_ids'] = serviceIds;
-    data['tm_ids'] = tmIds;
-    data['description'] = description;
-    data['trn'] = trn;
-    data['tag'] = tag;
-    data['duration_in_months'] = durationInMonths;
-    data['is_food_watch_account'] = isFoodWatchAccount;
-    data['billing_method'] = billingMethod;
-    data['no_of_installments'] = noOfInstallments;
-    data['sub_total'] = subTotal;
-    data['dis_per'] = disPer;
-    data['dis_amt'] = disAmt;
-    data['vat_per'] = vatPer;
-    data['vat_amt'] = vatAmt;
-    data['grand_total'] = grandTotal;
-    data['contract_start_date'] = contractStartDate;
-    data['contract_end_date'] = contractEndDate;
-    data['is_contracted'] = isContracted;
-    data['term_and_condition_id'] = termAndConditionId;
-    data['created_at'] = createdAt;
-    data['updated_at'] = updatedAt;
-    data['client_id'] = clientId;
-    data['contract_cancelled_at'] = contractCancelledAt;
-    data['contract_cancel_reason'] = contractCancelReason;
-    if (treatmentMethods != null) {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['id'] = this.id;
+    data['user_id'] = this.userId;
+    data['quote_title'] = this.quoteTitle;
+    data['client_address_id'] = this.clientAddressId;
+    data['subject'] = this.subject;
+    data['service_ids'] = this.serviceIds;
+    data['tm_ids'] = this.tmIds;
+    data['description'] = this.description;
+    data['trn'] = this.trn;
+    data['tag'] = this.tag;
+    data['duration_in_months'] = this.durationInMonths;
+    data['is_food_watch_account'] = this.isFoodWatchAccount;
+    data['billing_method'] = this.billingMethod;
+    data['no_of_installments'] = this.noOfInstallments;
+    data['sub_total'] = this.subTotal;
+    data['dis_per'] = this.disPer;
+    data['dis_amt'] = this.disAmt;
+    data['vat_per'] = this.vatPer;
+    data['vat_amt'] = this.vatAmt;
+    data['grand_total'] = this.grandTotal;
+    data['contract_start_date'] = this.contractStartDate;
+    data['contract_end_date'] = this.contractEndDate;
+    data['is_contracted'] = this.isContracted;
+    data['term_and_condition_id'] = this.termAndConditionId;
+    data['created_at'] = this.createdAt;
+    data['updated_at'] = this.updatedAt;
+    data['client_id'] = this.clientId;
+    data['license_no'] = this.licenseNo;
+    data['contract_cancelled_at'] = this.contractCancelledAt;
+    data['contract_cancel_reason'] = this.contractCancelReason;
+    if (this.treatmentMethods != null) {
       data['treatment_methods'] =
-          treatmentMethods!.map((v) => v.toJson()).toList();
+          this.treatmentMethods!.map((v) => v.toJson()).toList();
     }
-    if (user != null) {
-      data['user'] = user!.toJson();
+    if (this.user != null) {
+      data['user'] = this.user!.toJson();
     }
-    if (quoteServices != null) {
+    if (this.termAndCondition != null) {
+      data['term_and_condition'] = this.termAndCondition!.toJson();
+    }
+    if (this.quoteServices != null) {
       data['quote_services'] =
-          quoteServices!.map((v) => v.toJson()).toList();
+          this.quoteServices!.map((v) => v.toJson()).toList();
     }
     return data;
   }
 }
 
-
 class TreatmentMethods {
   int? id;
   String? name;
-  Null? deletedAt;
+  String? deletedAt;
   String? createdAt;
   String? updatedAt;
 
@@ -217,13 +220,16 @@ class User {
   int? id;
   String? name;
   String? email;
-  Null? emailVerifiedAt;
+  String? emailVerifiedAt;
   int? roleId;
   int? isActive;
-  Null? deletedAt;
+  String? deletedAt;
   String? createdAt;
   String? updatedAt;
-  Null? firedAt;
+  String? firedAt;
+  String? appVersion;
+  String? firebaseToken;
+  String? branchId;
   Client? client;
 
   User(
@@ -237,6 +243,9 @@ class User {
         this.createdAt,
         this.updatedAt,
         this.firedAt,
+        this.appVersion,
+        this.firebaseToken,
+        this.branchId,
         this.client});
 
   User.fromJson(Map<String, dynamic> json) {
@@ -250,6 +259,9 @@ class User {
     createdAt = json['created_at'];
     updatedAt = json['updated_at'];
     firedAt = json['fired_at'];
+    appVersion = json['app_version'];
+    firebaseToken = json['firebase_token'];
+    branchId = "${json['branch_id']}";
     client =
     json['client'] != null ? new Client.fromJson(json['client']) : null;
   }
@@ -266,6 +278,9 @@ class User {
     data['created_at'] = this.createdAt;
     data['updated_at'] = this.updatedAt;
     data['fired_at'] = this.firedAt;
+    data['app_version'] = this.appVersion;
+    data['firebase_token'] = this.firebaseToken;
+    data['branch_id'] = this.branchId;
     if (this.client != null) {
       data['client'] = this.client!.toJson();
     }
@@ -284,7 +299,7 @@ class Client {
   String? referencableType;
   int? referencableId;
   String? openingBalance;
-  Null? deletedAt;
+  String? deletedAt;
   String? createdAt;
   String? updatedAt;
   Referencable? referencable;
@@ -350,13 +365,16 @@ class Referencable {
   int? id;
   String? name;
   String? email;
-  Null? emailVerifiedAt;
+  String? emailVerifiedAt;
   int? roleId;
   int? isActive;
-  Null? deletedAt;
+  String? deletedAt;
   String? createdAt;
   String? updatedAt;
-  Null? firedAt;
+  String? firedAt;
+  String? appVersion;
+  String? firebaseToken;
+  int? branchId;
 
   Referencable(
       {this.id,
@@ -368,7 +386,10 @@ class Referencable {
         this.deletedAt,
         this.createdAt,
         this.updatedAt,
-        this.firedAt});
+        this.firedAt,
+        this.appVersion,
+        this.firebaseToken,
+        this.branchId});
 
   Referencable.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -381,6 +402,9 @@ class Referencable {
     createdAt = json['created_at'];
     updatedAt = json['updated_at'];
     firedAt = json['fired_at'];
+    appVersion = json['app_version'];
+    firebaseToken = json['firebase_token'];
+    branchId = json['branch_id'];
   }
 
   Map<String, dynamic> toJson() {
@@ -395,11 +419,51 @@ class Referencable {
     data['created_at'] = this.createdAt;
     data['updated_at'] = this.updatedAt;
     data['fired_at'] = this.firedAt;
+    data['app_version'] = this.appVersion;
+    data['firebase_token'] = this.firebaseToken;
+    data['branch_id'] = this.branchId;
     return data;
   }
 }
 
-class QuoteServices {
+class TermAndCondition {
+  int? id;
+  String? name;
+  String? text;
+  String? deletedAt;
+  String? createdAt;
+  String? updatedAt;
+
+  TermAndCondition(
+      {this.id,
+        this.name,
+        this.text,
+        this.deletedAt,
+        this.createdAt,
+        this.updatedAt});
+
+  TermAndCondition.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    name = json['name'];
+    text = json['text'];
+    deletedAt = json['deleted_at'];
+    createdAt = json['created_at'];
+    updatedAt = json['updated_at'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['id'] = this.id;
+    data['name'] = this.name;
+    data['text'] = this.text;
+    data['deleted_at'] = this.deletedAt;
+    data['created_at'] = this.createdAt;
+    data['updated_at'] = this.updatedAt;
+    return data;
+  }
+}
+
+class EditQuoteResponseQuoteServices {
   int? id;
   int? quoteId;
   int? serviceId;
@@ -412,7 +476,7 @@ class QuoteServices {
   Service? service;
   List<QuoteServiceDates>? quoteServiceDates;
 
-  QuoteServices(
+  EditQuoteResponseQuoteServices(
       {this.id,
         this.quoteId,
         this.serviceId,
@@ -425,7 +489,7 @@ class QuoteServices {
         this.service,
         this.quoteServiceDates});
 
-  QuoteServices.fromJson(Map<String, dynamic> json) {
+  EditQuoteResponseQuoteServices.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     quoteId = json['quote_id'];
     serviceId = json['service_id'];
@@ -472,7 +536,7 @@ class Service {
   String? pestName;
   String? serviceTitle;
   String? termAndConditions;
-  Null? deletedAt;
+  String? deletedAt;
   String? createdAt;
   String? updatedAt;
 

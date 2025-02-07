@@ -10,6 +10,7 @@ import 'package:accurate/components/generic/UIHelper.dart';
 import 'package:accurate/components/generic/navWithBack.dart';
 import 'package:accurate/jsonModels/GeneralErrorResponse.dart';
 import 'package:accurate/jsonModels/UserDetails.dart';
+import 'package:accurate/sales_man/AddImagesForIPMReportScreen.dart';
 import 'package:accurate/sales_man/CreateServiceReport.dart';
 import 'package:accurate/sales_man/ReschduleJob.dart';
 import 'package:accurate/utils/APICall.dart';
@@ -217,7 +218,15 @@ class _JobDetailsState extends State<JobDetails> {
                                                                     ?.id ??
                                                                 0));
                                                   }))
-                                          : Container()
+                                          : Container(),
+
+                                      Expanded(child: jobController?.jobData?.data?.isCompleted == 2
+                                          ? Container(child: Bluebutton(title: "Add Images", sendingData: false.obs, onTap: (){
+                                            UiHelper.navigateToNextScreen(context, AddImagesForIPMReportScreen(serviceID: widget.id,));
+                                      },))
+                                          : Container())
+
+
                                     ],
                                   )
                           ],

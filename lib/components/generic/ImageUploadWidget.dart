@@ -7,6 +7,7 @@ class ImageUploadWidget extends StatefulWidget {
   final double? width;
   final double? height;
   final String? title;
+  final ImageSource? sourceType; // New parameter for source type
 
   const ImageUploadWidget({
     Key? key,
@@ -14,6 +15,7 @@ class ImageUploadWidget extends StatefulWidget {
     this.width = 150,
     this.height = 150,
     this.title = 'Select an image',
+    this.sourceType, // If null, shows both options. If specified, opens that source directly
   }) : super(key: key);
 
   @override
@@ -28,7 +30,7 @@ class _ImageUploadWidgetState extends State<ImageUploadWidget> {
     try {
       final pickedFile = await _picker.pickImage(
         source: ImageSource.gallery,
-        imageQuality: 80, // You can adjust image quality here
+        imageQuality: 80,
       );
 
       if (pickedFile != null) {
@@ -46,7 +48,7 @@ class _ImageUploadWidgetState extends State<ImageUploadWidget> {
     try {
       final pickedFile = await _picker.pickImage(
         source: ImageSource.camera,
-        imageQuality: 80, // You can adjust image quality here
+        imageQuality: 80,
       );
 
       if (pickedFile != null) {
@@ -57,6 +59,20 @@ class _ImageUploadWidgetState extends State<ImageUploadWidget> {
       }
     } catch (e) {
       print('Error picking image from camera: $e');
+    }
+  }
+
+  Future<void> _handleImageSelection() async {
+    if (widget.sourceType != null) {
+      // If source type is specified, open that directly
+      if (widget.sourceType == ImageSource.camera) {
+        await _getImageFromCamera();
+      } else {
+        await _getImageFromGallery();
+      }
+    } else {
+      // If no source type specified, show the bottom sheet with options
+      _showImageSourceOptions();
     }
   }
 
@@ -122,7 +138,7 @@ class _ImageUploadWidgetState extends State<ImageUploadWidget> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: _showImageSourceOptions,
+      onTap: _handleImageSelection,
       child: Container(
         width: widget.width,
         height: widget.height,
@@ -157,7 +173,7 @@ class _ImageUploadWidgetState extends State<ImageUploadWidget> {
                       color: Colors.white,
                       size: 20,
                     ),
-                    onPressed: _showImageSourceOptions,
+                    onPressed: _handleImageSelection,
                   ),
                 ),
               ),
@@ -169,7 +185,11 @@ class _ImageUploadWidgetState extends State<ImageUploadWidget> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Icon(
-                  Icons.add_a_photo,
+                  widget.sourceType == ImageSource.camera
+                      ? Icons.camera_alt
+                      : widget.sourceType == ImageSource.gallery
+                      ? Icons.photo_library
+                      : Icons.add_a_photo,
                   size: 40.0,
                   color: Colors.grey.shade400,
                 ),

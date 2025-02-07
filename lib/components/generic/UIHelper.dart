@@ -374,4 +374,46 @@ class UiHelper {
     return [firstDayOfMonth, lastDayOfMonth];
   }
 
+
+  static List<String> getDocumentsByProfession(String profession) {
+    const List<String> allDocuments = [
+      "Employment Letter",
+      "Job Offer Letter/Joining Letter APCS",
+      "Passport Handover Form",
+      "Passport",
+      "EID",
+      "DM Card",
+      "Driving Licence",
+      "MOHRE Letter",
+      "Labour Card",
+      "Change Status",
+      "Visa",
+      "EHOC",
+      "Medical Report",
+      "Visa Stamping",
+      "Health Insurance",
+      "Vehicle Policy",
+      "Asset Policy",
+      "ILOE Insurance",
+      "Bank Detail/Salary Transfer",
+    ];
+
+    // Documents to exclude for HR Manager
+    const List<String> hrExcludedDocs = ["Vehicle Policy", "DM Card", "EHOC"];
+
+    // Handle HR Manager case
+    if (profession == "HR Manager") {
+      return allDocuments.where((doc) => !hrExcludedDocs.contains(doc)).toList();
+    }
+
+    // Handle Sales roles
+    if (profession == "Sales Manager" || profession == "Sales Officer") {
+      const List<String> salesExcludedDocs = ["DM Card", "EHOC"];
+      return allDocuments.where((doc) => !salesExcludedDocs.contains(doc)).toList();
+    }
+
+    // For other professions, return all documents
+    return allDocuments;
+  }
+
 }

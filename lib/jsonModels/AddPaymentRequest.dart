@@ -5,6 +5,7 @@ class AddPaymentRequest {
   String? paymentType;
   String? bankId;
   String? transectionId;
+  int? is_settlement = 0;
 
   AddPaymentRequest(
       {this.serviceInvoiceId,
@@ -12,7 +13,9 @@ class AddPaymentRequest {
         this.description,
         this.paymentType,
         this.bankId,
-        this.transectionId});
+        this.transectionId,
+        this.is_settlement
+      });
 
   AddPaymentRequest.fromJson(Map<String, dynamic> json) {
     serviceInvoiceId = json['service_invoice_id'];
@@ -21,6 +24,7 @@ class AddPaymentRequest {
     paymentType = json['payment_type'];
     bankId = json['bank_id'];
     transectionId = json['transection_id'];
+    is_settlement = json['is_settlement'];
   }
 
   Map<String, dynamic> toJson() {
@@ -31,6 +35,7 @@ class AddPaymentRequest {
     data['payment_type'] = this.paymentType;
     data['bank_id'] = this.bankId;
     data['transection_id'] = this.transectionId;
+    data['is_settlement'] = this.is_settlement;
     return data;
   }
 }

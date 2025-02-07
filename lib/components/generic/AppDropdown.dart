@@ -6,11 +6,13 @@ class AppDropdown extends StatefulWidget {
   final String title;
   final List<String> options;
   final Function(String? value, int? index) onChanged;
+  final String? selectedOption;
 
   AppDropdown({
     required this.title,
     required this.options,
     required this.onChanged,
+    this.selectedOption,
   });
 
   @override
@@ -24,6 +26,7 @@ class _AppDropdownState extends State<AppDropdown> {
   @override
   void initState() {
     super.initState();
+    _selectedValue = widget.selectedOption;
     _focusNode.addListener(() {
       setState(() {});
     });

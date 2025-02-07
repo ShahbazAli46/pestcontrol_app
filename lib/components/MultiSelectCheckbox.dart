@@ -5,11 +5,13 @@ class MultiSelectCheckbox extends StatefulWidget {
   final RxList items;
   final Function(List<String>) onSelectionChanged;
   final String? title;
+  final List<int> selectedIds;
 
   const MultiSelectCheckbox({
     Key? key,
     required this.items,
     required this.onSelectionChanged,
+    this.selectedIds = const [],
     this.title,
   }) : super(key: key);
 
@@ -18,6 +20,15 @@ class MultiSelectCheckbox extends StatefulWidget {
 }
 
 class _MultiSelectCheckboxState extends State<MultiSelectCheckbox> {
+  @override
+  void initState() {
+    super.initState();
+    print(widget.selectedIds);
+    for (var item in widget.items) {
+      item.isSelected = widget.selectedIds.contains(int.parse(item.id));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Obx(() => Card(
@@ -43,20 +54,15 @@ class _MultiSelectCheckboxState extends State<MultiSelectCheckbox> {
                   (index) => CheckboxListTile(
                 value: widget.items[index].isSelected,
                 title: Text(widget.items[index].value),
-
                 onChanged: (value) {
-                  // Create a new list with the updated item
                   final updatedItems = widget.items.toList();
                   updatedItems[index].isSelected = value ?? false;
-
-                  // Update the RxList using value assignment
                   widget.items.assignAll(updatedItems);
 
                   List<String> ids = [];
-
                   widget.items.forEach((item){
                     if (item.isSelected){
-                        ids.add(item.id);
+                      ids.add(item.id);
                     }
                   });
                   widget.onSelectionChanged(ids);
@@ -71,6 +77,7 @@ class _MultiSelectCheckboxState extends State<MultiSelectCheckbox> {
     ));
   }
 }
+
 
 class CheckboxItem {
   final String id;

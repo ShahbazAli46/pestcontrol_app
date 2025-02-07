@@ -5,8 +5,13 @@ import 'package:accurate/components/generic/GreenButton.dart';
 import 'package:accurate/components/generic/SelectableButtonGroup.dart';
 import 'package:accurate/components/generic/UIHelper.dart';
 import 'package:accurate/components/generic/navWithBack.dart';
+import 'package:accurate/superadmin/Components/CancelQuoteScreen.dart';
 import 'package:accurate/superadmin/Components/CreateQuoteScreen.dart';
+import 'package:accurate/superadmin/Components/EditQuote/ApproveQuoteScreen.dart';
+import 'package:accurate/superadmin/Components/EditQuote/EditQuoteController.dart';
+import 'package:accurate/superadmin/Components/EditQuote/EditQuoteScreen.dart';
 import 'package:accurate/superadmin/Controllers/QuotesController.dart';
+import 'package:accurate/utils/AlertService.dart';
 import 'package:accurate/utils/TextStyle.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -91,7 +96,7 @@ class _QuoteScreenState extends State<QuoteScreen> {
                     height: 50,
                     child: Center(
                       child: AppTextLabels.regularShortText(
-                          label: "Client Name", color: AppColors.appBlack),
+                          label: "Firm Name", color: AppColors.appBlack),
                     ),
                   )),
                   Expanded(
@@ -193,6 +198,21 @@ class _QuoteScreenState extends State<QuoteScreen> {
   }
 
   Widget dataItem(index) {
+    Future<void> handleView() async {
+      final url = 'https://www.apcs.ae/quotePdf/?id=${controller.list?[index].id ?? 0}';
+      if (await canLaunch(url)) {
+        await launch(
+          url,
+          forceSafariVC: false,
+          forceWebView: false,
+        );
+      } else {
+        throw 'Could not launch $url';
+      }
+    }
+
+
+
     return Container(
       child: Column(
         children: [
@@ -207,71 +227,115 @@ class _QuoteScreenState extends State<QuoteScreen> {
               ),
               Expanded(
                   child: Container(
-                child: Row(
-                  children: [
-                    AppTextLabels.regularText(
-                        label: "${controller.list?[index].user?.name}",
-                        color: AppColors.appBlack),
-                  ],
-                ),
-              )),
+                    child: Row(
+                      children: [
+                        AppTextLabels.regularText(
+                            label: "${controller.list?[index].user?.client?.firmName ?? ""}",
+                            color: AppColors.appBlack),
+                      ],
+                    ),
+                  )),
               Expanded(
                   child: Container(
-                child: Center(
-                  child: AppTextLabels.regularShortText(
-                      label: "${controller.list?[index].subTotal}",
-                      color: AppColors.appBlack),
-                ),
-              )),
+                    child: Center(
+                      child: AppTextLabels.regularShortText(
+                          label: "${controller.list?[index].grandTotal}",
+                          color: AppColors.appBlack),
+                    ),
+                  )),
               Expanded(
                   child: Container(
-                child: Center(
-                  child: AppTextLabels.regularShortText(
-                      label:
-                          "${controller.list?[index].user?.client?.referencable?.name}",
-                      color: AppColors.appBlack),
-                ),
-              )),
+                    child: Center(
+                      child: AppTextLabels.regularShortText(
+                          label: "${controller.list?[index].user?.client?.referencable?.name}",
+                          color: AppColors.appBlack),
+                    ),
+                  )),
               Container(
                 height: 50,
                 width: 50,
                 child: Center(
                   child: AppTextLabels.regularShortText(
-                      label:
-                          "${controller.list?[index].isContracted == 0 ? "Pending" : "Approved"}",
-                      color: controller.list?[index].isContracted == 0
-                          ? AppColors.appBlack
-                          : AppColors.appGreen,
+                      label: "${controller.list?[index].isContracted == 1 ?   "Approved" :  controller.list?[index].contractCancelReason ==  null ?   "Pending" : "Canceled"}",
+                      color: controller.list?[index].isContracted == 1
+                          ? AppColors.appGreen
+                          : controller.list?[index].contractCancelReason ==  null ? AppColors.appBlack : Colors.red,
                       fontSize: 10),
                 ),
               ),
-              GestureDetector(
-                onTap: () async {
-                  final url =
-                      'https://www.apcs.ae/quotePdf/?id=${controller.list?[index].id ?? 0}';
-                  if (await canLaunch(url)) {
-                    await launch(
-                      url,
-                      forceSafariVC: false,
-                      forceWebView: false,
-                    );
-                  } else {
-                    throw 'Could not launch $url';
+              PopupMenuButton<String>(
+                onSelected: (value) {
+                  if (value == 'view') {
+                    handleView();
+                  } else if (value == 'edit') {
+                    handleEdit(controller.list?[index].id ?? 0);
+                  } else if (value == 'Approve'){
+                    if (controller.list![index].quoteServices!.length > 1){
+                      AlertService.showAlert("Alert", "One Contract can have one Service only, Please Edit Quote, remove extra service ");
+                    }
+                    else{
+                      approveBtnPressed(controller.list?[index].id ?? 0);
+                    }
+
+                  } else if (value == 'cancel'){
+                    UiHelper.navigateToNextScreen(context, CancelQuoteScreen(quoteId: controller.list?[index].id ?? 0,));
                   }
                 },
+                itemBuilder: (context) => [
+                  PopupMenuItem(
+                    value: 'view',
+                    child: Row(
+                      children: [
+                        Icon(Icons.visibility, color: AppColors.appGreen, size: 18),
+                        SizedBox(width: 8),
+                        Text('View', style: TextStyle(color: AppColors.appGreen)),
+                      ],
+                    ),
+                  ),
+                  if (controller.list?[index].isContracted == 0 && controller.list?[index].contractCancelReason == null)
+                    PopupMenuItem(
+                      value: 'edit',
+                      child: Row(
+                        children: [
+                          Icon(Icons.edit, color: AppColors.appGreen, size: 18),
+                          SizedBox(width: 8),
+                          Text('Edit', style: TextStyle(color: AppColors.appGreen)),
+                        ],
+                      ),
+                    ),
+                  if (controller.list?[index].isContracted == 0 && controller.list?[index].contractCancelReason == null)
+                    PopupMenuItem(
+                      value: 'Approve',
+                      child: Row(
+                        children: [
+                          Icon(Icons.check, color: AppColors.appGreen, size: 18),
+                          SizedBox(width: 8),
+                          Text('Approve', style: TextStyle(color: AppColors.appGreen)),
+                        ],
+                      ),
+                    ),
+
+                  if (controller.list?[index].isContracted == 0 && controller.list?[index].contractCancelReason == null)
+                    PopupMenuItem(
+                      value: 'cancel',
+                      child: Row(
+                        children: [
+                          Icon(Icons.cancel, color: Colors.red, size: 18),
+                          SizedBox(width: 8),
+                          Text('Cancel', style: TextStyle(color: Colors.red)),
+                        ],
+                      ),
+                    ),
+                ],
                 child: Container(
                   height: 50,
                   width: 30,
                   child: Center(
-                      child: AppTextLabels.regularShortText(
-                          label: "View",
-                          color: AppColors.appGreen,
-                          fontSize: 10)),
+                    child: Icon(Icons.more_vert, color: AppColors.appGreen),
+                  ),
                 ),
               ),
-              SizedBox(
-                width: 10,
-              )
+              SizedBox(width: 10),
             ],
           ),
           UiHelper.dashedBoarder()
@@ -279,4 +343,12 @@ class _QuoteScreenState extends State<QuoteScreen> {
       ),
     );
   }
+
+  void handleEdit(int id) {
+    UiHelper.navigateToNextScreen(context, EditQuoteScreen(quoteId: id,));
+  }
+  void approveBtnPressed(int id){
+    UiHelper.navigateToNextScreen(context, ApproveQuoteScreen(qouteItd: id));
+  }
+
 }

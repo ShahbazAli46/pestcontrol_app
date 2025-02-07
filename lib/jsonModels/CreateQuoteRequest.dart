@@ -9,6 +9,7 @@ class CreateQuoteRequest {
   List<int>? tmIds;
   String? description;
   int? trn;
+  int? quote_id;
   String? tag;
   int? durationInMonths;
   int? isFoodWatchAccount;
@@ -16,6 +17,7 @@ class CreateQuoteRequest {
   int? dis_amt;
   int? vatPer;
   int? termAndConditionId;
+  String? service_ids;
   List<QuoteServices>? services;
 
   CreateQuoteRequest(
@@ -34,7 +36,10 @@ class CreateQuoteRequest {
         this.dis_amt,
         this.vatPer,
         this.termAndConditionId,
-        this.services});
+        this.services,
+        this.service_ids,
+        this.quote_id
+      });
 
   CreateQuoteRequest.fromJson(Map<String, dynamic> json) {
     manageType = json['manage_type'];
@@ -68,9 +73,11 @@ class CreateQuoteRequest {
     data['client_address_id'] = this.clientAddressId;
     data['subject'] = this.subject;
     data['tm_ids'] = this.tmIds;
+    data['service_ids'] = this.service_ids;
     data['description'] = this.description;
     data['trn'] = this.trn;
     data['tag'] = this.tag;
+    data['quote_id'] = this.quote_id;
     data['duration_in_months'] = this.durationInMonths;
     data['is_food_watch_account'] = this.isFoodWatchAccount;
     data['billing_method'] = this.billingMethod;

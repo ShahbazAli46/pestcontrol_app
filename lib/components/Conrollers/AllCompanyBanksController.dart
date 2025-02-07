@@ -51,6 +51,7 @@ class AllCompanyBanksController extends GetxController {
     var response  = await api.postDataWithToken(url, request.toJson());
     try {
         GeneralErrorResponse generalErrorResponse = GeneralErrorResponse.fromJson(response);
+        print(generalErrorResponse.status);
         if (generalErrorResponse.status == "success"){
           AlertService.showAlertWithAction("Sucess", generalErrorResponse.message ?? "", onOkPressed: (){
             int roleId = userObj?.data?.roleId ?? 0;

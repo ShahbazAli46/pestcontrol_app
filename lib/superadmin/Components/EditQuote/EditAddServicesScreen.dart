@@ -4,6 +4,7 @@ import 'package:accurate/components/generic/GreenButtonBordered.dart';
 import 'package:accurate/components/generic/SelectableButtonGroup.dart';
 import 'package:accurate/components/generic/UIHelper.dart';
 import 'package:accurate/components/generic/navWithBack.dart';
+import 'package:accurate/superadmin/Components/EditQuote/EditQuoteController.dart';
 import 'package:accurate/superadmin/Controllers/CreateQuoteController.dart';
 import 'package:accurate/utils/AlertService.dart';
 import 'package:accurate/utils/Constants.dart';
@@ -12,19 +13,20 @@ import 'package:accurate/utils/appColors.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../jsonModels/QuoteServices.dart';
+import '../../../jsonModels/QuoteServices.dart';
 
-class AddServicesScreen extends StatefulWidget {
+class EditAddServicesScreen extends StatefulWidget {
   final Function addServiceInArray;
-  AddServicesScreen({required this.addServiceInArray});
+  EditAddServicesScreen({required this.addServiceInArray});
 
   @override
-  State<AddServicesScreen> createState() => _AddServicesScreenState();
+  State<EditAddServicesScreen> createState() => _EditAddServicesScreenState();
 }
 
-class _AddServicesScreenState extends State<AddServicesScreen> {
+class _EditAddServicesScreenState extends State<EditAddServicesScreen> {
 
-  late CreateQuoteController controller;
+
+  late EditQuoteController controller;
 
 
   int numberOfJobs = 0;
@@ -39,7 +41,7 @@ class _AddServicesScreenState extends State<AddServicesScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    controller = Get.find(tag: Constants.createQuote);
+    controller = Get.find(tag: Constants.editQuote);
     numberOfJobController.text = "";
     priceController.text = "";
 
@@ -93,49 +95,49 @@ class _AddServicesScreenState extends State<AddServicesScreen> {
           padding: const EdgeInsets.only(left: 100, right: 100),
           child: GreenButtonBordered(title: "Add Service In List", sendingData: false.obs, onTap: (){
 
-              if (selectedServiceId == 0){
-                AlertService.showAlert("Alert", "Please select service");
-              } else if (jobType == Constants.monthly && numberOfJobController.text == ""){
-                AlertService.showAlert("Alert", "Please enter number of jobs");
-              } else if (priceController.text == ""){
-                AlertService.showAlert("Alert", "Please enter price");
+            if (selectedServiceId == 0){
+              AlertService.showAlert("Alert", "Please select service");
+            } else if (jobType == Constants.monthly && numberOfJobController.text == ""){
+              AlertService.showAlert("Alert", "Please enter number of jobs");
+            } else if (priceController.text == ""){
+              AlertService.showAlert("Alert", "Please enter price");
+            }
+            else{
+              QuoteServices service  = QuoteServices();
+              controller.refreshQuoteServices.value = true;
+
+              if (jobType == Constants.monthly){
+                service.serviceId = selectedServiceId;
+                service.serviceName = serviceName;
+                service.jobDuration = "${controller.duration.text}";
+                service.serviceType = jobType;
+                service.jobsCount = "${int.parse(numberOfJobController.text) * int.parse(controller.duration.text)}";
+                QuoteServicesDetail item = QuoteServicesDetail(jobType: "monthly", noOfJobs: int.parse(numberOfJobController.text) * int.parse(controller.duration.text), rate: int.tryParse(priceController.text ?? ""));
+                List<QuoteServicesDetail> list= [];
+                list.add(item);
+                service.detail = list;
+                widget.addServiceInArray(service);
+              } else {
+                service.serviceId = selectedServiceId;
+                service.serviceName = serviceName;
+                service.serviceType = jobType;
+                service.jobDuration = "${controller.duration.text} ";
+                int durationInt = int.parse(controller.duration.text ?? "0");
+                int jobs = calculateJobNumber(durationInt);
+                service.jobsCount = "${jobs}";
+                QuoteServicesDetail item = QuoteServicesDetail(jobType: "custom", noOfJobs: jobs, rate: int.tryParse(priceController.text ?? ""));
+                List<QuoteServicesDetail> list= [];
+                list.add(item);
+
+                service.detail = list;
+                widget.addServiceInArray(service);
               }
-              else{
-                QuoteServices service  = QuoteServices();
-                controller.refreshQuoteServices.value = true;
 
-                if (jobType == Constants.monthly){
-                  service.serviceId = selectedServiceId;
-                  service.serviceName = serviceName;
-                  service.jobDuration = "${controller.duration.text}";
-                  service.serviceType = jobType;
-                  service.jobsCount = "${int.parse(numberOfJobController.text) * int.parse(controller.duration.text)}";
-                  QuoteServicesDetail item = QuoteServicesDetail(jobType: "monthly", noOfJobs: int.parse(numberOfJobController.text) * int.parse(controller.duration.text), rate: int.tryParse(priceController.text ?? ""));
-                      List<QuoteServicesDetail> list= [];
-                      list.add(item);
-                  service.detail = list;
-                  widget.addServiceInArray(service);
-                } else {
-                  service.serviceId = selectedServiceId;
-                  service.serviceName = serviceName;
-                  service.serviceType = jobType;
-                  service.jobDuration = "${controller.duration.text} ";
-                  int durationInt = int.parse(controller.duration.text ?? "0");
-                  int jobs = calculateJobNumber(durationInt);
-                  service.jobsCount = "${jobs}";
-                  QuoteServicesDetail item = QuoteServicesDetail(jobType: "custom", noOfJobs: jobs, rate: int.tryParse(priceController.text ?? ""));
-                  List<QuoteServicesDetail> list= [];
-                  list.add(item);
-
-                  service.detail = list;
-                  widget.addServiceInArray(service);
-                }
-
-                controller.refreshQuoteServices.value = false;
-                Navigator.of(context).pop();
+              controller.refreshQuoteServices.value = false;
+              Navigator.of(context).pop();
 
 
-              }
+            }
 
           }),
         )

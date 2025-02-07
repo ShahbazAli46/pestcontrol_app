@@ -7,6 +7,7 @@ import 'package:accurate/controllers/generic/AppRadioSelection.dart';
 import 'package:accurate/jsonModels/CreateQuoteRequest.dart';
 import 'package:accurate/jsonModels/GeneralErrorResponse.dart';
 import 'package:accurate/main.dart';
+import 'package:accurate/superadmin/Components/EditQuote/EditQuoteController.dart';
 import 'package:accurate/superadmin/Controllers/CreateQuoteController.dart';
 import 'package:accurate/utils/APICall.dart';
 import 'package:accurate/utils/AlertService.dart';
@@ -15,22 +16,22 @@ import 'package:accurate/utils/TextStyle.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class BillingMethodScreen extends StatefulWidget {
-  const BillingMethodScreen({Key? key}) : super(key: key);
+class EditBillingMethodScreen extends StatefulWidget {
+  const EditBillingMethodScreen({Key? key}) : super(key: key);
 
   @override
-  State<BillingMethodScreen> createState() => _BillingMethodScreenState();
+  State<EditBillingMethodScreen> createState() => _EditBillingMethodScreenState();
 }
 
-class _BillingMethodScreenState extends State<BillingMethodScreen> {
-  late CreateQuoteController controller;
+class _EditBillingMethodScreenState extends State<EditBillingMethodScreen> {
+  late EditQuoteController controller;
   String billingMethod = "service";
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    controller = Get.find(tag: Constants.createQuote);
+    controller = Get.find(tag: Constants.editQuote);
   }
 
   @override
@@ -45,17 +46,13 @@ class _BillingMethodScreenState extends State<BillingMethodScreen> {
                   height: 20,
                 ),
                 AppTextLabels.boldTextShort(
-                    label: "Billing Method", fontSize: 20),
+                    label: "Vat And Discount", fontSize: 20),
                 SizedBox(
                   height: 20,
                 ),
 
                 Expanded(child: SingleChildScrollView(child: Column(
                   children: [
-
-                    SizedBox(
-                      height: 10,
-                    ),
                     AppTextLabels.boldTextShort(label: "Total", fontSize: 20),
                     AppTextLabels.boldTextShort(
                         label: "${controller.grandTotal}", fontSize: 20),
@@ -84,7 +81,7 @@ class _BillingMethodScreenState extends State<BillingMethodScreen> {
                     ),
                     Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: GreenButton(title: "Create Quote", sendingData: controller.sendingData, onTap: ()async{
+                      child: GreenButton(title: "Update Quote", sendingData: controller.sendingData, onTap: ()async{
                         if (controller.vat.text == ""){
                           AlertService.showAlert("Alert", "Please enter value in VAT");
                         } else if (billingMethod == ""){
@@ -94,7 +91,8 @@ class _BillingMethodScreenState extends State<BillingMethodScreen> {
                           if (!controller.sendingData.value) {
                             controller.sendingData.value = true;
                             CreateQuoteRequest request = CreateQuoteRequest();
-                            request.manageType = "create";
+                            request.quote_id = controller.quoteID;
+                            request.manageType = "update";
                             String serviceIdsString = '[' + controller.selectedAnimals.join(',') + ']';
                             request.service_ids = serviceIdsString;
                             request.userId = controller.selectedClientID;
@@ -149,5 +147,4 @@ class _BillingMethodScreenState extends State<BillingMethodScreen> {
               ],
             )));
   }
-
 }

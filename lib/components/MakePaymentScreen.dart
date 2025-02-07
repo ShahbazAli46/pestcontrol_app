@@ -1,3 +1,4 @@
+import 'package:accurate/components/MultiSelectCheckbox.dart';
 import 'package:accurate/components/generic/AppDatePicker.dart';
 import 'package:accurate/components/generic/AppDropdown.dart';
 import 'package:accurate/components/generic/AppInput.dart';
@@ -25,12 +26,13 @@ class MakePaymentScreen extends StatefulWidget {
 
 class _MakePaymentScreenState extends State<MakePaymentScreen> {
 
-  var paymentType = -1;
+  var paymentType = 0;
   var bankId = -1;
   TextEditingController cashAmount = TextEditingController();
   TextEditingController vat = TextEditingController();
   late AllCompanyBanksController banksController;
   TextEditingController transactionNumber = TextEditingController();
+  List<String> settlementOptions = [];
 
   DateTime? chequeDate;
 
@@ -76,6 +78,7 @@ class _MakePaymentScreenState extends State<MakePaymentScreen> {
               SizedBox(height: 20,),
               invoiceItem(),
               SizedBox(height: 20,),
+              MultiSelectCheckbox(title: "Settlement", onSelectionChanged: settlementChanged, items: [CheckboxItem(id: "1", value: "Yes")].obs,),
               AppTextLabels.boldTextShort(label: "Choose Payment Method", fontSize: 15, color: AppColors.appGreen),
               SizedBox(height: 10,),
               Obx(()=> banksController.fetchingBanks.value ? Center(child: CircularProgressIndicator(),) : Column(
@@ -226,7 +229,9 @@ class _MakePaymentScreenState extends State<MakePaymentScreen> {
           AlertService.showAlert("Alert", "Please enter amount");
         }
         else{
-          AddPaymentRequest request = AddPaymentRequest(serviceInvoiceId: "${widget.item.id ?? 0}",
+          AddPaymentRequest request = AddPaymentRequest(
+            is_settlement: settlementOptions.length > 0 ? 1 : 0,
+              serviceInvoiceId: "${widget.item.id ?? 0}",
               paidAmt: "${cashAmount.text}", description: "desc", bankId: null, transectionId: null, paymentType: "cash" );
           banksController.addPaymentRequest(request);
         }
@@ -240,7 +245,9 @@ class _MakePaymentScreenState extends State<MakePaymentScreen> {
         }
         else{
           // submit
-          AddPaymentRequest request = AddPaymentRequest(serviceInvoiceId: "${widget.item.id ?? 0}",
+          AddPaymentRequest request = AddPaymentRequest(
+              is_settlement: settlementOptions.length > 0 ? 1 : 0,
+              serviceInvoiceId: "${widget.item.id ?? 0}",
               paidAmt: "${cashAmount.text}", description: "desc", bankId: "${bankId}", transectionId: transactionNumber.text, paymentType: "online" );
           banksController.addPaymentRequest(request);
         }
@@ -252,9 +259,14 @@ class _MakePaymentScreenState extends State<MakePaymentScreen> {
         }
         else{
           AddPaymentRequest request = AddPaymentRequest(serviceInvoiceId: "${widget.item.id ?? 0}",
+              is_settlement: settlementOptions.length > 0 ? 1 : 0,
               paidAmt: "${cashAmount.text}", description: "desc", bankId: "${bankId}", transectionId: transactionNumber.text , paymentType: "pos");
           banksController.addPaymentRequest(request);
         }
       }
+  }
+
+  settlementChanged(value){
+    settlementOptions = value;
   }
 }

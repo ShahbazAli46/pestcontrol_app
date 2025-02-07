@@ -15,12 +15,16 @@ class SearchableDropdownWithID extends StatefulWidget {
   final String title;
   final List<DropdownItem> options;
   final Function(DropdownItem? value) onChanged;
+  final bool active;
+  final int? selectedID;
 
   const SearchableDropdownWithID({
     required Key key,
     required this.title,
     required this.options,
     required this.onChanged,
+    this.active = true,
+    this.selectedID,
   }) : super(key: key);
 
   @override
@@ -36,21 +40,29 @@ class SearchableDropdownWithIDState extends State<SearchableDropdownWithID> {
   final LayerLink _layerLink = LayerLink();
   OverlayEntry? _overlayEntry;
 
-
   void clear() {
+    if (!widget.active) return;
     setState(() {
       _selectedValue = null;
       _searchController.clear();
     });
+    widget.onChanged(null);
   }
-
 
   @override
   void initState() {
     super.initState();
     _filteredOptions = widget.options;
+    if (widget.selectedID != null) {
+      _selectedValue = widget.options.firstWhere(
+            (item) => item.id == widget.selectedID,
+        orElse: () => widget.options.first,
+      );
+      _searchController.text = _selectedValue?.name ?? "";
+    }
 
     _focusNode.addListener(() {
+      if (!widget.active) return;
       if (_focusNode.hasFocus && !_isExpanded) {
         _showOverlay();
       } else if (!_focusNode.hasFocus && _isExpanded) {
@@ -68,6 +80,7 @@ class SearchableDropdownWithIDState extends State<SearchableDropdownWithID> {
   }
 
   void _filterOptions(String query) {
+    if (!widget.active) return;
     setState(() {
       if (query.isEmpty) {
         _filteredOptions = widget.options;
@@ -77,12 +90,12 @@ class SearchableDropdownWithIDState extends State<SearchableDropdownWithID> {
             .toList();
       }
     });
-
-    // Rebuild overlay to show filtered results
     _overlayEntry?.markNeedsBuild();
   }
 
   void _showOverlay() {
+    if (!widget.active) return;
+
     final RenderBox renderBox = context.findRenderObject() as RenderBox;
     final size = renderBox.size;
 
@@ -107,12 +120,15 @@ class SearchableDropdownWithIDState extends State<SearchableDropdownWithID> {
                 shrinkWrap: true,
                 itemCount: _filteredOptions.length,
                 itemBuilder: (context, index) {
+                  final item = _filteredOptions[index];
+                  final isSelected = _selectedValue?.id == item.id;
                   return ListTile(
-                    title: Text(_filteredOptions[index].name),
+                    title: Text(item.name),
+                    tileColor: isSelected ? Colors.grey.shade100 : null,
                     onTap: () {
                       setState(() {
-                        _selectedValue = _filteredOptions[index];
-                        _searchController.text = _selectedValue?.name ?? "";
+                        _selectedValue = item;
+                        _searchController.text = item.name;
                       });
                       widget.onChanged(_selectedValue);
                       _focusNode.unfocus();
@@ -144,6 +160,23 @@ class SearchableDropdownWithIDState extends State<SearchableDropdownWithID> {
   }
 
   @override
+  void didUpdateWidget(SearchableDropdownWithID oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.selectedID != oldWidget.selectedID) {
+      if (widget.selectedID != null) {
+        _selectedValue = widget.options.firstWhere(
+              (item) => item.id == widget.selectedID,
+          orElse: () => widget.options.first,
+        );
+        _searchController.text = _selectedValue?.name ?? "";
+      } else {
+        _selectedValue = null;
+        _searchController.clear();
+      }
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return CompositedTransformTarget(
       link: _layerLink,
@@ -157,6 +190,7 @@ class SearchableDropdownWithIDState extends State<SearchableDropdownWithID> {
               style: GoogleFonts.manrope(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
+                color: widget.active ? null : Colors.grey,
               ),
             ),
             const SizedBox(height: 8),
@@ -164,9 +198,20 @@ class SearchableDropdownWithIDState extends State<SearchableDropdownWithID> {
               focusNode: _focusNode,
               controller: _searchController,
               onChanged: _filterOptions,
+              enabled: widget.active,
               decoration: InputDecoration(
                 hintText: "Search...",
-                suffixIcon: const Icon(Icons.arrow_drop_down),
+                suffixIcon: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    if (_selectedValue != null && widget.active)
+                      IconButton(
+                        icon: Icon(Icons.clear, size: 20),
+                        onPressed: clear,
+                      ),
+                    const Icon(Icons.arrow_drop_down),
+                  ],
+                ),
                 prefixIcon: const Icon(Icons.search),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
@@ -185,6 +230,8 @@ class SearchableDropdownWithIDState extends State<SearchableDropdownWithID> {
                     width: 1,
                   ),
                 ),
+                fillColor: widget.active ? null : Colors.grey.shade200,
+                filled: !widget.active,
               ),
             ),
           ],

@@ -5,6 +5,7 @@ import 'package:accurate/components/generic/UIHelper.dart';
 import 'package:accurate/main.dart';
 import 'package:accurate/sales_man/HistoryScreen.dart';
 import 'package:accurate/sales_man/UpcomingJobsScreen.dart';
+import 'package:accurate/user/UserProfile/UserProfileScreen.dart';
 import 'package:accurate/user/login.dart';
 import 'package:accurate/utils/AlertService.dart';
 import 'package:accurate/utils/AppImages.dart';
@@ -163,7 +164,7 @@ class _SalesManDashboardState extends State<SalesManDashboard> {
                       children: [
                         Expanded(child: GestureDetector(
                           onTap: (){
-                            // UiHelper.navigateToNextScreen(context, EmployeeStockScreen());
+                            UiHelper.navigateToNextScreen(context, UserProfileScreen());
                           },
                           child: Container(
                             height: 100,

@@ -30,6 +30,8 @@ class UserData {
   Employee? employee;
   List<CaptainJobs>? captainJobs;
   List<AssignedInvoices>? assignedInvoices;
+  List<Devices>? devices;
+  List<AssignedVehicles>? assignedVehicles;
 
 
   UserData(
@@ -45,6 +47,8 @@ class UserData {
         this.stocks,
         this.employee,
         this.assignedInvoices,
+        this.devices,
+        this.assignedVehicles,
         this.captainJobs});
 
   UserData.fromJson(Map<String, dynamic> json) {
@@ -78,6 +82,22 @@ class UserData {
         assignedInvoices!.add(new AssignedInvoices.fromJson(v));
       });
     }
+    if (json['devices'] != null) {
+      devices = <Devices>[];
+      json['devices'].forEach((v) {
+        devices!.add(new Devices.fromJson(v));
+      });
+    }
+    if (json['assigned_vehicles'] != null) {
+      print("Raw assigned_vehicles: ${json['assigned_vehicles']}");
+      assignedVehicles = <AssignedVehicles>[];
+      json['assigned_vehicles'].forEach((v) {
+        print("Processing vehicle: $v");
+        assignedVehicles!.add(AssignedVehicles.fromJson(v));
+      });
+      print("Processed vehicles: ${assignedVehicles?.length}");
+    }
+
   }
 
   Map<String, dynamic> toJson() {
@@ -203,6 +223,8 @@ class Employee {
   Null? deletedAt;
   String? createdAt;
   String? updatedAt;
+  String? country;
+  List<Documents>? documents;
 
   Employee(
       {this.id,
@@ -236,6 +258,8 @@ class Employee {
         this.totalSalary,
         this.deletedAt,
         this.createdAt,
+        this.documents,
+        this.country,
         this.updatedAt});
 
   Employee.fromJson(Map<String, dynamic> json) {
@@ -268,9 +292,16 @@ class Employee {
     allowance = json['allowance'];
     other = json['other'];
     totalSalary = json['total_salary'];
+    country = json['country'];
     deletedAt = json['deleted_at'];
     createdAt = json['created_at'];
     updatedAt = json['updated_at'];
+    if (json['documents'] != null) {
+      documents = <Documents>[];
+      json['documents'].forEach((v) {
+        documents!.add(new Documents.fromJson(v));
+      });
+    }
   }
 
   Map<String, dynamic> toJson() {
@@ -1125,5 +1156,165 @@ class Address {
     data['updated_at'] = this.updatedAt;
     data['area'] = this.area;
     return data;
+  }
+}
+
+
+class Documents {
+  int? id;
+  String? name;
+  String? file;
+  String? status;
+  String? start;
+  String? expiry;
+  String? desc;
+  int? employeeUserId;
+  int? employeeId;
+  String? createdAt;
+  String? updatedAt;
+  String? processDate;
+  String? processAmt;
+
+  Documents(
+      {this.id,
+        this.name,
+        this.file,
+        this.status,
+        this.start,
+        this.expiry,
+        this.desc,
+        this.employeeUserId,
+        this.employeeId,
+        this.createdAt,
+        this.updatedAt,
+        this.processDate,
+        this.processAmt});
+
+  Documents.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    name = json['name'];
+    file = json['file'];
+    status = json['status'];
+    start = json['start'];
+    expiry = json['expiry'];
+    desc = json['desc'];
+    employeeUserId = json['employee_user_id'];
+    employeeId = json['employee_id'];
+    createdAt = json['created_at'];
+    updatedAt = json['updated_at'];
+    processDate = json['process_date'];
+    processAmt = json['process_amt'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['id'] = this.id;
+    data['name'] = this.name;
+    data['file'] = this.file;
+    data['status'] = this.status;
+    data['start'] = this.start;
+    data['expiry'] = this.expiry;
+    data['desc'] = this.desc;
+    data['employee_user_id'] = this.employeeUserId;
+    data['employee_id'] = this.employeeId;
+    data['created_at'] = this.createdAt;
+    data['updated_at'] = this.updatedAt;
+    data['process_date'] = this.processDate;
+    data['process_amt'] = this.processAmt;
+    return data;
+  }
+}
+
+class Devices {
+  int? id;
+  String? name;
+  String? model;
+  String? codeNo;
+  String? desc;
+  int? userId;
+  int? employeeId;
+  Null? deletedAt;
+  String? createdAt;
+  String? updatedAt;
+
+  Devices(
+      {this.id,
+        this.name,
+        this.model,
+        this.codeNo,
+        this.desc,
+        this.userId,
+        this.employeeId,
+        this.deletedAt,
+        this.createdAt,
+        this.updatedAt});
+
+  Devices.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    name = json['name'];
+    model = json['model'];
+    codeNo = json['code_no'];
+    desc = json['desc'];
+    userId = json['user_id'];
+    employeeId = json['employee_id'];
+    deletedAt = json['deleted_at'];
+    createdAt = json['created_at'];
+    updatedAt = json['updated_at'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['id'] = this.id;
+    data['name'] = this.name;
+    data['model'] = this.model;
+    data['code_no'] = this.codeNo;
+    data['desc'] = this.desc;
+    data['user_id'] = this.userId;
+    data['employee_id'] = this.employeeId;
+    data['deleted_at'] = this.deletedAt;
+    data['created_at'] = this.createdAt;
+    data['updated_at'] = this.updatedAt;
+    return data;
+  }
+}
+class AssignedVehicles {
+  int? id;
+  String? vehicleNumber;
+  String? deletedAt;
+  String? createdAt;
+  String? updatedAt;
+  String? modalName;
+  int? userId;
+  String? condition;
+  String? expiryDate;
+  String? oilChangeLimit;
+  String? meterReading;
+
+  AssignedVehicles({
+    this.id,
+    this.vehicleNumber,
+    this.deletedAt,
+    this.createdAt,
+    this.updatedAt,
+    this.modalName,
+    this.userId,
+    this.condition,
+    this.expiryDate,
+    this.oilChangeLimit,
+    this.meterReading,
+  });
+
+  AssignedVehicles.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    vehicleNumber = json['vehicle_number'].toString();
+    deletedAt = json['deleted_at'];
+    createdAt = json['created_at'];
+    updatedAt = json['updated_at'];
+    modalName = json['modal_name'];
+    userId = json['user_id'];
+    condition = json['condition'];
+    expiryDate = json['expiry_date'];
+    oilChangeLimit = json['oil_change_limit'];
+    meterReading = json['meter_reading'];
   }
 }

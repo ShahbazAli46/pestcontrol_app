@@ -1,5 +1,6 @@
 import 'package:accurate/RecoveryOfficeDashboard/controllers/ProcessInvoiceController.dart';
 import 'package:accurate/components/Conrollers/AllCompanyBanksController.dart';
+import 'package:accurate/components/MultiSelectCheckbox.dart';
 import 'package:accurate/components/generic/AppDatePicker.dart';
 import 'package:accurate/components/generic/AppDropdown.dart';
 import 'package:accurate/components/generic/AppInput.dart';
@@ -47,6 +48,7 @@ class _ProcessInvoiceScreenState extends State<ProcessInvoiceScreen> {
   TextEditingController vat = TextEditingController();
   TextEditingController transactionNumber = TextEditingController();
   TextEditingController commentsController = TextEditingController();
+  List<String> settlementOptions = [];
 
   @override
   void initState() {
@@ -137,6 +139,7 @@ class _ProcessInvoiceScreenState extends State<ProcessInvoiceScreen> {
           SizedBox(
             height: 20,
           ),
+
           Obx(() => banksController.fetchingBanks.value
               ? Center(
                   child: CircularProgressIndicator(),
@@ -153,6 +156,11 @@ class _ProcessInvoiceScreenState extends State<ProcessInvoiceScreen> {
                     SizedBox(
                       height: 20,
                     ),
+                    MultiSelectCheckbox(title: "Settlement", onSelectionChanged: settlementChanged, items: [CheckboxItem(id: "1", value: "Yes")].obs,),
+                    SizedBox(
+                      height: 10,
+                    ),
+
                     setViewAsPerSelectedPaymentType()
                   ],
                 )),
@@ -348,10 +356,12 @@ class _ProcessInvoiceScreenState extends State<ProcessInvoiceScreen> {
         GeneralErrorResponse generalErrorResponse = GeneralErrorResponse.fromJson(response);
 
         if (generalErrorResponse.status == "success"){
-          InvoicePaymentRequest paymentRequest = InvoicePaymentRequest();
+          InvoicePaymentRequest paymentRequest = InvoicePaymentRequest(is_settlement: settlementOptions.length > 0 ? 1: 0);
           paymentRequest.serviceInvoiceId = "${widget.invoices.id}";
           paymentRequest.paidAmt = "${cashAmount.text}";
           paymentRequest.paymentType = "cash";
+          paymentRequest.is_settlement = settlementOptions.length > 0 ? 1: 0;
+
           String addPaymentURL = Urls.baseURL + "service_invoices/add_payment";
           var response = await api.postDataWithToken(addPaymentURL, paymentRequest.toJson());
           GeneralErrorResponse generalErrorResponse = GeneralErrorResponse.fromJson(response);
@@ -378,7 +388,9 @@ class _ProcessInvoiceScreenState extends State<ProcessInvoiceScreen> {
         AlertService.showAlert("Alert", "Please enter amount");
       } else {
 
-        AddPaymentRequest request = AddPaymentRequest(serviceInvoiceId: "${widget.invoices.id ?? 0}",
+        AddPaymentRequest request = AddPaymentRequest(
+            is_settlement: settlementOptions.length > 0 ? 1 : 0,
+            serviceInvoiceId: "${widget.invoices.id ?? 0}",
             paidAmt: "${cashAmount.text}", description: "desc", bankId: "${bankId}", transectionId: transactionNumber.text, paymentType: "online" );
         String url = Urls.addPaymentForInvoices;
         var response = await api.postDataWithToken(url, request.toJson());
@@ -404,5 +416,9 @@ class _ProcessInvoiceScreenState extends State<ProcessInvoiceScreen> {
 
   onSelect(index) {
     controller.changeView(index);
+  }
+
+  settlementChanged(value){
+    settlementOptions = value;
   }
 }
