@@ -100,7 +100,10 @@ class _AssignedInvoicesScreenState extends State<AssignedInvoicesScreen> {
           UiHelper.buildRow("Name", controller.assignedInvoices?[index].user?.name ?? ""),
           UiHelper.buildRow("Firm Name", controller.assignedInvoices?[index].user?.name ?? ""),
           UiHelper.buildRow("Address", controller.assignedInvoices?[index].address?.address ?? "N/A"),
-          UiHelper.buildRow("Amount", controller.assignedInvoices?[index].totalAmt ?? "N/A"),
+          UiHelper.buildRow(
+            "Amount",
+            "${(double.parse(controller.assignedInvoices?[index].totalAmt ?? "0") - double.parse(controller.assignedInvoices?[index].paidAmt ?? "0")).toStringAsFixed(2)}" ?? "N/A",
+          ),
           UiHelper.buildRow("Status", controller.assignedInvoices?[index].status ?? "N/A"),
 
           controller.assignedInvoices?[index].promiseDate != null  ? UiHelper.buildRow("Promise Date", controller.assignedInvoices?[index].promiseDate ?? "N/A") :

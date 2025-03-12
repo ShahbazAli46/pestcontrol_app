@@ -38,8 +38,13 @@ class Constants {
   static String expensesController = "expensesController";
   static String products = "products";
   static String createQuote = "createQuote";
+  static String createSalesOfficerVisit = "createSalesOfficerVisit";
   static String editQuote = "editQuote";
   static String monthly = "Monthly";
   static String quarterly = "Quarterly";
+  static String interested = "Interested";
+  static String contracted = "Contracted";
+  static String notInterested = "Not-Interested";
+  static String quoted = "Quoted";
 
 }

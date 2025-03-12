@@ -52,11 +52,13 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                     'Documents',
                     'Devices',
                     'Vechicels',
+                    "Annual Leaves"
                   ],
                   tabContents: [
                     PersonalInfo(info: controller.details,),
                     DocumentScreen(info: controller.details,),
                     DevicesScreen(info: controller.details,),
+                    VehicleScreen(info: controller.details,),
                     VehicleScreen(info: controller.details,)
                   ],
                 ),

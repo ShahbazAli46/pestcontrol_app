@@ -98,6 +98,7 @@ class CreateQuoteController extends GetxController {
 
   void getAddresses (int id){
     refreshAddress.value = true;
+    addresses.clear();
     allClients?.forEach((item){
       if (item.id == id){
         item.client?.addresses?.forEach((address){

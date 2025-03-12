@@ -2,6 +2,7 @@ import 'package:accurate/components/generic/UIHelper.dart';
 import 'package:accurate/jsonModels/AddPaymentRequest.dart';
 import 'package:accurate/jsonModels/AddSupplierPaymentRequest.dart';
 import 'package:accurate/jsonModels/AllBanksReponse.dart';
+import 'package:accurate/jsonModels/AllBranchesResponse.dart';
 import 'package:accurate/jsonModels/GeneralErrorResponse.dart';
 import 'package:accurate/main.dart';
 import 'package:accurate/sales_man/salesManDashboard.dart';
@@ -13,6 +14,7 @@ import 'package:get/get.dart';
 
 class AllCompanyBanksController extends GetxController {
   var fetchingBanks = false.obs;
+  var fetchingBranches = true.obs;
   List<BankData>? banksList;
   List<String> bankNamesList = [];
   var addingPayment = false.obs;
@@ -21,12 +23,18 @@ class AllCompanyBanksController extends GetxController {
 
   BuildContext context;
   AllCompanyBanksController({required this.context});
+  List<AllBranchesResponseData>? allBranches;
+  List<String> branchNames = [];
+  var selectedBranched = -1;
+
+
 
   @override
   void onInit() {
     // TODO: implement onInit
     super.onInit();
     getBanksList();
+    getBranches();
   }
   getBanksList() async {
     fetchingBanks.value = true;
@@ -43,6 +51,23 @@ class AllCompanyBanksController extends GetxController {
 
   int getBankId  (index){
     return banksList?[index].id ?? 0;
+  }
+
+  setSelectedBranchID(int index){
+    selectedBranched = allBranches?[index].id ?? 0;
+  }
+
+  getBranches ()async{
+    fetchingBranches.value = true;
+    String url = Urls.baseURL + "branch";
+    var response = await api.getDataWithToken(url);
+    AllBranchesResponse branchesResponse = AllBranchesResponse.fromJson(response);
+    allBranches = branchesResponse.data;
+    allBranches?.forEach((item){
+      branchNames.add(item.name ?? "");
+    });
+
+    fetchingBranches.value = false;
   }
 
   addPaymentRequest (AddPaymentRequest request) async{

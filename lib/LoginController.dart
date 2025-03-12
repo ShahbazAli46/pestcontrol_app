@@ -46,6 +46,8 @@ class LoginController extends GetxController {
         await NotificationService().init;
         await NotificationService().updateTokenOnServer();
         await LoginResponseStorage.saveLoginResponse(loginResponse);
+        print("************************");
+        print(loginResponse.data?.roleId);
         Navigator.pushAndRemoveUntil(
           context!,
           MaterialPageRoute(builder: (context) => UiHelper.goToUserDashboardAsPerUserRole(loginResponse.data?.roleId ?? 0)),

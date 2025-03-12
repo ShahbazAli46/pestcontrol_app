@@ -13,6 +13,7 @@ import 'package:accurate/jsonModels/GeneralErrorResponse.dart';
 import 'package:accurate/jsonModels/InvoicePaymentRequest.dart';
 import 'package:accurate/jsonModels/InvoiceResponse.dart';
 import 'package:accurate/jsonModels/PromiseDateRequest.dart';
+import 'package:accurate/jsonModels/RecivedChequeRequest.dart';
 import 'package:accurate/jsonModels/UserDetails.dart';
 import 'package:accurate/main.dart';
 import 'package:accurate/utils/APICall.dart';
@@ -48,15 +49,16 @@ class _ProcessInvoiceScreenState extends State<ProcessInvoiceScreen> {
   TextEditingController vat = TextEditingController();
   TextEditingController transactionNumber = TextEditingController();
   TextEditingController commentsController = TextEditingController();
+  TextEditingController chequeNumber = TextEditingController();
   List<String> settlementOptions = [];
-
   @override
   void initState() {
     banksController = Get.put(AllCompanyBanksController(context: context));
     super.initState(); // Always call super.initState() first
     controller = Get.put(ProcessInvoiceController(),
         tag: "processInvoices", permanent: false);
-    cashAmount.text = widget.invoices?.totalAmt ?? "";
+    cashAmount.text =
+    "${(double.parse(widget.invoices?.totalAmt ?? "0") - double.parse(widget.invoices?.paidAmt ?? "0")).toStringAsFixed(2)}";
     DateTime now = DateTime.now();
     promiseDate = UiHelper.formatDateForServer(now);
   }
@@ -109,7 +111,7 @@ class _ProcessInvoiceScreenState extends State<ProcessInvoiceScreen> {
                     child: Column(
                       children: [
                         UiHelper.buildRow("Name", widget.invoices.user?.name ?? ""),
-                        UiHelper.buildRow("Amount", widget.invoices?.totalAmt ?? ""),
+                        UiHelper.buildRow("Amount","${(double.parse(widget.invoices?.totalAmt ?? "0") - double.parse(widget.invoices?.paidAmt ?? "0")).toStringAsFixed(2)}"),
                       ],
                     ),
                   ),
@@ -147,7 +149,7 @@ class _ProcessInvoiceScreenState extends State<ProcessInvoiceScreen> {
               : Column(
                   children: [
                     SelectableButtonGroup(
-                        titles: ["Cash", "Online"],
+                        titles: ["Cash", "Online", "Cheque"],
                         onSelect: (selectedIndex) {
                           paymentType = selectedIndex;
                           bankId = -1;
@@ -228,7 +230,14 @@ class _ProcessInvoiceScreenState extends State<ProcessInvoiceScreen> {
     } else if (paymentType == 2) {
       return Column(
         children: [
-          AppInput(title: "Transaction Number", controller: transactionNumber),
+          AppDropdown(
+              title: "Chose Bank",
+              options: banksController.bankNamesList ?? [],
+              onChanged: (value, index) {
+                bankId = banksController.getBankId(index);
+              }),
+          AppInput(title: "Cheque Number", controller: chequeNumber),
+          AppDatePicker(title: "Cheque Date", onDateSelected: onDateSelected),
           AppInput(
             title: "Amount",
             controller: cashAmount,
@@ -248,7 +257,11 @@ class _ProcessInvoiceScreenState extends State<ProcessInvoiceScreen> {
         ],
       );
     } else {
-      return Container();
+      return Column(
+        children: [
+          Container(),
+        ],
+      );
     }
   }
 
@@ -326,8 +339,6 @@ class _ProcessInvoiceScreenState extends State<ProcessInvoiceScreen> {
                 else{
                   AlertService.showAlert("Failed", generalErrorResponse.message ?? "");
                 }
-
-
               }
             }),
           )
@@ -368,7 +379,7 @@ class _ProcessInvoiceScreenState extends State<ProcessInvoiceScreen> {
           if (generalErrorResponse.status == "success"){
             AlertService.showAlertWithAction("Success", generalErrorResponse.message ??  "", onOkPressed: (){
               Get.deleteAll();
-              Get.off(UiHelper.goToUserDashboardAsPerUserRole(userObj?.data?.roleId ?? 0));
+              Get.offAll(UiHelper.goToUserDashboardAsPerUserRole(userObj?.data?.roleId ?? 0));
             });
           }
           else{
@@ -388,29 +399,91 @@ class _ProcessInvoiceScreenState extends State<ProcessInvoiceScreen> {
         AlertService.showAlert("Alert", "Please enter amount");
       } else {
 
-        AddPaymentRequest request = AddPaymentRequest(
-            is_settlement: settlementOptions.length > 0 ? 1 : 0,
-            serviceInvoiceId: "${widget.invoices.id ?? 0}",
-            paidAmt: "${cashAmount.text}", description: "desc", bankId: "${bankId}", transectionId: transactionNumber.text, paymentType: "online" );
-        String url = Urls.addPaymentForInvoices;
-        var response = await api.postDataWithToken(url, request.toJson());
+
+        InvoiceResponse invoiceResponse = InvoiceResponse();
+        invoiceResponse.comment = "paid";
+        invoiceResponse.recoveryOfficerId = "${userObj!.data?.id ?? 0}";
+        invoiceResponse.responseType = "payment";
+        invoiceResponse.invoiceId = "${widget.invoices.id}";
+        String url = Urls.baseURL + "employee/invoice/assign/response";
+
+
+        addingPayment.value = true;
+        var response = await api.postDataWithToken(url, invoiceResponse.toJson());
+        GeneralErrorResponse generalErrorResponse = GeneralErrorResponse.fromJson(response);
+
+        if (generalErrorResponse.status == "success"){
+          AddPaymentRequest request = AddPaymentRequest(
+              is_settlement: settlementOptions.length > 0 ? 1 : 0,
+              serviceInvoiceId: "${widget.invoices.id ?? 0}",
+              paidAmt: "${cashAmount.text}", description: "desc", bankId: "${bankId}", transectionId: transactionNumber.text, paymentType: "online" );
+          String url = Urls.addPaymentForInvoices;
+          var response = await api.postDataWithToken(url, request.toJson());
+          GeneralErrorResponse generalErrorResponse = GeneralErrorResponse.fromJson(response);
+          if (generalErrorResponse.status == "success"){
+            AlertService.showAlertWithAction("Success", generalErrorResponse.message ??  "", onOkPressed: (){
+              Get.deleteAll();
+              Get.offAll(UiHelper.goToUserDashboardAsPerUserRole(userObj?.data?.roleId ?? 0));
+            });
+          }
+          else{
+            AlertService.showAlert("Failed", generalErrorResponse.message ?? "");
+          }
+        }
+
+
+      }
+    } else if (paymentType == 2) {
+      if (bankId == -1){
+        AlertService.showAlert("Alert", "Please enter select Bank");
+      } else if (chequeNumber.text.isEmpty) {
+        AlertService.showAlert("Alert", "Please enter Cheque Number");
+      } else if (cashAmount.text.isEmpty) {
+        AlertService.showAlert("Alert", "Please enter amount");
+      } else {
+
+
+        InvoiceResponse invoiceResponse = InvoiceResponse();
+        invoiceResponse.comment = "paid";
+        invoiceResponse.recoveryOfficerId = "${userObj!.data?.id ?? 0}";
+        invoiceResponse.responseType = "payment";
+        invoiceResponse.invoiceId = "${widget.invoices.id}";
+        String url = Urls.baseURL + "employee/invoice/assign/response";
+
+
+        addingPayment.value = true;
+        var response = await api.postDataWithToken(url, invoiceResponse.toJson());
         GeneralErrorResponse generalErrorResponse = GeneralErrorResponse.fromJson(response);
         if (generalErrorResponse.status == "success"){
-          AlertService.showAlertWithAction("Success", generalErrorResponse.message ??  "", onOkPressed: (){
-            Get.deleteAll();
-            Get.off(UiHelper.goToUserDashboardAsPerUserRole(userObj?.data?.roleId ?? 0));
-          });
+          RecivedChequeRequest request = RecivedChequeRequest();
+          request.serviceInvoiceId = "${widget.invoices.id ?? 0}";
+          request.paidAmt = cashAmount.text;
+          request.descrp = "";
+          request.isSettlement =  settlementOptions.length > 0 ? "1" : "0";
+          request.paymentType = "cheque";
+          request.bankId = "${bankId}";
+          request.chequeAmount = cashAmount.text;
+          request.chequeNo = chequeNumber.text;
+          request.chequeDate = promiseDate;
+          String url = Urls.addPaymentForInvoices;
+          var response = await api.postDataWithToken(url, request.toJson());
+          GeneralErrorResponse generalErrorResponse = GeneralErrorResponse.fromJson(response);
+          if (generalErrorResponse.status == "success"){
+            AlertService.showAlertWithAction("Success", generalErrorResponse.message ??  "", onOkPressed: (){
+              Get.deleteAll();
+              Get.offAll(UiHelper.goToUserDashboardAsPerUserRole(userObj?.data?.roleId ?? 0));
+            });
+          }
+          else{
+            AlertService.showAlert("Failed", generalErrorResponse.message ?? "");
+          }
         }
         else{
           AlertService.showAlert("Failed", generalErrorResponse.message ?? "");
         }
+
+
       }
-    } else if (paymentType == 2) {
-      if (transactionNumber.text.isEmpty) {
-        AlertService.showAlert("Alert", "Please enter Transaction number");
-      } else if (cashAmount.text.isEmpty) {
-        AlertService.showAlert("Alert", "Please enter amount");
-      } else {}
     }
   }
 

@@ -1,5 +1,6 @@
 import 'package:accurate/AccountantDashboard/AccountantDashboardScreen.dart';
 import 'package:accurate/RecoveryOfficeDashboard/RecoverOfficerDashboard.dart';
+import 'package:accurate/SalesManagerAndSalesMan/SalesMan/SalesOfficerDashboard.dart';
 import 'package:accurate/components/generic/DashedSeparatorPainter.dart';
 import 'package:accurate/sales_man/salesManDashboard.dart';
 import 'package:accurate/superadmin/SuperAdminDashboard.dart';
@@ -167,8 +168,13 @@ class UiHelper {
 
 
   static String formatDate(String date) {
-    DateTime dateTime = DateTime.parse(date);
-    return '${DateFormat('MMM d, y').format(dateTime)}';
+    try {
+      DateTime dateTime = DateTime.parse(date);
+      return '${DateFormat('MMM d, y').format(dateTime)}';
+    } catch(e){
+      return "Unparse able Date ${date}";
+    }
+
   }
 
   static String formatDateToMonthYear(String dateString) {
@@ -252,13 +258,19 @@ class UiHelper {
                 );
               },
               child: Container(
-                height: 50,
-                decoration: BoxDecoration(),
-                child: Center(
-                    child: AppTextLabels.regularShortText(
+                constraints: BoxConstraints(
+                  minHeight: 50, // Set the minimum height here
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    AppTextLabels.regularShortText(
                         label: areaObject,
                         color: AppColors.appBlack,
-                        textAlign: TextAlign.center)),
+                        textAlign: TextAlign.center),
+                  ],
+                ),
               ),
             ),
           ),
@@ -267,6 +279,27 @@ class UiHelper {
     );
   }
 
+  static Widget commonContainer (Widget child){
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Container(
+        padding: EdgeInsets.all(10),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(8),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.5),
+              spreadRadius: 1,
+              blurRadius: 5,
+              offset: Offset(0, 2),
+            ),
+          ],
+        ),
+        child: child,
+      ),
+    );
+  }
 
   static Widget goToUserDashboardAsPerUserRole(int roleId){
     Widget home;
@@ -279,6 +312,8 @@ class UiHelper {
       home =  AccountantDashboardScreen();
     } else if (roleId == 7){
       home = RecoverOfficerDashboard();
+    } else if (roleId == 9){
+      home = SalesOfficerDashboard();
     }
     return home;
   }

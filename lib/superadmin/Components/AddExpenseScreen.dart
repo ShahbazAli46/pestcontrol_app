@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:accurate/components/Conrollers/AllCompanyBanksController.dart';
+import 'package:accurate/components/CustomShimmerEffect.dart';
 import 'package:accurate/components/generic/AppDatePicker.dart';
 import 'package:accurate/components/generic/AppDropdown.dart';
 import 'package:accurate/components/generic/AppInput.dart';
@@ -38,6 +39,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
   TextEditingController cashAmount = TextEditingController();
   TextEditingController vat = TextEditingController();
   TextEditingController transactionNumber = TextEditingController();
+  TextEditingController chequeNumber = TextEditingController();
 
   String selectedDate =  DateFormat('yyyy-MM-dd').format(DateTime.now());
   String chequeDate =  DateFormat('yyyy-MM-dd').format(DateTime.now());
@@ -85,6 +87,9 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                 AppDatePicker(title: "Expense Date", onDateSelected: onDateSelected),
                 AppDropdown(title: "Select Category", options: controller.categoriesList, onChanged: onCategoryChanged),
                 AppMultilineInput(title: "Description", controller: descController),
+                Obx(()=> banksController.fetchingBranches.value ? CircularProgressIndicator() : AppDropdown(title: "Select Branch", options: banksController.branchNames, onChanged: (String? value, int? index){
+                  banksController.setSelectedBranchID(index ?? 0);
+                })),
                 Obx(()=> banksController.fetchingBanks.value ? Center(child: CircularProgressIndicator(),) : Column(
                   children: [
                     Container(
@@ -141,10 +146,9 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
     } else if (paymentType == 1){
       return Column(
         children: [
-          AppDropdown(title: "Chose Bank", options: banksController.bankNamesList ?? [], onChanged: (value,index){
-            bankId = banksController.getBankId(index);
-          }),
           AppDatePicker(title: "Cheque Date", onDateSelected: onChequeDateChanged),
+          SizedBox(height: 10,),
+          AppInput(title: "Cheque Number", controller: chequeNumber, inputType: TextInputType.number,),
           SizedBox(height: 10,),
           AppInput(title: "Amount", controller: cashAmount, inputType: TextInputType.number,),
           SizedBox(height: 20,),
@@ -185,7 +189,10 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
       AlertService.showAlert("Alert", "Please enter Expense Name");
     } else if (controller.selectedExpCatId == -1){
       AlertService.showAlert("Alert", "Please select Expense Category");
-    } else if (paymentType == 0){
+    } else if (banksController.selectedBranched == -1){
+      AlertService.showAlert("Alert", "Please select branch");
+    }
+    else if (paymentType == 0){
       if (cashAmount.text.isEmpty){
         AlertService.showAlert("Alert", "Please enter amount");
       }
@@ -195,8 +202,10 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
         request.expenseDate = selectedDate;
         request.expenseCategoryId = "${controller.selectedExpCatId}";
         request.vat = "0";
+        request.branch_id = "${banksController.selectedBranched}";
         request.amount = cashAmount.text;
         request.paymentType = "cash";
+
         sendingData.value = true;
         late GeneralErrorResponse errorResponse;
         if (image == null) {
@@ -221,10 +230,10 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
 
       }
     } else if (paymentType == 1){
-      if (bankId == -1){
-        AlertService.showAlert("Alert", "Please Select Bank");
-      } else if (cashAmount.text.isEmpty){
+      if (cashAmount.text.isEmpty){
         AlertService.showAlert("Alert", "Please enter amount");
+      }  else if (chequeNumber.text.isEmpty){
+        AlertService.showAlert("Alert", "Please enter cheque number");
       }
       else{
         ExpenseRequest request = ExpenseRequest();
@@ -233,12 +242,15 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
         request.expenseCategoryId = "${controller.selectedExpCatId}";
         request.vat = "0";
         request.amount = cashAmount.text;
-        request.paymentType = "cash";
-        request.bankId = "${bankId}";
+        request.paymentType = "cheque";
+        request.bankId = null;
+        request.branch_id = "${banksController.selectedBranched}";
         request.chequeDate = "${chequeDate}";
+        request.cheque_no = "${chequeNumber.text}";
         sendingData.value = true;
 
         late GeneralErrorResponse errorResponse;
+
         if (image == null) {
           var response  = await api.postDataWithToken(Urls.addExpense, request.toJson());
           errorResponse = GeneralErrorResponse.fromJson(response);
@@ -274,8 +286,9 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
         request.expenseCategoryId = "${controller.selectedExpCatId}";
         request.vat = "0";
         request.amount = cashAmount.text;
-        request.paymentType = "cash";
+        request.paymentType = "online";
         request.bankId = "${bankId}";
+        request.branch_id = "${banksController.selectedBranched}";
         request.transectionId = transactionNumber.text;
         sendingData.value = true;
 

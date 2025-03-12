@@ -358,6 +358,74 @@ class APICall {
 
 
 
+  Future<dynamic> sendMultipartRequestWithImages(
+      String method,
+      String url, {
+        bool useToken = true,
+        Map<String, dynamic>? data,
+        List<File>? images,
+        String imagesFieldName = 'images',
+      }) async {
+    if (!await checkInternetConnection()) {
+      await showNoInternetDialog();
+      return sendMultipartRequestWithImages(
+        method,
+        url,
+        useToken: useToken,
+        data: data,
+        images: images,
+        imagesFieldName: imagesFieldName,
+      );
+    }
+
+    var request = http.MultipartRequest(method, Uri.parse(url));
+
+    if (useToken) {
+      final token = await LoginResponseStorage.getToken();
+      request.headers['Authorization'] = 'Bearer $token';
+    }
+
+    // Add images to the request if provided
+    if (images != null && images.isNotEmpty) {
+      for (int i = 0; i < images.length; i++) {
+        request.files.add(
+          await http.MultipartFile.fromPath(
+            '$imagesFieldName[$i]',
+            images[i].path,
+          ),
+        );
+      }
+    }
+
+    // Add other form fields if they exist
+    if (data != null) {
+      data.forEach((key, value) {
+        if (value is List) {
+          // Handle array fields
+          for (var i = 0; i < value.length; i++) {
+            request.fields['${key}[$i]'] = value[i].toString();
+          }
+        } else {
+          request.fields[key] = value.toString();
+        }
+      });
+    }
+
+    var response = await request.send();
+    final res = await response.stream.bytesToString();
+
+    if (response.statusCode == 200 || response.statusCode == 204) {
+      return jsonDecode(res);
+    } else {
+      print('Error response: $res');
+      return jsonDecode(res);
+    }
+  }
+
+
+
+
+
   Future<void> showNoInternetDialog() async {
     return showDialog(
       context: navigatorKey.currentContext!,

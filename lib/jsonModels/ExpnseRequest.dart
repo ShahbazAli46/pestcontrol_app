@@ -10,6 +10,8 @@ class ExpenseRequest {
   String? amount;
   String? chequeDate;
   String? bankId;
+  String? branch_id;
+  String? cheque_no;
 
   ExpenseRequest(
       {this.expenseName,
@@ -22,7 +24,10 @@ class ExpenseRequest {
         this.transectionId,
         this.amount,
         this.chequeDate,
-        this.bankId});
+        this.bankId,
+        this.branch_id,
+        this.cheque_no
+      });
 
   ExpenseRequest.fromJson(Map<String, dynamic> json) {
     expenseName = json['expense_name'];
@@ -36,6 +41,8 @@ class ExpenseRequest {
     amount = json['amount'];
     chequeDate = json['cheque_date'];
     bankId = json['bank_id'];
+    branch_id = json['branch_id'];
+    cheque_no = json['cheque_no'];
   }
 
   Map<String, String> toJson() {
@@ -51,6 +58,8 @@ class ExpenseRequest {
     data['amount'] = this.amount ?? "";
     data['cheque_date'] = this.chequeDate ?? "";
     data['bank_id'] = this.bankId ?? "";
+    data['branch_id'] = this.branch_id ?? "";
+    data['cheque_no'] = this.cheque_no ?? "";
     return data;
   }
 }
