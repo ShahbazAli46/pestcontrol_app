@@ -1,4 +1,5 @@
 import 'package:accurate/AccountantDashboard/AccountantDashboardScreen.dart';
+import 'package:accurate/QualityInspector/QualityInspectorDashboard.dart';
 import 'package:accurate/RecoveryOfficeDashboard/RecoverOfficerDashboard.dart';
 import 'package:accurate/SalesManagerAndSalesMan/SalesMan/SalesOfficerDashboard.dart';
 import 'package:accurate/components/generic/DashedSeparatorPainter.dart';
@@ -13,6 +14,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:intl/intl.dart';
 
@@ -154,11 +156,13 @@ class UiHelper {
   }
 
   static Expanded loader(){
-    return const Expanded(
+    return Expanded(
       child
           : Column(
         children: [
           Expanded(child: Text("")),
+          Image.asset(AppImages.logo, height: 150,),
+          SizedBox(height: 20,),
           Center(child: CircularProgressIndicator()),
           Expanded(child: Text(""))
         ],
@@ -314,6 +318,8 @@ class UiHelper {
       home = RecoverOfficerDashboard();
     } else if (roleId == 9){
       home = SalesOfficerDashboard();
+    } else if (roleId == 10){
+      home = QualityInspectorDashboard();
     }
     return home;
   }
@@ -449,6 +455,12 @@ class UiHelper {
 
     // For other professions, return all documents
     return allDocuments;
+  }
+
+  static void handleLogout() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.clear(); // This will remove all data from SharedPreferences
+    Get.offAll(()=>Login());
   }
 
 }

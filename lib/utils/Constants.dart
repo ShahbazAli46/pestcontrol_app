@@ -21,6 +21,7 @@ class Urls {
   static String allOperationsTeams = "${Urls.baseURL}employee/sales_manager/get";
   static String assignJob = "${Urls.baseURL}job/sales_manager/assign";
   static String addExpense = "${Urls.baseURL}expense/create";
+  static String addInspectionVisit = "${Urls.baseURL}inspection/report/create";
 }
 
 

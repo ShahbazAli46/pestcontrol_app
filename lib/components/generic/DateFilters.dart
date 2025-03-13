@@ -14,7 +14,7 @@ class DateFilters extends StatefulWidget {
 }
 
 class _DateFiltersState extends State<DateFilters> {
-  String _selectedOption = 'Select Date';
+  String _selectedOption = 'Today';
   DateTime? _startDate;
   DateTime? _endDate;
 

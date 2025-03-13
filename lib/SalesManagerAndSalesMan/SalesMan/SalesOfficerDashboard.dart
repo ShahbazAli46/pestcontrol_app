@@ -190,7 +190,7 @@ class _SalesOfficerDashboardState extends State<SalesOfficerDashboard> {
                               ),
                               child: Column(
                                 children: [
-                                  AppTextLabels.boldTextShort(label: "Sales", fontSize: 13, color: AppColors.appGreen),
+                                  AppTextLabels.boldTextShort(label: "Cash Sales", fontSize: 13, color: AppColors.appGreen),
                                   AppTextLabels.regularShortText(label: controller.commissions.sale ?? "", color: AppColors.appBlack, fontSize: 20)
                                 ],
                               ),
@@ -426,7 +426,7 @@ class _SalesOfficerDashboardState extends State<SalesOfficerDashboard> {
                   children: [
                     Expanded(child: GestureDetector(
                       onTap: (){
-                        UiHelper.navigateToNextScreen(context, SalesmanJobsScreen());
+                        UiHelper.navigateToNextScreen(context, SalesmanJobsScreen(isSingleClient: false,));
                       },
                       child: Container(
                         height: 100,
@@ -477,6 +477,34 @@ class _SalesOfficerDashboardState extends State<SalesOfficerDashboard> {
 
                   ],
                 ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Container(
+                    width: double.infinity,
+                    child: GestureDetector(
+                  onTap: (){
+                    UiHelper.navigateToNextScreenGetX(ViewAllClients(type: ClientScreenViewTypes.forPayment,));
+                  },
+                  child: Container(
+                    height: 100,
+                    decoration: BoxDecoration(
+                        border: Border.all(
+                            color: AppColors.appGreen,
+                            width: 2
+                        ),
+                        borderRadius: BorderRadius.circular(10)
+                    ),
+                    child: Column(
+                      children: [
+                        SizedBox(height: 10,),
+                        Image.asset(AppImages.payment, height: 50,),
+                        SizedBox(height: 10,),
+                        AppTextLabels.boldTextShort(label: "Receive Payment", color: AppColors.appGreen, fontSize: 15)
+                      ],
+                    ),
+                  ),
+                )),
               ),
               Padding(
                 padding: const EdgeInsets.all(8.0),

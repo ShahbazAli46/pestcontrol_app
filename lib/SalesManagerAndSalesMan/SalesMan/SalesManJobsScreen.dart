@@ -12,7 +12,10 @@ import '../../utils/appColors.dart';
 
 class SalesmanJobsScreen extends StatefulWidget {
 
+  bool isSingleClient = false;
+  int clientID = 0;
 
+  SalesmanJobsScreen({required this.isSingleClient, this.clientID = 0});
 
   @override
   State<SalesmanJobsScreen> createState() => _SalesmanJobsScreenState();
@@ -21,10 +24,11 @@ class SalesmanJobsScreen extends StatefulWidget {
 class _SalesmanJobsScreenState extends State<SalesmanJobsScreen> {
   late SalesManJobsController controller;
 
+
   @override
   void initState() {
     super.initState();
-    controller = Get.put(SalesManJobsController());
+    controller = Get.put(SalesManJobsController(isSingleClient: widget.isSingleClient, clientId: widget.clientID));
   }
 
   @override

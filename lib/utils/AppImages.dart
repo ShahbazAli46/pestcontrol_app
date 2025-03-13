@@ -20,4 +20,6 @@ class AppImages {
   static String visitor = "images/visitor.png";
   static String appointment = "images/appointment.png";
   static String meeting = "images/meeting.png";
+  static String inspection = "images/inspection.png";
+  static String inspectionVisits = "images/inspectionVisits.png";
 }

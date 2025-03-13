@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:accurate/components/ImageViewerDialog.dart';
 import 'package:accurate/components/MapLauncher.dart';
 import 'package:accurate/components/UpcomignJobs/Controllers/JobDetailsController.dart';
 import 'package:accurate/components/UpcomignJobs/UpcomingJobsController.dart';
@@ -142,9 +143,6 @@ class _JobDetailsState extends State<JobDetails> {
                               height: 35,
                             ),
                             _teamMembers(),
-                            SizedBox(
-                              height: 55,
-                            ),
                             jobMap(),
                             SizedBox(
                               height: 20,
@@ -228,7 +226,8 @@ class _JobDetailsState extends State<JobDetails> {
 
 
                                     ],
-                                  )
+                                  ),
+
                           ],
                         ),
                       ),
@@ -376,6 +375,31 @@ class _JobDetailsState extends State<JobDetails> {
             AppTextLabels.boldText(label: "Job Instructions", fontSize: 15, color: AppColors.appBlack),
             SizedBox(height: 10,),
             AppTextLabels.regularShortText(label: jobController.jobData?.data?.jobInstructions ?? "", color: AppColors.appBlack),
+            jobController.jobData?.data?.user?.clientInspectionReports?[0].generalComment != null ? Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                AppTextLabels.boldTextShort(label: "Inspector Recommendations", fontSize: 18),
+                SizedBox(height: 15,),
+                UiHelper.commonContainer(
+                    Column(
+                  children: [
+                    UiHelper.buildRow("Client Remarks", "${jobController.jobData?.data?.user?.clientInspectionReports?[0].clientRemarks}"),
+                    UiHelper.buildRow("Recommendation For Operation Team", "${jobController.jobData?.data?.user?.clientInspectionReports?[0].recommendationForOperation}"),
+                    UiHelper.buildRow("General Comments", "${jobController.jobData?.data?.user?.clientInspectionReports?[0].generalComment}"),
+                    UiHelper.buildRow("Nesting Areas", "${jobController.jobData?.data?.user?.clientInspectionReports?[0].nestingArea}"),
+                    SizedBox(height: 5,),
+                    Center(
+                      child: TextButton(onPressed: (){
+                        showImageViewer(context, jobController.jobData?.data?.user?.clientInspectionReports?[0].pictures ?? []);
+                      }, child: AppTextLabels.regularShortText(label: "View Attachments", color: AppColors.appGreen)),
+                    )
+                  ],
+                )),
+
+
+              ],
+            ): Container()
+
           ],
         ),
       ),

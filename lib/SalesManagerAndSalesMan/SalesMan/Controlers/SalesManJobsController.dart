@@ -11,6 +11,11 @@ import '../../../jsonModels/TeamListResponse.dart';
 class SalesManJobsController extends GetxController {
   var fetchingData = true.obs;
 
+  var isSingleClient = false;
+  var clientId = 0;
+
+  SalesManJobsController({required this.isSingleClient, this.clientId = 0});
+
   var api  = APICall();
 
   List<CaptainJobs>? data = [];
@@ -40,7 +45,14 @@ class SalesManJobsController extends GetxController {
     pending.clear();
     completedAmount = 0.0;
     pendingAmount = 0.0;
-    String url = Urls.baseURL + "employee/reference/jobs/get/${userObj?.data?.id}?start_date=${start}&end_date=${end}";
+
+    String url = "";
+    if (isSingleClient){
+      url = Urls.baseURL + "job/all?start_date=${start}&user_id=${clientId}&end_date=$end";
+    }
+    else{
+      url = Urls.baseURL + "employee/reference/jobs/get/${userObj?.data?.id}?start_date=${start}&end_date=${end}";
+    }
     var response = await api.getDataWithToken(url);
     AllJobsResponse res = AllJobsResponse.fromJson(response);
     res.data?.forEach((item){
@@ -59,7 +71,6 @@ class SalesManJobsController extends GetxController {
 
   handleButtonTypeChange(int type){
     fetchingData.value = true;
-
     if (type == 0){
       data = completed;
     }
@@ -67,10 +78,11 @@ class SalesManJobsController extends GetxController {
       {
         data = pending;
       }
-
-
-
     fetchingData.value = false;
 
   }
+}
+
+enum JobsView {
+  viewSingleClient
 }
