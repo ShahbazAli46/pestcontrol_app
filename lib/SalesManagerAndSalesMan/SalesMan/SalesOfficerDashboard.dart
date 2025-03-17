@@ -1,5 +1,6 @@
 import 'package:accurate/SalesManagerAndSalesMan/SalesMan/AddSalesOfficeVisitScreen.dart';
 import 'package:accurate/SalesManagerAndSalesMan/SalesMan/Controlers/SalesOfficerDashboardController.dart';
+import 'package:accurate/SalesManagerAndSalesMan/SalesMan/SalesManContractsListScreen.dart';
 import 'package:accurate/SalesManagerAndSalesMan/SalesMan/SalesManJobsScreen.dart';
 import 'package:accurate/SalesManagerAndSalesMan/SalesMan/SalesmanIncomeScreen.dart';
 import 'package:accurate/SalesManagerAndSalesMan/SalesMan/ViewFollowupsScreen.dart';
@@ -15,6 +16,7 @@ import 'package:accurate/user/UserProfile/UserProfileScreen.dart';
 import 'package:accurate/user/login.dart';
 import 'package:accurate/utils/AlertService.dart';
 import 'package:accurate/utils/AppImages.dart';
+import 'package:accurate/utils/Constants.dart';
 import 'package:accurate/utils/appColors.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -40,7 +42,7 @@ class _SalesOfficerDashboardState extends State<SalesOfficerDashboard> {
   @override
   void initState() {
     super.initState();
-    controller = Get.put(SalesOfficerDashboardController());
+    controller = Get.put(SalesOfficerDashboardController(), tag: Constants.salesMan);
 
   }
 
@@ -67,7 +69,8 @@ class _SalesOfficerDashboardState extends State<SalesOfficerDashboard> {
                   CircularProgressIndicator(),
                   SizedBox(height: 20,),
                 ],
-              ) : Column(
+              ) :
+              Column(
                 children: [
                   Padding(
                     padding: const EdgeInsets.all(8.0),
@@ -225,31 +228,55 @@ class _SalesOfficerDashboardState extends State<SalesOfficerDashboard> {
                       ],
                     ),
                   ),
-                  // Container(
-                  //   width: double.infinity,
-                  //   margin: EdgeInsets.only(left: 10, right: 10),
-                  //   padding: EdgeInsets.all(10),
-                  //   decoration: BoxDecoration(
-                  //     color: Colors.white,
-                  //     borderRadius: BorderRadius.circular(8),
-                  //     boxShadow: [
-                  //       BoxShadow(
-                  //         color: Colors.grey.withOpacity(0.2),
-                  //         spreadRadius: 1,
-                  //         blurRadius: 2,
-                  //         offset: const Offset(0, 1),
-                  //       ),
-                  //     ],
-                  //   ),
-                  //   child: Column(
-                  //     children: [
-                  //       AppTextLabels.boldTextShort(label: "Commission", fontSize: 20, color: AppColors.appGreen),
-                  //       AppTextLabels.regularShortText(label: controller.commissions.paidAmt ?? "", color: AppColors.appBlack, fontSize: 20)
-                  //     ],
-                  //   ),
-                  // ),
                 ],
               )),
+
+              Obx(()=>controller.gettingContracts.value ? Container() :
+              Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+
+                      children: [
+                        AppTextLabels.boldTextShort(label: "Contracts", fontSize: 15,color: AppColors.appGreen),
+                        SizedBox(height: 10,),
+                        UiHelper.commonContainer(Column(
+                          children: [
+                            UiHelper.buildRow("All Contracts", "${controller.allContracts.toStringAsFixed(0)}"),
+                            UiHelper.buildRow("Amount", "${controller.allContractValue.toStringAsFixed(2)}"),
+                            SizedBox(height: 5,),
+                            UiHelper.dashedBoarder(),
+                            SizedBox(height: 5,),
+                            UiHelper.buildRow("Active Contracts", "${controller.activeContracts.toStringAsFixed(0)}"),
+                            UiHelper.buildRow("Amount", "${controller.activeContractAmount.toStringAsFixed(2)}"),
+                            SizedBox(height: 5,),
+                            UiHelper.dashedBoarder(),
+                            SizedBox(height: 5,),
+                            UiHelper.buildRow("Canceled Contracts", "${controller.canceledContracts.toStringAsFixed(0)}"),
+                            UiHelper.buildRow("Amount", "${controller.cancelContractsAmount.toStringAsFixed(2)}"),
+                            SizedBox(height: 5,),
+                            UiHelper.dashedBoarder(),
+                            SizedBox(height: 5,),
+                            UiHelper.buildRow("Completed Contracts", "${controller.completedContracts.toStringAsFixed(0)}"),
+                            UiHelper.buildRow("Amount", "${controller.completedContractAmount.toStringAsFixed(2)}"),
+                            SizedBox(height: 5,),
+                            GestureDetector(
+                                onTap: (){
+                                  UiHelper.navigateToNextScreen(context, SalesmanContractsListScreen());
+                                },
+                                child: AppTextLabels.regularShortText(label: "View Details", color: AppColors.appGreen)),
+                            SizedBox(height: 5,),
+                          ],
+                        )),
+
+                      ],
+                    ),
+                  ),
+                ],
+              )),
+
+
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Row(
@@ -466,7 +493,7 @@ class _SalesOfficerDashboardState extends State<SalesOfficerDashboard> {
                             SizedBox(height: 10,),
                             Image.asset(AppImages.payment, height: 50,),
                             SizedBox(height: 10,),
-                            AppTextLabels.boldTextShort(label: "Received Amount", color: AppColors.appGreen, fontSize: 15)
+                            AppTextLabels.boldTextShort(label: "My Clients Amount", color: AppColors.appGreen, fontSize: 15)
                           ],
                         ),
                       ),

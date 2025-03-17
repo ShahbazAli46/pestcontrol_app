@@ -47,5 +47,6 @@ class Constants {
   static String contracted = "Contracted";
   static String notInterested = "Not-Interested";
   static String quoted = "Quoted";
+  static String salesMan = "salesMan";
 
 }

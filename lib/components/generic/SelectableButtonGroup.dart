@@ -52,6 +52,7 @@ class SelectableButtonGroupState extends State<SelectableButtonGroup> {
                 child: Center(
                   child: AppTextLabels.boldTextShort(
                     label: widget.titles[index],
+                    textAlign: TextAlign.center,
                     color: Colors.white,
                     fontSize: 15,
                   ),
