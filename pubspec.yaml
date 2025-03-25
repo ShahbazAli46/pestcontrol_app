@@ -23,7 +23,7 @@ dependencies:
   firebase_core:
   firebase_messaging:
   google_place:
-  flutter_local_notifications:
+  flutter_local_notifications: ^17.2.1
   path_provider:
   google_places_flutter:
   http_parser:

@@ -82,7 +82,7 @@ class UpcomingJobsController extends GetxController {
     else{
       captainJobs = previousJobs;
 
-      print(captainJobs.length);
+
     }
     fetchingData.value = false;
   }

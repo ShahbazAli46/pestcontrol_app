@@ -219,8 +219,8 @@ class _JobDetailsState extends State<JobDetails> {
                                           : Container(),
 
                                       Expanded(child: jobController?.jobData?.data?.isCompleted == 2
-                                          ? Container(child: Bluebutton(title: "Add Images", sendingData: false.obs, onTap: (){
-                                            UiHelper.navigateToNextScreen(context, AddImagesForIPMReportScreen(serviceID: widget.id,));
+                                          ? Container(child: Bluebutton(title: "Add IPM Images", sendingData: false.obs, onTap: (){
+                                            UiHelper.navigateToNextScreen(context, AddImagesForIPMReportScreen(serviceID: widget.id, clinetID: jobController.jobData?.data?.userId ?? 0,));
                                       },))
                                           : Container())
 
@@ -370,36 +370,34 @@ class _JobDetailsState extends State<JobDetails> {
                     ],
                   );
                 }),
-
             SizedBox(height: 20,),
             AppTextLabels.boldText(label: "Job Instructions", fontSize: 15, color: AppColors.appBlack),
             SizedBox(height: 10,),
             AppTextLabels.regularShortText(label: jobController.jobData?.data?.jobInstructions ?? "", color: AppColors.appBlack),
-            jobController.jobData?.data?.user?.clientInspectionReports?[0].generalComment != null ? Column(
+            jobController.jobData?.data?.user?.clientInspectionReports != null &&
+                (jobController.jobData?.data?.user?.clientInspectionReports ?? []).isNotEmpty
+                ? Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 AppTextLabels.boldTextShort(label: "Inspector Recommendations", fontSize: 18),
                 SizedBox(height: 15,),
                 UiHelper.commonContainer(
                     Column(
-                  children: [
-                    UiHelper.buildRow("Client Remarks", "${jobController.jobData?.data?.user?.clientInspectionReports?[0].clientRemarks}"),
-                    UiHelper.buildRow("Recommendation For Operation Team", "${jobController.jobData?.data?.user?.clientInspectionReports?[0].recommendationForOperation}"),
-                    UiHelper.buildRow("General Comments", "${jobController.jobData?.data?.user?.clientInspectionReports?[0].generalComment}"),
-                    UiHelper.buildRow("Nesting Areas", "${jobController.jobData?.data?.user?.clientInspectionReports?[0].nestingArea}"),
-                    SizedBox(height: 5,),
-                    Center(
-                      child: TextButton(onPressed: (){
-                        showImageViewer(context, jobController.jobData?.data?.user?.clientInspectionReports?[0].pictures ?? []);
-                      }, child: AppTextLabels.regularShortText(label: "View Attachments", color: AppColors.appGreen)),
-                    )
-                  ],
-                )),
-
-
+                      children: [
+                        UiHelper.buildRow("Client Remarks", "${jobController.jobData?.data?.user?.clientInspectionReports![0].clientRemarks}"),
+                        UiHelper.buildRow("Recommendation For Operation Team", "${jobController.jobData?.data?.user?.clientInspectionReports![0].recommendationForOperation}"),
+                        UiHelper.buildRow("General Comments", "${jobController.jobData?.data?.user?.clientInspectionReports![0].generalComment}"),
+                        UiHelper.buildRow("Nesting Areas", "${jobController.jobData?.data?.user?.clientInspectionReports![0].nestingArea}"),
+                        SizedBox(height: 5,),
+                        Center(
+                          child: TextButton(onPressed: (){
+                            showImageViewer(context, jobController.jobData?.data?.user?.clientInspectionReports![0].pictures ?? []);
+                          }, child: AppTextLabels.regularShortText(label: "View Attachments", color: AppColors.appGreen)),
+                        )
+                      ],
+                    )),
               ],
             ): Container()
-
           ],
         ),
       ),
@@ -594,17 +592,14 @@ class _JobDetailsState extends State<JobDetails> {
 
   void requestToStartJob() async {
     makingRequestForStartJob.value = true;
-
     final url = Urls.startJob + "${jobController?.jobData?.data?.id}";
     var response = await apiCall.getDataWithToken(url);
     GeneralErrorResponse errorResponse =
         GeneralErrorResponse.fromJson(response);
-
     AlertService.showAlertWithAction(
         "Alert", errorResponse.message ?? "Please try later", onOkPressed: () {
-      Navigator.pop(context);
+      jobController.fetchJobDetails();
     });
-
     makingRequestForStartJob.value = false;
   }
 

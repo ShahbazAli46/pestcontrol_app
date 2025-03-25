@@ -377,7 +377,7 @@ class APICall {
         imagesFieldName: imagesFieldName,
       );
     }
-
+    print(data);
     var request = http.MultipartRequest(method, Uri.parse(url));
 
     if (useToken) {

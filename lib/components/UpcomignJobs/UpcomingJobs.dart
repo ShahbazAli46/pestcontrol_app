@@ -109,9 +109,27 @@ class _UpComingJobsState extends State<UpComingJobs> {
                 ),
               ],
             ),
+
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Expanded(child: Text("Job Status")),
+
+                SizedBox(
+                  width: 10,
+                ),
+                AppTextLabels.regularShortText(
+                    label: job.isCompleted == 1 ?"Completed" : job.isCompleted == 0 ? "Not Started" : "Started",
+                    color: AppColors.appBlack),
+                SizedBox(
+                  width: 10,
+                ),
+              ],
+            ),
             SizedBox(
               height: 10,
             ),
+
             ListView.builder(
                 physics: NeverScrollableScrollPhysics(),
                 primary: false,
