@@ -58,7 +58,6 @@ class LoginController extends GetxController {
     } catch (e) {
       _errorMessage.value = 'Failed to log in. Please check ID and Password';
       print('Error parsing JSON: $e');
-      AlertService.showAlert("Error", "Failed to log in. Please check ID and Password");
       AlertService.showAlert('Error', _errorMessage.value);
     } finally {
       isLoading.value = false;

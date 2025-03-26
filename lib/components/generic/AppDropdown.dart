@@ -7,12 +7,14 @@ class AppDropdown extends StatefulWidget {
   final List<String> options;
   final Function(String? value, int? index) onChanged;
   final String? selectedOption;
+  final double? width;
 
   AppDropdown({
     required this.title,
     required this.options,
     required this.onChanged,
     this.selectedOption,
+    this.width,
   });
 
   @override
@@ -41,6 +43,7 @@ class _AppDropdownState extends State<AppDropdown> {
   @override
   Widget build(BuildContext context) {
     return Container(
+      width: widget.width ?? double.infinity,
       padding: EdgeInsets.all(8.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -56,12 +59,14 @@ class _AppDropdownState extends State<AppDropdown> {
           Focus(
             focusNode: _focusNode,
             child: DropdownButtonFormField<String>(
+              isExpanded: true, // This helps with long text
               value: _selectedValue,
               hint: Text(
                 "Select Value",
                 style: GoogleFonts.manrope(
                   color: AppColors.appBlack.withOpacity(0.5),
                 ),
+                overflow: TextOverflow.ellipsis,
               ),
               items: [
                 ...widget.options.asMap().entries.map((entry) {
@@ -72,6 +77,8 @@ class _AppDropdownState extends State<AppDropdown> {
                       style: GoogleFonts.manrope(
                         color: _focusNode.hasFocus ? AppColors.appGreen : AppColors.appBlack,
                       ),
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
                     ),
                   );
                 }).toList(),
@@ -101,7 +108,10 @@ class _AppDropdownState extends State<AppDropdown> {
                     color: AppColors.appGreen,
                   ),
                 ),
+                contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               ),
+              menuMaxHeight: 300, // Limit dropdown height
+              borderRadius: BorderRadius.circular(10),
             ),
           ),
         ],

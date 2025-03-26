@@ -1,6 +1,7 @@
 import 'package:accurate/components/MultiSelectCheckbox.dart';
 import 'package:accurate/components/generic/SearchableDropdownWithID.dart';
 import 'package:accurate/components/generic/UIHelper.dart';
+import 'package:accurate/jsonModels/AllBranchesResponse.dart';
 import 'package:accurate/jsonModels/CilentsResponse.dart';
 import 'package:accurate/jsonModels/ServiceAgreementResponse.dart';
 import 'package:accurate/jsonModels/TermAndConditionsResponse.dart';
@@ -65,6 +66,11 @@ class CreateQuoteController extends GetxController {
   String serviceTime = "";
   bool isMonthly = true;
 
+  List<AllBranchesResponseData>? allBranches;
+  List<String> branchNames = [];
+  var selectedBranched = -1;
+
+
 
 
   @override
@@ -74,6 +80,7 @@ class CreateQuoteController extends GetxController {
     getServices();
     getTreatmentMethods();
     getTermsAndConditions();
+    getBranches();
 
   }
 
@@ -245,6 +252,22 @@ class CreateQuoteController extends GetxController {
       refreshServiceView.value = false;
     }
 
+  }
+
+
+  void getBranches()async{
+    String url = Urls.baseURL + "branch";
+    var response = await api.getDataWithToken(url);
+    AllBranchesResponse branchesResponse = AllBranchesResponse.fromJson(response);
+    allBranches = branchesResponse.data;
+    allBranches?.forEach((item){
+      branchNames.add(item.name ?? "");
+    });
+
+  }
+
+  setSelectedBranchID(int index){
+    selectedBranched = allBranches?[index].id ?? 0;
   }
 
 

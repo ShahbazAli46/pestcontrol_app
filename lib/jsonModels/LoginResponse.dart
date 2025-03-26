@@ -27,10 +27,10 @@ class Data {
   int? id;
   String? name;
   String? email;
-  Null? emailVerifiedAt;
+  String? emailVerifiedAt;
   int? roleId;
   int? isActive;
-  Null? deletedAt;
+  String? deletedAt;
   String? createdAt;
   String? updatedAt;
   Role? role;
@@ -135,7 +135,7 @@ class Employee {
   String? allowance;
   String? other;
   String? totalSalary;
-  Null? deletedAt;
+  String? deletedAt;
   String? createdAt;
   String? updatedAt;
 

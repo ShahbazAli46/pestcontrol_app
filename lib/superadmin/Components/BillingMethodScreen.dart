@@ -109,6 +109,7 @@ class _BillingMethodScreenState extends State<BillingMethodScreen> {
                             request.durationInMonths = int.parse(
                                 controller.duration.text);
                             request.isFoodWatchAccount = 1;
+                            request.branch_id = "${controller.selectedBranched}";
                             request.billingMethod = billingMethod;
                             request.vatPer = int.parse(controller.vat.text);
                             request.dis_amt = controller.discount.text == ""
@@ -134,6 +135,7 @@ class _BillingMethodScreenState extends State<BillingMethodScreen> {
                                   });
                             }
                             else {
+                              controller.sendingData.value = false;
                               AlertService.showAlert(
                                   "Alert", errorResponse.message ?? "");
                             }

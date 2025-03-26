@@ -18,6 +18,7 @@ class CreateQuoteRequest {
   int? vatPer;
   int? termAndConditionId;
   String? service_ids;
+  String? branch_id;
   List<QuoteServices>? services;
 
   CreateQuoteRequest(
@@ -38,7 +39,8 @@ class CreateQuoteRequest {
         this.termAndConditionId,
         this.services,
         this.service_ids,
-        this.quote_id
+        this.quote_id,
+        this.branch_id
       });
 
   CreateQuoteRequest.fromJson(Map<String, dynamic> json) {
@@ -73,6 +75,7 @@ class CreateQuoteRequest {
     data['client_address_id'] = this.clientAddressId;
     data['subject'] = this.subject;
     data['tm_ids'] = this.tmIds;
+    data['branch_id'] = this.branch_id;
     data['service_ids'] = this.service_ids;
     data['description'] = this.description;
     data['trn'] = this.trn;

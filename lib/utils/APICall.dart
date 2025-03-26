@@ -4,15 +4,32 @@ import 'package:accurate/UserRepository.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:connectivity_plus/connectivity_plus.dart';
+
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 
 class APICall {
   Future<bool> checkInternetConnection() async {
     try {
-      final response = await http.get(Uri.parse('https://www.google.com'));
-      return response.statusCode == 200;
+      // First, check connectivity status
+      final connectivityResult = await Connectivity().checkConnectivity();
+
+      // If no connectivity, return false immediately
+      if (connectivityResult == ConnectivityResult.none) {
+        return false;
+      }
+
+      // Additional check to verify actual internet access
+      try {
+        final result = await InternetAddress.lookup('google.com');
+        return result.isNotEmpty && result[0].rawAddress.isNotEmpty;
+      } on SocketException catch (_) {
+        return false;
+      }
     } catch (e) {
+      // Handle any unexpected errors
+      print('Error checking internet connection: $e');
       return false;
     }
   }

@@ -1,3 +1,4 @@
+import 'package:accurate/components/generic/AppDropdown.dart';
 import 'package:accurate/components/generic/AppInput.dart';
 import 'package:accurate/components/generic/AppMultilineInput.dart';
 import 'package:accurate/components/generic/GreenButton.dart';
@@ -73,6 +74,9 @@ class _CreateQuoteScreenState extends State<CreateQuoteScreen> {
                     AppInput(title: "Quote Title", controller: controller.title),
                     AppInput(title: "Quote Subject", controller: controller.subject),
                     AppInput(title: "Quote Tag", controller: controller.tag),
+                    AppDropdown(title: "Select Branch", options: controller.branchNames, onChanged: (value, index){
+                      controller.setSelectedBranchID(index ?? 0);
+                    }),
                     AppInput(title: "Duration in Month", controller: controller.duration,inputType: TextInputType.number),
                     AppMultilineInput(title: "Description", controller: controller.desc),
                     SizedBox(height: 10,),
