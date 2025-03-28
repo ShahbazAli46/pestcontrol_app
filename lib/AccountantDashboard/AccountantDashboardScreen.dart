@@ -1,6 +1,8 @@
 import 'package:accurate/AccountantDashboard/Components/AddVechileFineScreen.dart';
 import 'package:accurate/AccountantDashboard/Components/ApprovePaymentScreen.dart';
+import 'package:accurate/AccountantDashboard/Components/DailyReceiveAmountScreen.dart';
 import 'package:accurate/AccountantDashboard/Components/OutstandingScreen.dart';
+import 'package:accurate/AccountantDashboard/Components/PaymentScreen.dart';
 import 'package:accurate/components/ViewAllClients.dart';
 import 'package:accurate/components/generic/Navbar.dart';
 import 'package:accurate/components/generic/UIHelper.dart';
@@ -44,6 +46,63 @@ class _AccountantDashboardScreenState extends State<AccountantDashboardScreen> {
           child: SingleChildScrollView(
             child: Column(
               children: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    children: [
+                      Expanded(child: GestureDetector(
+                        onTap: (){
+                          UiHelper.navigateToNextScreenGetX(DailyReceiveAmountScreen());
+                        },
+                        child: Container(
+                          height: 100,
+                          decoration: BoxDecoration(
+                              border: Border.all(
+                                  color: AppColors.appGreen,
+                                  width: 2
+                              ),
+                              borderRadius: BorderRadius.circular(10)
+                          ),
+                          child: Column(
+                            children: [
+                              SizedBox(height: 10,),
+                              Image.asset(AppImages.income, height: 50,),
+                              SizedBox(height: 10,),
+                              AppTextLabels.boldTextShort(label: "Received Amounts", color: AppColors.appGreen, fontSize: 15)
+                            ],
+                          ),
+                        ),
+                      )),
+                      SizedBox(width: 10,),
+
+                      Expanded(child: GestureDetector(
+                        onTap: (){
+                          UiHelper.navigateToNextScreenGetX(PaymentsScreen());
+
+                        },
+                        child: Container(
+                          height: 100,
+                          decoration: BoxDecoration(
+                              border: Border.all(
+                                  color: AppColors.appGreen,
+                                  width: 2
+                              ),
+                              borderRadius: BorderRadius.circular(10)
+                          ),
+                          child: Column(
+                            children: [
+                              SizedBox(height: 10,),
+                              Image.asset(AppImages.expenses, height: 50,),
+                              SizedBox(height: 10,),
+                              AppTextLabels.boldTextShort(label: "Payments", color: AppColors.appGreen, fontSize: 15)
+                            ],
+                          ),
+                        ),
+                      )),
+
+                    ],
+                  ),
+                ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Row(

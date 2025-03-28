@@ -157,17 +157,17 @@ class NotificationService {
         //     },
         //   );
         // }
-        if (updateTokenResponse.appVersion != appVersion) {
-          // Show an un-dismissible alert with an "Update App" button
-          AlertService.showUpdateAppAlert(
-            title: "Update Required",
-            message: "A new version of the app is available. Please update to continue using the app.",
-            onUpdatePressed: () {
-              // Handle the "Update App" button action
-              _launchAppStore(); // You need to implement this function to open the app store
-            },
-          );
-        }
+        // if (updateTokenResponse.appVersion != appVersion) {
+        //   // Show an un-dismissible alert with an "Update App" button
+        //   AlertService.showUpdateAppAlert(
+        //     title: "Update Required",
+        //     message: "A new version of the app is available. Please update to continue using the app.",
+        //     onUpdatePressed: () {
+        //       // Handle the "Update App" button action
+        //       _launchAppStore(); // You need to implement this function to open the app store
+        //     },
+        //   );
+        // }
 
 
 

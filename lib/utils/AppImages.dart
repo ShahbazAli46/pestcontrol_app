@@ -22,4 +22,5 @@ class AppImages {
   static String meeting = "images/meeting.png";
   static String inspection = "images/inspection.png";
   static String inspectionVisits = "images/inspectionVisits.png";
+  static String income = "images/income.png";
 }
