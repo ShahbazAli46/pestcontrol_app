@@ -185,13 +185,13 @@ class User {
   int? id;
   String? name;
   String? email;
-  Null? emailVerifiedAt;
+  String? emailVerifiedAt;
   int? roleId;
   int? isActive;
-  Null? deletedAt;
+  String? deletedAt;
   String? createdAt;
   String? updatedAt;
-  Null? firedAt;
+  String? firedAt;
   Client? client;
 
   User(
@@ -252,7 +252,7 @@ class Client {
   String? referencableType;
   int? referencableId;
   String? openingBalance;
-  Null? deletedAt;
+  String? deletedAt;
   String? createdAt;
   String? updatedAt;
   Referencable? referencable;
@@ -318,13 +318,13 @@ class Referencable {
   int? id;
   String? name;
   String? email;
-  Null? emailVerifiedAt;
+  String? emailVerifiedAt;
   int? roleId;
   int? isActive;
-  Null? deletedAt;
+  String? deletedAt;
   String? createdAt;
   String? updatedAt;
-  Null? firedAt;
+
 
   Referencable(
       {this.id,
@@ -336,7 +336,7 @@ class Referencable {
         this.deletedAt,
         this.createdAt,
         this.updatedAt,
-        this.firedAt});
+        });
 
   Referencable.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -348,7 +348,7 @@ class Referencable {
     deletedAt = json['deleted_at'];
     createdAt = json['created_at'];
     updatedAt = json['updated_at'];
-    firedAt = json['fired_at'];
+
   }
 
   Map<String, dynamic> toJson() {
@@ -362,7 +362,7 @@ class Referencable {
     data['deleted_at'] = this.deletedAt;
     data['created_at'] = this.createdAt;
     data['updated_at'] = this.updatedAt;
-    data['fired_at'] = this.firedAt;
+
     return data;
   }
 }

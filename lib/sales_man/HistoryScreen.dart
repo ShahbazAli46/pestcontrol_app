@@ -7,6 +7,7 @@ import 'package:accurate/components/generic/navWithBack.dart';
 import 'package:accurate/sales_man/controllers/HistoryController.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../components/UpcomignJobs/UpcomingJobsController.dart';
 import '../components/generic/DashedSeparatorPainter.dart';
@@ -203,7 +204,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                         CreateServiceReport(jobId: job?.id ?? 0, fromJob: false,));
                   }
                   else{
-
+                    _launchURL(job?.id ?? 0);
                   }
                 }),
             SizedBox(
@@ -211,5 +212,14 @@ class _HistoryScreenState extends State<HistoryScreen> {
             ),
           ],
         ));
+  }
+
+
+  Future<void> _launchURL(id) async {
+    final Uri url = Uri.parse('https://www.apcs.ae/serviceRpoertPdf/?id=$id');
+
+    if (!await launchUrl(url)) {
+      throw Exception('Could not launch $url');
+    }
   }
 }

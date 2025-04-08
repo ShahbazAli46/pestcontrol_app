@@ -1,3 +1,5 @@
+import 'package:accurate/components/generic/UIHelper.dart';
+import 'package:accurate/main.dart';
 import 'package:accurate/utils/AlertService.dart';
 import 'package:accurate/utils/AppImages.dart';
 import 'package:accurate/utils/TextStyle.dart';
@@ -59,7 +61,9 @@ class _AddFeedBackScreenState extends State<AddFeedBackScreen> {
 
   makeRequest(){
       if (feedbackTextController.text.isEmpty){
-        AlertService.showAlert("Alert", "Please write some feedback");
+       AlertService.showAlertWithCancelButton("Alert", "Are you sure, you want to submit empty feedback", onOkPressed: (){
+         Get.offAll(UiHelper.goToUserDashboardAsPerUserRole(userObj?.data?.roleId ?? 0));
+       });
       } else{
         feedbackController.reportId = widget.reportID;
         feedbackController.sendFeedback(feedbackTextController.text);

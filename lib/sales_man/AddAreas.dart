@@ -120,7 +120,7 @@ class _AddAreasState extends State<AddAreas> {
             _buildRow('Inspected Areas', item.areaName),
             _buildRow('Pests Found', item.pestFound),
             _buildRow('Infestation Level', item.manifestationLevel),
-            _buildRow('Manifested Areas', item.manifestedArea),
+            _buildRow('Main infested Areas', item.manifestedArea),
             _buildRow('Report And Follow Up Detail', item.followUp),
           ],
         ),
@@ -191,7 +191,7 @@ class _AddAreasState extends State<AddAreas> {
                     options: ["High", "Medium", "Low"],
                     onChanged: levelDropDownChanged),
                 AppInput(
-                    title: "Manifested areas",
+                    title: "Main Infested areas",
                     controller: inspectedAreasController.manifestiedArea),
                 AppInput(
                     title: "Report and Follow Up details",

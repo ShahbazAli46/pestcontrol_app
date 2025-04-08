@@ -21,7 +21,7 @@ class AddInspectedAreasController extends GetxController {
     } else if (level.isEmpty){
       DialogHelper.showDialog(msg: "Please select manifestation level");
     } else if (manifestiedArea.text.trim().isEmpty){
-        DialogHelper.showDialog(msg: "Please enter manifested area");
+        DialogHelper.showDialog(msg: "Please enter main infested area");
     } else if (followUp.text.trim().isEmpty){
       DialogHelper.showDialog(msg: "Please enter follow up detail");
     } else {

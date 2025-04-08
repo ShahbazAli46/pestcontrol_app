@@ -123,8 +123,6 @@ class _AddChemicalsScreenState extends State<AddChemicalsScreen> {
 
             _buildRow('Chemical Name', item.name),
             _buildRow('Qunatity', "${item.quantity} ${item.unit}"),
-            _buildRow('is Extra', item.isExtra ? "True" : "False"),
-            _buildRow('Price', "${item.isExtra ? item.price : "0"}"),
           ],
         ),
       ),
@@ -195,18 +193,7 @@ class _AddChemicalsScreenState extends State<AddChemicalsScreen> {
                         title: userInfoController.currentUnit,
                         controller: usedController.quantityController
                     ),
-                    AppRadioSelection(
-                      title: "Is Extra",
-                      options: ["No", "Yes"],
-                      initialValue: "No",
-                      onChanged: extraValueChanged,
-                    ),
                     SizedBox(height: 20),
-                    AppInput(
-                        title: "Price",
-                        controller: usedController.price,
-                        enabled: true
-                    ),
                     // Fixed Row structure
                     Container(
                       child: Row(
