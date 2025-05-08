@@ -5,6 +5,7 @@ import 'package:accurate/components/generic/CustomListView.dart';
 import 'package:accurate/components/generic/GreenButton.dart';
 import 'package:accurate/components/generic/UIHelper.dart';
 import 'package:accurate/components/generic/navWithBack.dart';
+import 'package:accurate/sales_man/AddPaymentFollowUpScreen.dart';
 import 'package:accurate/utils/Constants.dart';
 import 'package:accurate/utils/TextStyle.dart';
 import 'package:accurate/utils/appColors.dart';
@@ -40,6 +41,13 @@ class _ViewClientInvoicesScreenState extends State<ViewClientInvoicesScreen> {
             AppTextLabels.boldTextShort(label: "All Invoices ", fontSize: 20),
             SizedBox(width: double.infinity, height: 10,),
             clientCard(),
+            SizedBox(width: double.infinity, height: 20,),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: GreenButton(title: "Add Follow Up info", sendingData: false.obs, onTap: (){
+                UiHelper.navigateToNextScreen(context, AddPaymentFollowUpScreen(clientId: invoicesController.clientId,));
+              }),
+            ),
             SizedBox(width: double.infinity, height: 20,),
             AppTextLabels.boldTextShort(label: "Select Invoice", fontSize: 20),
             SizedBox(width: double.infinity, height: 10,),

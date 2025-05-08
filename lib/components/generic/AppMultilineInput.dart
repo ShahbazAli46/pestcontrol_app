@@ -7,12 +7,14 @@ class AppMultilineInput extends StatefulWidget {
   final TextEditingController controller;
   final int? maxLines;
   final int? maxLength;
+  final FocusNode? focusNode; // Make FocusNode optional
 
   AppMultilineInput({
     required this.title,
     required this.controller,
     this.maxLines,
     this.maxLength,
+    this.focusNode, // Add this parameter
   });
 
   @override
@@ -20,11 +22,16 @@ class AppMultilineInput extends StatefulWidget {
 }
 
 class _AppMultilineInputState extends State<AppMultilineInput> {
-  FocusNode _focusNode = FocusNode();
+  late FocusNode _focusNode;
+  bool _internalFocusNode = false;
 
   @override
   void initState() {
     super.initState();
+    // Use provided FocusNode or create a new one
+    _focusNode = widget.focusNode ?? FocusNode();
+    _internalFocusNode = widget.focusNode == null;
+
     _focusNode.addListener(() {
       setState(() {});
     });
@@ -32,7 +39,10 @@ class _AppMultilineInputState extends State<AppMultilineInput> {
 
   @override
   void dispose() {
-    _focusNode.dispose();
+    // Only dispose the FocusNode if we created it internally
+    if (_internalFocusNode) {
+      _focusNode.dispose();
+    }
     super.dispose();
   }
 
