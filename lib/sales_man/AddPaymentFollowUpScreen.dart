@@ -60,9 +60,7 @@ class _AddPaymentFollowUpScreenState extends State<AddPaymentFollowUpScreen> {
                   padding: const EdgeInsets.all(8.0),
                   child: SelectableButtonGroup(titles: ["Promise", "Payment", "Partial Payment"], onSelect: (index){
                     paymentPromiseType = index;
-                    setState(() {
-
-                    });
+                    
                   }),
                 ),
                 Column(

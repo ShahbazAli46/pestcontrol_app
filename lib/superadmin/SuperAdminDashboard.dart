@@ -1,5 +1,6 @@
 import 'package:accurate/AccountantDashboard/Components/OutstandingScreen.dart';
 import 'package:accurate/NotificationService.dart';
+import 'package:accurate/SalesManagerAndSalesMan/SalesMan/PaymentFollowUpScreen.dart';
 import 'package:accurate/components/generic/MonthPicker.dart';
 import 'package:accurate/superadmin/Components/BanksScreen.dart';
 import 'package:accurate/superadmin/Components/FinancialReportScreen.dart';
@@ -389,6 +390,40 @@ class _SuperAdminDashboardState extends State<SuperAdminDashboard> {
                       ],
                     ),
                   ),
+
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Row(
+                      children: [
+                        Expanded(child: GestureDetector(
+                          onTap: (){
+                            UiHelper.navigateToNextScreen(context, PaymentFollowUpScreen());
+
+                            // UiHelper.navigateToNextScreen(context, HistoryScreen());
+                          },
+                          child: Container(
+                            height: 100,
+                            decoration: BoxDecoration(
+                                border: Border.all(
+                                    color: AppColors.appGreen,
+                                    width: 2
+                                ),
+                                borderRadius: BorderRadius.circular(10)
+                            ),
+                            child: Column(
+                              children: [
+                                SizedBox(height: 10,),
+                                Image.asset(AppImages.follow, height: 50,),
+                                SizedBox(height: 10,),
+                                AppTextLabels.boldTextShort(label: "Payment Follow Up", color: AppColors.appGreen, fontSize: 15)
+                              ],
+                            ),
+                          ),
+                        )),
+                      ],
+                    ),
+                  ),
+
 
                   GestureDetector(
                     onTap: (){

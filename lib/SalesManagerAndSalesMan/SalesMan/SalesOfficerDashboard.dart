@@ -1,5 +1,6 @@
 import 'package:accurate/SalesManagerAndSalesMan/SalesMan/AddSalesOfficeVisitScreen.dart';
 import 'package:accurate/SalesManagerAndSalesMan/SalesMan/Controlers/SalesOfficerDashboardController.dart';
+import 'package:accurate/SalesManagerAndSalesMan/SalesMan/PaymentFollowUpScreen.dart';
 import 'package:accurate/SalesManagerAndSalesMan/SalesMan/SalesManContractsListScreen.dart';
 import 'package:accurate/SalesManagerAndSalesMan/SalesMan/SalesManJobsScreen.dart';
 import 'package:accurate/SalesManagerAndSalesMan/SalesMan/SalesmanIncomeScreen.dart';
@@ -505,34 +506,72 @@ class _SalesOfficerDashboardState extends State<SalesOfficerDashboard> {
                   ],
                 ),
               ),
+
               Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: Container(
-                    width: double.infinity,
-                    child: GestureDetector(
-                  onTap: (){
-                    UiHelper.navigateToNextScreenGetX(ViewAllClients(type: ClientScreenViewTypes.forPayment,));
-                  },
-                  child: Container(
-                    height: 100,
-                    decoration: BoxDecoration(
-                        border: Border.all(
-                            color: AppColors.appGreen,
-                            width: 2
+                child: Row(
+                  children: [
+                    Expanded(child: GestureDetector(
+                      onTap: (){
+                        UiHelper.navigateToNextScreen(context, UserProfileScreen());
+                      },
+                      child: Container(
+                          width: double.infinity,
+                          child: GestureDetector(
+                            onTap: (){
+                              UiHelper.navigateToNextScreenGetX(ViewAllClients(type: ClientScreenViewTypes.forPayment,));
+                            },
+                            child: Container(
+                              height: 100,
+                              decoration: BoxDecoration(
+                                  border: Border.all(
+                                      color: AppColors.appGreen,
+                                      width: 2
+                                  ),
+                                  borderRadius: BorderRadius.circular(10)
+                              ),
+                              child: Column(
+                                children: [
+                                  SizedBox(height: 10,),
+                                  Image.asset(AppImages.payment, height: 50,),
+                                  SizedBox(height: 10,),
+                                  AppTextLabels.boldTextShort(label: "Receive Payment", color: AppColors.appGreen, fontSize: 15)
+                                ],
+                              ),
+                            ),
+                          )),
+                    )),
+                    SizedBox(width: 10,),
+                    Expanded(child: GestureDetector(
+                      onTap: (){
+                        UiHelper.navigateToNextScreen(context, PaymentFollowUpScreen());
+
+                        // UiHelper.navigateToNextScreen(context, HistoryScreen());
+                      },
+                      child: Container(
+                        height: 100,
+                        decoration: BoxDecoration(
+                            border: Border.all(
+                                color: AppColors.appGreen,
+                                width: 2
+                            ),
+                            borderRadius: BorderRadius.circular(10)
                         ),
-                        borderRadius: BorderRadius.circular(10)
-                    ),
-                    child: Column(
-                      children: [
-                        SizedBox(height: 10,),
-                        Image.asset(AppImages.payment, height: 50,),
-                        SizedBox(height: 10,),
-                        AppTextLabels.boldTextShort(label: "Receive Payment", color: AppColors.appGreen, fontSize: 15)
-                      ],
-                    ),
-                  ),
-                )),
+                        child: Column(
+                          children: [
+                            SizedBox(height: 10,),
+                            Image.asset(AppImages.follow, height: 50,),
+                            SizedBox(height: 10,),
+                            AppTextLabels.boldTextShort(label: "Payment Follow Up", color: AppColors.appGreen, fontSize: 15)
+                          ],
+                        ),
+                      ),
+                    )),
+
+                  ],
+                ),
               ),
+
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Row(
