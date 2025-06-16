@@ -79,10 +79,10 @@ class _CreateservicereportState extends State<CreateServiceReport> {
                   buildInfoRow("Client Name",
                       jobController?.jobData?.data?.user?.name ?? ""),
                   SizedBox(height: 20),
-                  buildInfoRow(
-                      "Date",
-                      UiHelper.formatDate(
-                          jobController?.jobData?.data?.jobDate ?? "")),
+                  // buildInfoRow(
+                  //     "Date",
+                  //     UiHelper.formatDate(
+                  //         jobController?.jobData?.data?.jobDate ?? "")),
                   SizedBox(height: 20),
                   buildInfoRow(
                       "Contact",
@@ -91,8 +91,7 @@ class _CreateservicereportState extends State<CreateServiceReport> {
                   SizedBox(height: 20),
                   buildInfoRow(
                       "Service Name",
-                      getServiceTitles(jobController?.jobData?.data?.jobServices) ??
-                          ""),
+                      "getServiceTitles(jobController?.jobData?.data?.jobServices) ??"),
                   typesOfServices(),
                   // buildInfoRow("Time In", "12 : 40 PM"),
                   // buildInfoRow("Time Out", "12 : 40 PM"),
@@ -158,10 +157,10 @@ class _CreateservicereportState extends State<CreateServiceReport> {
     );
   }
 
-  String? getServiceTitles(List<JobServices>? jobServices) {
-    return jobServices
-        ?.map((jobService) => jobService?.service?.serviceTitle)
-        .where((title) => title != null)
-        .join(',');
-  }
+  // String? getServiceTitles(List<JobServices>? jobServices) {
+  //   return jobServices
+  //       ?.map((jobService) => jobService?.service?.serviceTitle)
+  //       .where((title) => title != null)
+  //       .join(',');
+  // }
 }

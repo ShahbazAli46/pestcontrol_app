@@ -11,6 +11,7 @@ import 'package:accurate/components/generic/UIHelper.dart';
 import 'package:accurate/components/generic/navWithBack.dart';
 import 'package:accurate/jsonModels/GeneralErrorResponse.dart';
 import 'package:accurate/jsonModels/UserDetails.dart';
+import 'package:accurate/main.dart';
 import 'package:accurate/sales_man/AddImagesForIPMReportScreen.dart';
 import 'package:accurate/sales_man/CreateServiceReport.dart';
 import 'package:accurate/sales_man/ReschduleJob.dart';
@@ -93,13 +94,12 @@ class _JobDetailsState extends State<JobDetails> {
                             detailRow(
                                 "Date : ",
                                 UiHelper.formatDate(
-                                    jobController?.jobData?.data?.jobDate ??
-                                        "")),
+                                    jobController?.jobData?.data?.jobDate ?? "" )),
                             SizedBox(
                               height: 15,
                             ),
-                            detailRow("Client Name : ",
-                                jobController?.jobData?.data?.user?.name ?? ""),
+                            detailRow("Firm Name : ",
+                                jobController?.jobData?.data?.user?.client?.firmName ?? ""),
                             SizedBox(
                               height: 15,
                             ),
@@ -131,13 +131,41 @@ class _JobDetailsState extends State<JobDetails> {
                               height: 15,
                             ),
                             detailRow(
-                                "State : ",
+                                "Address : ",
                                 jobController?.jobData?.data?.clientAddress
                                         ?.address ??
                                     ""),
                             SizedBox(
                               height: 35,
                             ),
+
+                            ListView.builder(
+                                physics: NeverScrollableScrollPhysics(),
+                                primary: false,
+                                shrinkWrap: true,
+                                itemCount: jobController.jobData?.data?.jobServices?.length ?? 0,
+                                itemBuilder: (context, index) {
+                                  return AppTextLabels.boldTextShort(
+                                      label:
+                                      "${index + 1} ${jobController.jobData?.data?.jobServices?[index].service?.serviceTitle ?? ""}",
+                                      fontSize: 20,
+                                      color: AppColors.appGreen);
+                                }),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            CustomPaint(
+                              painter: DashedSeparatorPainter(),
+                              child: Container(
+                                height: 1, // Set the height of the separator
+                              ),
+                            ),
+
+                            SizedBox(
+                              height: 20,
+                            ),
+
+
                             reschdulesList(),
                             SizedBox(
                               height: 35,
@@ -147,86 +175,85 @@ class _JobDetailsState extends State<JobDetails> {
                             SizedBox(
                               height: 20,
                             ),
-                            jobController.jobData?.data?.captainId == null
-                                ? Container(
-                                    child: Text(""),
+                            jobController.loggedInCaptain?.captainId == userObj?.data?.id ? Row(
+                              children: [
+                                Expanded(
+                                    child: Bluebutton(
+                                        title: jobController.loggedInCaptain?.isCompleted == 0
+                                            ? "Start Job"
+                                            : jobController.loggedInCaptain?.isCompleted ==
+                                            1
+                                            ? "Create Report"
+                                            : jobController.loggedInCaptain?.isCompleted ==
+                                            2
+                                            ? "Complete Job"
+                                            : "${jobController.loggedInCaptain?.isCompleted}",
+                                        sendingData:
+                                        makingRequestForStartJob,
+                                        onTap: () {
+                                          if (jobController.loggedInCaptain?.isCompleted ==
+                                              0) {
+                                            requestToStartJob();
+                                          } else if (jobController.loggedInCaptain?.isCompleted ==
+                                              1) {
+                                            UiHelper
+                                                .navigateToNextScreenGetX(
+                                                CreateServiceReport(
+                                                  jobId: jobController
+                                                      ?.jobData
+                                                      ?.data
+                                                      ?.id ??
+                                                      0,
+                                                  fromJob: true,
+                                                ));
+                                          } else {
+                                            completeJobRequest();
+                                          }
+                                        })),
+                                SizedBox(
+                                  width: 10,
+                                ),
+                                jobController?.jobData?.data
+                                    ?.isCompleted ==
+                                    0
+                                    ? Expanded(
+                                    child: Bluebutton(
+                                        title: "Reschedule Job",
+                                        sendingData: false.obs,
+                                        onTap: () {
+                                          UiHelper.navigateToNextScreen(
+                                              context,
+                                              ReschduleJob(
+                                                  jobId: jobController
+                                                      ?.jobData
+                                                      ?.data
+                                                      ?.id ??
+                                                      0));
+                                        }))
+                                    : Container(),
+
+                                if (jobController.loggedInCaptain?.isCompleted == 2)
+                                  Expanded(
+                                    child: Bluebutton(
+                                      title: "Add IPM Images",
+                                      sendingData: false.obs,
+                                      onTap: () {
+                                        UiHelper.navigateToNextScreen(
+                                          context,
+                                          AddImagesForIPMReportScreen(
+                                            serviceID: widget.id,
+                                            clinetID: jobController.jobData?.data?.userId ?? 0,
+                                          ),
+                                        );
+                                      },
+                                    ),
                                   )
-                                : Row(
-                                    children: [
-                                      Expanded(
-                                          child: Bluebutton(
-                                              title: jobController?.jobData
-                                                          ?.data?.isCompleted ==
-                                                      0
-                                                  ? "Start Job"
-                                                  : jobController?.jobData?.data
-                                                              ?.isCompleted ==
-                                                          1
-                                                      ? "Create Report"
-                                                      : jobController
-                                                                  ?.jobData
-                                                                  ?.data
-                                                                  ?.isCompleted ==
-                                                              2
-                                                          ? "Complete Job"
-                                                          : "${jobController?.jobData?.data?.isCompleted}",
-                                              sendingData:
-                                                  makingRequestForStartJob,
-                                              onTap: () {
-                                                if (jobController?.jobData?.data
-                                                        ?.isCompleted ==
-                                                    0) {
-                                                  requestToStartJob();
-                                                } else if (jobController
-                                                        ?.jobData
-                                                        ?.data
-                                                        ?.isCompleted ==
-                                                    1) {
-                                                  UiHelper
-                                                      .navigateToNextScreenGetX(
-                                                          CreateServiceReport(
-                                                    jobId: jobController
-                                                            ?.jobData
-                                                            ?.data
-                                                            ?.id ??
-                                                        0,
-                                                    fromJob: true,
-                                                  ));
-                                                } else {
-                                                  completeJobRequest();
-                                                }
-                                              })),
-                                      SizedBox(
-                                        width: 10,
-                                      ),
-                                      jobController?.jobData?.data
-                                                  ?.isCompleted ==
-                                              0
-                                          ? Expanded(
-                                              child: Bluebutton(
-                                                  title: "Reschedule Job",
-                                                  sendingData: false.obs,
-                                                  onTap: () {
-                                                    UiHelper.navigateToNextScreen(
-                                                        context,
-                                                        ReschduleJob(
-                                                            jobId: jobController
-                                                                    ?.jobData
-                                                                    ?.data
-                                                                    ?.id ??
-                                                                0));
-                                                  }))
-                                          : Container(),
-
-                                      Expanded(child: jobController?.jobData?.data?.isCompleted == 2
-                                          ? Container(child: Bluebutton(title: "Add IPM Images", sendingData: false.obs, onTap: (){
-                                            UiHelper.navigateToNextScreen(context, AddImagesForIPMReportScreen(serviceID: widget.id, clinetID: jobController.jobData?.data?.userId ?? 0,));
-                                      },))
-                                          : Container())
+                                else // Optional: if you want a placeholder when false
+                                  Container(),
 
 
-                                    ],
-                                  ),
+                              ],
+                            ) : SizedBox.shrink(),
 
                           ],
                         ),
@@ -278,98 +305,66 @@ class _JobDetailsState extends State<JobDetails> {
                     width: 10,
                   ),
                   AppTextLabels.boldTextShort(
-                      label: "Team Members", fontSize: 18, color: Colors.white)
+                      label: "Team Captains", fontSize: 18, color: Colors.white)
                 ],
               ),
             ),
-            Container(
-              height: 70,
-              decoration: BoxDecoration(color: Color(0xffFCFCFD)),
-              child: Row(
-                children: [
-                  SizedBox(
-                    width: 10,
-                  ),
-                  Container(
-                      width: 40,
-                      child: AppTextLabels.boldTextShort(
-                          label: "Sr", fontSize: 15)),
-                  SizedBox(
-                    width: 10,
-                  ),
-                  Expanded(
-                      child: AppTextLabels.boldTextShort(
-                          label: "Name", fontSize: 15)),
-                  Expanded(
-                      child: AppTextLabels.boldTextShort(
-                          label: "Contact", fontSize: 15)),
-                  UiHelper.dashedBoarder()
-                ],
-              ),
-            ),
+            // Container(
+            //   height: 70,
+            //   decoration: BoxDecoration(color: Color(0xffFCFCFD)),
+            //   child: Row(
+            //     children: [
+            //       SizedBox(
+            //         width: 10,
+            //       ),
+            //       Container(
+            //           width: 40,
+            //           child: AppTextLabels.boldTextShort(
+            //               label: "Sr", fontSize: 15)),
+            //       SizedBox(
+            //         width: 10,
+            //       ),
+            //       Expanded(
+            //           child: AppTextLabels.boldTextShort(
+            //               label: "Name", fontSize: 15)),
+            //       Expanded(
+            //           child: AppTextLabels.boldTextShort(
+            //               label: "Contact", fontSize: 15)),
+            //       UiHelper.dashedBoarder()
+            //     ],
+            //   ),
+            // ),
             ListView.builder(
-                primary: false,
-                shrinkWrap: true,
-                itemCount: jobController?.members.length ?? 0,
-                physics: NeverScrollableScrollPhysics(),
-                itemBuilder: (context, index) {
-                  return Column(
-                    children: [
-                      Container(
-                        height: 60,
-                        child: Center(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Row(
-                                children: [
-                                  SizedBox(
-                                    width: 10,
-                                  ),
-                                  Container(
-                                      width: 40,
-                                      child: AppTextLabels.regularShortText(
-                                          label: "${index + 1}",
-                                          fontSize: 15,
-                                          color: AppColors.appBlack)),
-                                  SizedBox(
-                                    width: 10,
-                                  ),
-                                  Expanded(
-                                      child: AppTextLabels.regularShortText(
-                                          label: jobController
-                                                  ?.members?[index]?.name ??
-                                              "",
-                                          fontSize: 15,
-                                          color: AppColors.appBlack)),
-                                  Expanded(
-                                      child: GestureDetector(
-                                          onTap: () {
-                                            makeCall(jobController
-                                                    ?.members?[index]
-                                                    ?.employee
-                                                    ?.phoneNumber ??
-                                                "");
-                                          },
-                                          child: AppTextLabels.regularShortText(
-                                              label: jobController
-                                                      ?.members?[index]
-                                                      ?.employee
-                                                      ?.phoneNumber ??
-                                                  "",
-                                              fontSize: 15,
-                                              color: AppColors.appBlack))),
-                                ],
-                              ),
-                            ],
+              primary: false,
+              shrinkWrap: true,
+              itemCount: jobController.jobCaptains.length ?? 0,
+              physics: NeverScrollableScrollPhysics(),
+              itemBuilder: (context, captainIndex) {
+                final captain = jobController.jobCaptains[captainIndex];
+                return ExpansionTile(
+                  title: Text("Captain ${captainIndex + 1}: ${captain.captainName}"),
+                  children: [
+                    ListView.builder(
+                      shrinkWrap: true,
+                      physics: NeverScrollableScrollPhysics(),
+                      itemCount: captain.teamMembers.length,
+                      itemBuilder: (context, memberIndex) {
+                        final member = captain.teamMembers[memberIndex];
+                        return ListTile(
+                          leading: Text("${memberIndex + 1}"),
+                          title: Text(member.name),
+                          subtitle: Text(member.phone),
+                          trailing: IconButton(
+                            icon: Icon(Icons.call),
+                            onPressed: () => makeCall(member.phone),
                           ),
-                        ),
-                      ),
-                      UiHelper.dashedBoarder()
-                    ],
-                  );
-                }),
+                        );
+                      },
+                    ),
+                  ],
+                );
+              },
+            ),
             SizedBox(height: 20,),
             AppTextLabels.boldText(label: "Job Instructions", fontSize: 15, color: AppColors.appBlack),
             SizedBox(height: 10,),
@@ -478,16 +473,15 @@ class _JobDetailsState extends State<JobDetails> {
                                   SizedBox(
                                     width: 10,
                                   ),
-                                  Expanded(
-                                      child: AppTextLabels.regularShortText(
-                                          label: jobController?.jobData?.data?.rescheduleDates?[index].jobDate ?? "",
-                                          fontSize: 15,
-                                          color: AppColors.appBlack)),
-                                  Expanded(
-                                      child: AppTextLabels.regularShortText(
-                                          label: jobController?.jobData?.data?.rescheduleDates?[index].reason ?? "",
-                                          fontSize: 15,
-                                          color: AppColors.appBlack)),
+                                  AppTextLabels.regularShortText(
+                                      label: UiHelper.formatDate( jobController?.jobData?.data?.rescheduleDates?[index].jobDate ?? ""),
+                                      fontSize: 15,
+                                      color: AppColors.appBlack),
+                                  SizedBox(width: 10,),
+                                  AppTextLabels.regularShortText(
+                                      label: jobController?.jobData?.data?.rescheduleDates?[index].reason ?? "",
+                                      fontSize: 15,
+                                      color: AppColors.appBlack),
                                 ],
                               ),
                             ],

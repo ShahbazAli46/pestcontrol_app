@@ -1,4 +1,5 @@
 import 'package:accurate/jsonModels/JobDetailsResponse.dart';
+import 'package:accurate/main.dart';
 import 'package:accurate/utils/APICall.dart';
 import 'package:accurate/utils/Constants.dart';
 import 'package:get/get.dart';
@@ -10,8 +11,13 @@ class JobDetailsController extends GetxController {
     JobDetailsController({required this.jobId});
     JobDetailsResponse? jobData;
     bool fetched = false;
-    List<TeamMembers> members = [];
+    Captain? loggedInCaptain;
+
+
     final apiCall = APICall();
+
+
+    List<CaptainsList>jobCaptains = [];
 
     void fetchJobDetails() async {
       jobData = null;
@@ -21,9 +27,22 @@ class JobDetailsController extends GetxController {
         String url = Urls.singleJobDetails + "${jobId}";
         var response = await apiCall.getDataWithToken(url);
         jobData = JobDetailsResponse.fromJson(response);
-        members.clear();
-        members.addIf(true, jobData!.data!.captain!);
-        members.addAllIf(true, jobData!.data!.teamMembers ?? []);
+        
+        
+        jobData?.data?.captains.forEach((item){
+          if ((item.captainId ?? 0) == userObj?.data?.id){
+            loggedInCaptain = item;
+          }
+          List<TeamMember> teamMember = [];
+          item.teamMembers.forEach((team){
+            teamMember.add(TeamMember(name: team.name ?? "", phone: team.employee?.phoneNumber ?? ""));
+          });
+          CaptainsList cap = CaptainsList(
+            captainName: item.captain?.name ?? "",
+            teamMembers: teamMember
+          );
+          jobCaptains.add(cap);
+        });
         fetched = true;
       } catch (e) {
         print('Error fetching job details: $e');
@@ -32,4 +51,26 @@ class JobDetailsController extends GetxController {
       }
     }
 
+}
+
+
+
+class CaptainsList {
+  final String captainName;
+  final List<TeamMember> teamMembers;
+
+  CaptainsList({
+    required this.captainName,
+    required this.teamMembers,
+  });
+}
+
+class TeamMember {
+  final String name;
+  final String phone;
+
+  TeamMember({
+    required this.name,
+    required this.phone,
+  });
 }

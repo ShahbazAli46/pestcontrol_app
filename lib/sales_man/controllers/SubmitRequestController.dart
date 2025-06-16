@@ -62,6 +62,7 @@ class SubmitRequestController extends GetxController {
           inspectedAreas: item.areaName,
           manifestedAreas: item.manifestedArea,
           infestationLevel: item.manifestationLevel,
+          pestFound: item.pestFound,
           reportAndFollowUpDetail: item.followUp);
       addresses.add(address);
     });

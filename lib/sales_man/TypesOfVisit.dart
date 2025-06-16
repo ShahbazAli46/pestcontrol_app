@@ -5,10 +5,11 @@ class TypesOfVisit {
   TypesOfVisit({required this.visitTitle, this.isSelect = false});
   TypesOfVisit.empty() : visitTitle = '', isSelect = false;
   static List<TypesOfVisit> visits = [
-    TypesOfVisit(visitTitle: 'Regular Treatment'),
-    TypesOfVisit(visitTitle: 'Inspection Visit'),
-    TypesOfVisit(visitTitle: 'Complaint'),
-    TypesOfVisit(visitTitle: 'One time (T)'),
+    TypesOfVisit(visitTitle: 'Regular Treatment (Contract)'),
+    TypesOfVisit(visitTitle: 'Inspection Visit (Contract)'),
+    TypesOfVisit(visitTitle: 'Complaint Visit (Contract)'),
+    TypesOfVisit(visitTitle: 'One-Off Treatment'),
+    TypesOfVisit(visitTitle: 'Complaint Visit (One-Off)'),
   ];
 
   static void selectVisit(int index) {

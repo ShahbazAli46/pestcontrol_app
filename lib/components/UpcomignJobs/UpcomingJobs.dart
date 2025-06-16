@@ -164,7 +164,7 @@ class _UpComingJobsState extends State<UpComingJobs> {
                   width: 10,
                 ),
                 AppTextLabels.underlinedText(
-                    label: job.user?.name ?? "",
+                    label: job.user?.client?.firmName ?? "",
                     color: AppColors.appBlack,
                     fontSize: 18)
               ],

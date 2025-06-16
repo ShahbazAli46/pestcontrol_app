@@ -3,7 +3,7 @@ class Urls {
   static String login = "${Urls.baseURL}login";
   static String upcomingJobs = "${Urls.baseURL}employee/";
   static String reschduleJob = "${Urls.baseURL}job/reschedule";
-  static String startJob = "${Urls.baseURL}job/start/";
+  static String startJob = "${Urls.baseURL}job/captain/start/";
   static String singleJobDetails = "${Urls.baseURL}job/";
   static String services = "${Urls.baseURL}service";
   static String treatmentMethod = "${Urls.baseURL}treatment_method";

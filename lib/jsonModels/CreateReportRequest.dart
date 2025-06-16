@@ -58,26 +58,31 @@ class Addresses {
   String? manifestedAreas;
   String? reportAndFollowUpDetail;
   String? infestationLevel;
+  String? pestFound; // New field added
 
-  Addresses(
-      {this.inspectedAreas,
-        this.manifestedAreas,
-        this.reportAndFollowUpDetail,
-        this.infestationLevel});
+  Addresses({
+    this.inspectedAreas,
+    this.manifestedAreas,
+    this.reportAndFollowUpDetail,
+    this.infestationLevel,
+    this.pestFound, // Add to constructor
+  });
 
   Addresses.fromJson(Map<String, dynamic> json) {
     inspectedAreas = json['inspected_areas'];
     manifestedAreas = json['manifested_areas'];
     reportAndFollowUpDetail = json['report_and_follow_up_detail'];
     infestationLevel = json['infestation_level'];
+    pestFound = json['pest_found']; // Add fromJson
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['inspected_areas'] = this.inspectedAreas;
-    data['manifested_areas'] = this.manifestedAreas;
-    data['report_and_follow_up_detail'] = this.reportAndFollowUpDetail;
-    data['infestation_level'] = this.infestationLevel;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['inspected_areas'] = inspectedAreas;
+    data['manifested_areas'] = manifestedAreas;
+    data['report_and_follow_up_detail'] = reportAndFollowUpDetail;
+    data['infestation_level'] = infestationLevel;
+    data['pest_found'] = pestFound; // Add toJson
     return data;
   }
 }

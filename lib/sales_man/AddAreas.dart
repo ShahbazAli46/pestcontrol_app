@@ -181,7 +181,7 @@ class _AddAreasState extends State<AddAreas> {
                 ),
                 AppTextLabels.boldTextShort(label: "Add Area", fontSize: 18),
                 AppInput(
-                    title: "Inspected Area",
+                    title: "Treatment Area",
                     controller: inspectedAreasController.areaName),
                 AppInput(
                     title: "Pest Found",
@@ -191,7 +191,7 @@ class _AddAreasState extends State<AddAreas> {
                     options: ["High", "Medium", "Low"],
                     onChanged: levelDropDownChanged),
                 AppInput(
-                    title: "Main Infested areas",
+                    title: "Main infected area",
                     controller: inspectedAreasController.manifestiedArea),
                 AppInput(
                     title: "Report and Follow Up details",

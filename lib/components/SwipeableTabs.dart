@@ -36,7 +36,7 @@ class _CustomTabsState extends State<CustomTabs> with SingleTickerProviderStateM
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: MediaQuery.of(context).size.height-80,
+      height: MediaQuery.of(context).size.height-110,
       child: Column(
         children: [
           Container(
