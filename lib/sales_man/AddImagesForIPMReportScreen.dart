@@ -9,6 +9,7 @@ import 'package:accurate/components/generic/ImageUploadWidget.dart';
 import 'package:accurate/components/generic/UIHelper.dart';
 import 'package:accurate/components/generic/navWithBack.dart';
 import 'package:accurate/jsonModels/IpmRequest.dart';
+import 'package:accurate/sales_man/AddAreas.dart';
 import 'package:accurate/sales_man/CreateServiceReport.dart';
 import 'package:accurate/utils/APICall.dart';
 import 'package:accurate/utils/AlertService.dart';
@@ -22,8 +23,9 @@ import '../utils/Constants.dart';
 class AddImagesForIPMReportScreen extends StatefulWidget {
   int serviceID;
   int clinetID;
+  int captainJobId;
 
-  AddImagesForIPMReportScreen({required this.serviceID, required this.clinetID});
+  AddImagesForIPMReportScreen({required this.serviceID, required this.clinetID, required this.captainJobId});
 
   @override
   State<AddImagesForIPMReportScreen> createState() => _AddImagesForIPMReportScreenState();
@@ -48,7 +50,7 @@ class _AddImagesForIPMReportScreenState extends State<AddImagesForIPMReportScree
         MultiImagePicker(onImagesSelected: _handleImagesSelected),
         Padding(
           padding: const EdgeInsets.all(8.0),
-          child: GreenButton(title: "Submit Images And complete Service", sendingData: sendingData, onTap:(){
+          child: GreenButton(title: "Submit Images", sendingData: sendingData, onTap:(){
                 submitImage();
           }),
         )
@@ -94,21 +96,28 @@ class _AddImagesForIPMReportScreenState extends State<AddImagesForIPMReportScree
 
 
   void completeJobRequest() async {
-    final url = Urls.completeJob + "${widget.serviceID}";
-    var response = await apiCall.getDataWithToken(url);
-    GeneralErrorResponse errorResponse =
-    GeneralErrorResponse.fromJson(response);
-    AlertService.showAlertWithAction(
-        "Alert", errorResponse.message ?? "Please try later", onOkPressed: () {
-      Future.delayed(Duration(milliseconds: 100), () {
-        UiHelper.navigateToNextScreen(
-            context,
-            CreateServiceReport(
-              jobId: widget.serviceID ?? 0,
-              fromJob: true,
-            ));
-      });
-    });
+    UiHelper.navigateToNextScreen(
+        context,
+        AddAreas(
+          jobId: widget.serviceID ?? 0,
+          fromJob: true,
+          captainJobId: widget.captainJobId,
+        ));
+    // final url = Urls.completeJob + "${widget.serviceID}";
+    // var response = await apiCall.getDataWithToken(url);
+    // GeneralErrorResponse errorResponse =
+    // GeneralErrorResponse.fromJson(response);
+    // AlertService.showAlertWithAction(
+    //     "Alert", errorResponse.message ?? "Please try later", onOkPressed: () {
+    //   Future.delayed(Duration(milliseconds: 100), () {
+    //     UiHelper.navigateToNextScreen(
+    //         context,
+    //         CreateServiceReport(
+    //           jobId: widget.serviceID ?? 0,
+    //           fromJob: true,
+    //         ));
+    //   });
+    // });
 
   }
 }

@@ -27,7 +27,7 @@ import 'controllers/TreamentMethodController.dart';
 import 'controllers/VisitController.dart';
 
 class RecomendationsScreen extends StatefulWidget {
-  const RecomendationsScreen({Key? key}) : super(key: key);
+
 
   @override
   State<RecomendationsScreen> createState() => _RecomendationsScreenState();
@@ -35,13 +35,21 @@ class RecomendationsScreen extends StatefulWidget {
 
 class _RecomendationsScreenState extends State<RecomendationsScreen> {
   TextEditingController textEditingController = TextEditingController();
-  SubmitRequestController req  = Get.put(SubmitRequestController());
+  late SubmitRequestController req;
   var sendingData = false.obs;
 
   var isSignatureScreen = false;
 
   final signatureKey = GlobalKey<SignaturePadState>();
 
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+    req  = Get.put(SubmitRequestController());
+    req.context = context;
+  }
 
 
   @override
@@ -105,22 +113,8 @@ class _RecomendationsScreenState extends State<RecomendationsScreen> {
       AlertService.showAlert("Alert", "Please enter Recomedation text");
     }
     else {
-      if (isSignatureScreen){
-        final bytes = await signatureKey.currentState?.captureSignature();
-        if (bytes == null){
-            AlertService.showAlert("Alert", "Please get client Signature");
-        }
-        else{
-          final file = await uint8ListToFile(bytes);
-          req.sendData(textEditingController.text, file);
-        }
-      }
-      else{
-        isSignatureScreen = !isSignatureScreen;
-        setState(() {
 
-        });
-      }
+      req.sendData(textEditingController.text);
 
     }
   }

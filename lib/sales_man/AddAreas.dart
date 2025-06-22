@@ -1,3 +1,4 @@
+import 'package:accurate/components/UpcomignJobs/Controllers/JobDetailsController.dart';
 import 'package:accurate/components/generic/AppDropdown.dart';
 import 'package:accurate/components/generic/AppInput.dart';
 import 'package:accurate/components/generic/BlueButton.dart';
@@ -6,6 +7,8 @@ import 'package:accurate/components/generic/UIHelper.dart';
 import 'package:accurate/components/generic/navWithBack.dart';
 import 'package:accurate/sales_man/PestFoundScreen.dart';
 import 'package:accurate/sales_man/controllers/AddInspectedAreasController.dart';
+import 'package:accurate/sales_man/controllers/JobReportController.dart';
+import 'package:accurate/sales_man/controllers/VisitController.dart';
 import 'package:accurate/utils/Constants.dart';
 import 'package:accurate/utils/TextStyle.dart';
 import 'package:accurate/utils/appColors.dart';
@@ -13,14 +16,39 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class AddAreas extends StatefulWidget {
-  const AddAreas({Key? key}) : super(key: key);
-
+  int captainJobId;
+  bool fromJob;
+  int jobId;
+  AddAreas({required this.captainJobId, required this.fromJob, required this.jobId});
   @override
   State<AddAreas> createState() => _AddAreasState();
 }
 
 class _AddAreasState extends State<AddAreas> {
   late AddInspectedAreasController inspectedAreasController;
+
+  late VisitController visitController;
+
+  late JobReportController serviceReportController;
+
+  JobDetailsController? jobController;
+
+  @override
+  void initState() {
+    super.initState();
+
+    visitController =
+        Get.put(VisitController(), tag: Constants.visitsTypeController);
+
+
+    if (widget.fromJob){
+      jobController = Get.put(JobDetailsController(jobId: widget.jobId), tag: Constants.jobController);
+      jobController?.fetchJobDetails();
+    }
+  }
+
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +62,7 @@ class _AddAreasState extends State<AddAreas> {
             NavWithBack(),
             SizedBox(height: 10),
             AppTextLabels.boldTextShort(
-                label: "Create Service Report", fontSize: 20),
+                label: "Add Areas", fontSize: 20),
             SizedBox(height: 20),
             Expanded(
               child: Padding(
@@ -79,7 +107,7 @@ class _AddAreasState extends State<AddAreas> {
                         title: "Next",
                         sendingData: false.obs,
                         onTap: () {
-                          UiHelper.navigateToNextScreenGetX(PestFoundScreen());
+                          UiHelper.navigateToNextScreenGetX(PestFoundScreen(captainJobId: widget.captainJobId,));
                         }),
                     SizedBox(height: 20),
                   ],

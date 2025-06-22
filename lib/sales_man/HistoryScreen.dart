@@ -201,10 +201,10 @@ class _HistoryScreenState extends State<HistoryScreen> {
                 onTap: () {
                   if (job?.report == null){
                     UiHelper.navigateToNextScreenGetX(
-                        CreateServiceReport(jobId: job?.id ?? 0, fromJob: false,));
+                        CreateServiceReport(jobId: job?.id ?? 0, fromJob: false, jobCaptainId: 29,));
                   }
                   else{
-                    _launchURL(job?.id ?? 0);
+                    _launchURL(job?.service_report_pdf ?? 0);
                   }
                 }),
             SizedBox(
@@ -216,7 +216,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
 
 
   Future<void> _launchURL(id) async {
-    final Uri url = Uri.parse('https://www.apcs.ae/serviceRpoertPdf/?id=$id');
+    final Uri url = Uri.parse(id);
 
     if (!await launchUrl(url)) {
       throw Exception('Could not launch $url');

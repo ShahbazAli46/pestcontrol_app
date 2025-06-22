@@ -5,6 +5,7 @@ import 'package:accurate/components/MapLauncher.dart';
 import 'package:accurate/components/UpcomignJobs/Controllers/JobDetailsController.dart';
 import 'package:accurate/components/UpcomignJobs/UpcomingJobsController.dart';
 import 'package:accurate/components/generic/BlueButton.dart';
+import 'package:accurate/components/generic/CustomListView.dart';
 import 'package:accurate/components/generic/DashedSeparatorPainter.dart';
 import 'package:accurate/components/generic/GreenButton.dart';
 import 'package:accurate/components/generic/UIHelper.dart';
@@ -12,7 +13,9 @@ import 'package:accurate/components/generic/navWithBack.dart';
 import 'package:accurate/jsonModels/GeneralErrorResponse.dart';
 import 'package:accurate/jsonModels/UserDetails.dart';
 import 'package:accurate/main.dart';
+import 'package:accurate/sales_man/AddAreas.dart';
 import 'package:accurate/sales_man/AddImagesForIPMReportScreen.dart';
+import 'package:accurate/sales_man/CompleteJobScreen.dart';
 import 'package:accurate/sales_man/CreateServiceReport.dart';
 import 'package:accurate/sales_man/ReschduleJob.dart';
 import 'package:accurate/utils/APICall.dart';
@@ -175,9 +178,39 @@ class _JobDetailsState extends State<JobDetails> {
                             SizedBox(
                               height: 20,
                             ),
+
+                            AppTextLabels.boldTextShort(label: "Job Completion Status", fontSize: 15),
+                            Row(
+                              children: [
+                                Container(
+                                    height: 50,
+                                    width: 50,
+                                    child: Center(child: AppTextLabels.regularShortText(label: "Sr", color: AppColors.appBlack))),
+                                Expanded(
+                                  child: Container(
+                                      height: 50,
+
+                                      child: Center(child: AppTextLabels.regularShortText(label: "Captain Name", color: AppColors.appBlack))),
+                                ),
+                                Expanded(
+                                  child: Container(
+                                      height: 50,
+
+                                      child: Center(child: AppTextLabels.regularShortText(label: "Submitted Report", color: AppColors.appBlack))),
+                                ),
+
+
+                              ],
+                            ),
+                            CustomListView(
+                              shrinkWrap: true,
+                                isPrimary: false,
+                                physics: NeverScrollableScrollPhysics(),
+                                items: jobController.allCaptain ?? [], itemBuilder: (context, item, index)=>_captainItem(index)),
+
                             jobController.loggedInCaptain?.captainId == userObj?.data?.id ? Row(
                               children: [
-                                Expanded(
+                                jobController.allCompleted == 0 && jobController.loggedInCaptain?.isCompleted == 0 ?  Expanded(
                                     child: Bluebutton(
                                         title: jobController.loggedInCaptain?.isCompleted == 0
                                             ? "Start Job"
@@ -186,30 +219,32 @@ class _JobDetailsState extends State<JobDetails> {
                                             ? "Create Report"
                                             : jobController.loggedInCaptain?.isCompleted ==
                                             2
-                                            ? "Complete Job"
+                                            ? "Submit Report"
                                             : "${jobController.loggedInCaptain?.isCompleted}",
                                         sendingData:
                                         makingRequestForStartJob,
                                         onTap: () {
+
                                           if (jobController.loggedInCaptain?.isCompleted ==
                                               0) {
                                             requestToStartJob();
                                           } else if (jobController.loggedInCaptain?.isCompleted ==
                                               1) {
-                                            UiHelper
-                                                .navigateToNextScreenGetX(
-                                                CreateServiceReport(
+
+                                            UiHelper.navigateToNextScreen( context,
+                                                AddAreas(
                                                   jobId: jobController
                                                       ?.jobData
                                                       ?.data
                                                       ?.id ??
                                                       0,
                                                   fromJob: true,
+                                                  captainJobId: jobController.loggedInCaptain?.id ?? 0,
                                                 ));
                                           } else {
                                             completeJobRequest();
                                           }
-                                        })),
+                                        })) : SizedBox.shrink(),
                                 SizedBox(
                                   width: 10,
                                 ),
@@ -232,29 +267,33 @@ class _JobDetailsState extends State<JobDetails> {
                                         }))
                                     : Container(),
 
-                                if (jobController.loggedInCaptain?.isCompleted == 2)
-                                  Expanded(
-                                    child: Bluebutton(
-                                      title: "Add IPM Images",
-                                      sendingData: false.obs,
-                                      onTap: () {
-                                        UiHelper.navigateToNextScreen(
-                                          context,
-                                          AddImagesForIPMReportScreen(
-                                            serviceID: widget.id,
-                                            clinetID: jobController.jobData?.data?.userId ?? 0,
-                                          ),
-                                        );
-                                      },
-                                    ),
-                                  )
-                                else // Optional: if you want a placeholder when false
-                                  Container(),
+                                    if (jobController.loggedInCaptain?.isCompleted == 2)
+                                      Expanded(
+                                        child: Bluebutton(
+                                          title: "Add IPM Images",
+                                          sendingData: false.obs,
+                                          onTap: () {
+                                            UiHelper.navigateToNextScreen(
+                                              context,
+                                              AddImagesForIPMReportScreen(
+                                                serviceID: widget.id,
+                                                clinetID: jobController.jobData?.data?.userId ?? 0,
+                                                captainJobId: jobController.loggedInCaptain?.id ?? 0,
+                                              ),
+                                            );
+                                          },
+                                        ),
+                                      )
+                                    else // Optional: if you want a placeholder when false
+                                      Container(),
 
 
                               ],
                             ) : SizedBox.shrink(),
-
+                            SizedBox(height: 20,),
+                            jobController.allCompleted == 1 ? Bluebutton(title: "Complete Job", sendingData: false.obs, onTap: (){
+                              UiHelper.navigateToNextScreen(context, CompleteJobScreen(jobId: widget.id,));
+                            }): SizedBox.shrink(),
                           ],
                         ),
                       ),
@@ -309,31 +348,7 @@ class _JobDetailsState extends State<JobDetails> {
                 ],
               ),
             ),
-            // Container(
-            //   height: 70,
-            //   decoration: BoxDecoration(color: Color(0xffFCFCFD)),
-            //   child: Row(
-            //     children: [
-            //       SizedBox(
-            //         width: 10,
-            //       ),
-            //       Container(
-            //           width: 40,
-            //           child: AppTextLabels.boldTextShort(
-            //               label: "Sr", fontSize: 15)),
-            //       SizedBox(
-            //         width: 10,
-            //       ),
-            //       Expanded(
-            //           child: AppTextLabels.boldTextShort(
-            //               label: "Name", fontSize: 15)),
-            //       Expanded(
-            //           child: AppTextLabels.boldTextShort(
-            //               label: "Contact", fontSize: 15)),
-            //       UiHelper.dashedBoarder()
-            //     ],
-            //   ),
-            // ),
+
             ListView.builder(
               primary: false,
               shrinkWrap: true,
@@ -368,7 +383,7 @@ class _JobDetailsState extends State<JobDetails> {
             SizedBox(height: 20,),
             AppTextLabels.boldText(label: "Job Instructions", fontSize: 15, color: AppColors.appBlack),
             SizedBox(height: 10,),
-            AppTextLabels.regularShortText(label: jobController.jobData?.data?.jobInstructions ?? "", color: AppColors.appBlack),
+            AppTextLabels.regularShortText(label: jobController.loggedInCaptain?.jobInstruction  ?? "", color: AppColors.appBlack),
             jobController.jobData?.data?.user?.clientInspectionReports != null &&
                 (jobController.jobData?.data?.user?.clientInspectionReports ?? []).isNotEmpty
                 ? Column(
@@ -586,7 +601,7 @@ class _JobDetailsState extends State<JobDetails> {
 
   void requestToStartJob() async {
     makingRequestForStartJob.value = true;
-    final url = Urls.startJob + "${jobController?.jobData?.data?.id}";
+    final url = Urls.startJob + "${jobController.loggedInCaptain?.id}";
     var response = await apiCall.getDataWithToken(url);
     GeneralErrorResponse errorResponse =
         GeneralErrorResponse.fromJson(response);
@@ -598,22 +613,48 @@ class _JobDetailsState extends State<JobDetails> {
   }
 
   void completeJobRequest() async {
-    makingRequestForStartJob.value = true;
-    final url = Urls.completeJob + "${widget.id}";
-    var response = await apiCall.getDataWithToken(url);
-    GeneralErrorResponse errorResponse =
-        GeneralErrorResponse.fromJson(response);
-    AlertService.showAlertWithAction(
-        "Alert", errorResponse.message ?? "Please try later", onOkPressed: () {
-      Future.delayed(Duration(milliseconds: 100), () {
-        UiHelper.navigateToNextScreen(
-            context,
-            CreateServiceReport(
-              jobId: widget.id ?? 0,
-              fromJob: true,
-            ));
-      });
-    });
-    makingRequestForStartJob.value = false;
+    UiHelper.navigateToNextScreen(
+        context,
+        AddAreas(
+          jobId: widget.id ?? 0,
+          fromJob: true,
+          captainJobId: jobController.loggedInCaptain?.id ?? 0,
+        ));
+    // makingRequestForStartJob.value = true;
+    // final url = Urls.completeJob + "${widget.id}";
+    // var response = await apiCall.getDataWithToken(url);
+    // GeneralErrorResponse errorResponse =
+    //     GeneralErrorResponse.fromJson(response);
+    // AlertService.showAlertWithAction(
+    //     "Alert", errorResponse.message ?? "Please try later", onOkPressed: () {
+    //   Future.delayed(Duration(milliseconds: 100), () {
+    //
+    //   });
+    // });
+    // makingRequestForStartJob.value = false;
+  }
+
+  _captainItem(index){
+    return Row(
+      children: [
+        Container(
+            height: 50,
+            width: 50,
+            child: Center(child: AppTextLabels.regularShortText(label: "${index+1}", color: AppColors.appBlack))),
+        Expanded(
+          child: Container(
+              height: 50,
+
+              child: Center(child: AppTextLabels.regularShortText(label: "${jobController.allCaptain[index].captain?.name}", color: AppColors.appBlack))),
+        ),
+        Expanded(
+          child: Container(
+              height: 50,
+              child: Center(child: AppTextLabels.regularShortText(label: jobController.allCaptain[index].isCompleted == 1 ? "Submitted":"Not Yet", color: AppColors.appBlack))),
+        ),
+
+
+      ],
+    );
   }
 }

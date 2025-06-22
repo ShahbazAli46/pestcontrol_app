@@ -3,6 +3,7 @@ import 'package:accurate/components/generic/AppDropdown.dart';
 import 'package:accurate/components/generic/AppMultilineInput.dart';
 import 'package:accurate/components/generic/AppTimePicker.dart';
 import 'package:accurate/components/generic/GreenButton.dart';
+import 'package:accurate/components/generic/UIHelper.dart';
 import 'package:accurate/components/generic/navWithBack.dart';
 import 'package:accurate/jsonModels/GeneralErrorResponse.dart';
 import 'package:accurate/superadmin/Controllers/AllUpcomingJobsController.dart';
@@ -27,6 +28,9 @@ class _AssignTeamScreenState extends State<AssignTeamScreen> {
   List<String> teamIds = [];
 
   TextEditingController textEditingController = TextEditingController();
+
+
+
 
   var sendingData = false.obs;
 
@@ -53,24 +57,13 @@ class _AssignTeamScreenState extends State<AssignTeamScreen> {
                 SizedBox(
                   height: 20,
                 ),
-                AppDropdown(
-                    title: "Please Select Captain",
-                    options: controller.captains,
-                    onChanged: onChanged),
-                Container(
-                  margin: EdgeInsets.only(left: 10, right: 10),
-                  child: MultiSelectCheckbox(
-                      items: controller.teamMembers,
-                      onSelectionChanged: onSelectionChanged),
-                ),
-                SizedBox(
-                  height: 20,
-                ),
                             AppTimePicker(title: "Job Time", onTimeSelected: onTimeSelected),
+                            ..._buildAssignmentSections(),
+                            _buildAddButton(),
                             SizedBox(
                               height: 20,
                             ),
-                AppMultilineInput(title: "Jb Instructions", controller: textEditingController),
+
                 Container(
                   margin: EdgeInsets.all(10),
                   child: GreenButton(
@@ -127,6 +120,92 @@ class _AssignTeamScreenState extends State<AssignTeamScreen> {
 
     }
   }
+
+  List<Widget> _buildAssignmentSections() {
+    return controller.teamAssignments.asMap().entries.map((entry) {
+      final listIndex = entry.key;
+      final index = entry.key;
+      final assignment = entry.value;
+      return Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          children: [
+            // Section Title
+            if (index > 0) Column(
+              children: [
+                SizedBox(height: 10),
+                UiHelper.dashedBoarder(),
+                SizedBox(height: 10),
+              ],
+            ),
+            Row(
+              children: [
+                AppTextLabels.boldTextShort(label: "Team ${index + 1}", fontSize: 15),
+                Spacer(),
+                if (controller.teamAssignments.length > 1) // Show delete only if more than one
+                  IconButton(
+                    icon: Icon(Icons.delete, color: Colors.red),
+                    onPressed: () => _removeAssignment(index),
+                  ),
+              ],
+            ),
+            SizedBox(height: 10),
+
+            // The repeatable section
+            AppDropdown(
+              title: "Please Select Captain",
+              options: controller.captains,
+              selectedOption: controller.captains.contains(controller.teamAssignments[listIndex].captainName)
+                  ? controller.teamAssignments[listIndex].captainName
+                  : null,
+              onChanged: (value, index) => controller.getCaptainIdFromList(index ?? 0, listIndex),
+            ),
+            Container(
+              margin: EdgeInsets.symmetric(horizontal: 10),
+              child: Obx(() {
+                final availableMembers = controller.getAvailableMembers(listIndex).obs; // Convert to RxList
+                return MultiSelectCheckbox(
+                  items: availableMembers,
+
+                  onSelectionChanged: (selected) {
+                    final selectedIds = selected.map((item) => item).toList();
+                    controller.setTeamMembersFromList(selectedIds, listIndex);
+                  },
+                );
+              }),
+            ),
+            SizedBox(height: 20),
+            AppMultilineInput(
+              title: "Instructions",
+              controller: controller.teamAssignments[listIndex].instructionController,
+            ),
+            SizedBox(height: 20),
+          ],
+        ),
+      );
+    }).toList();
+  }
+
+  Widget _buildAddButton() {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 10),
+      child: OutlinedButton.icon(
+        icon: Icon(Icons.add),
+        label: Text("Add Another Team"),
+        onPressed: _addAssignment,
+      ),
+    );
+  }
+
+  void _addAssignment() => setState(() => controller.teamAssignments.add(TeamIds()));
+
+  void _removeAssignment(int index) {
+    if (controller.teamAssignments.length > 1) {
+      setState(() => controller.teamAssignments.removeAt(index));
+    }
+  }
+
+
 }
 
 
@@ -157,4 +236,13 @@ class AssignJobRequest {
     data['job_instructions'] = this.jobInstructions ?? "";
     return data;
   }
+}
+
+class TeamAssignment {
+  String? captainId;
+  List<String> teamIds = [];
+  TextEditingController instructionsController = TextEditingController();
+  TimeOfDay? jobTime;
+
+  TeamAssignment();
 }

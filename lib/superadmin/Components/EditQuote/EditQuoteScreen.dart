@@ -1,3 +1,4 @@
+import 'package:accurate/components/generic/AppDropdown.dart';
 import 'package:accurate/components/generic/AppInput.dart';
 import 'package:accurate/components/generic/AppMultilineInput.dart';
 import 'package:accurate/components/generic/GreenButton.dart';
@@ -24,6 +25,7 @@ class _EditQuoteScreenState extends State<EditQuoteScreen> {
 
   final GlobalKey<SearchableDropdownWithIDState> addressKey = GlobalKey<SearchableDropdownWithIDState>();
   final GlobalKey<SearchableDropdownWithIDState> clinetKey = GlobalKey<SearchableDropdownWithIDState>();
+
 
   @override
   void initState() {
@@ -59,7 +61,7 @@ class _EditQuoteScreenState extends State<EditQuoteScreen> {
           children: [
             NavWithBack(),
             SizedBox(height: 20,),
-            AppTextLabels.boldTextShort(label: "Create Quote", fontSize: 20),
+            AppTextLabels.boldTextShort(label: "Edit Quote", fontSize: 20),
             SizedBox(height: 20,),
             Obx(()=>controller.fetchingData.value ? UiHelper.loader() : Column(
               children: [
@@ -75,6 +77,9 @@ class _EditQuoteScreenState extends State<EditQuoteScreen> {
                     AppInput(title: "Quote Subject", controller: controller.subject),
                     AppInput(title: "Quote Tag", controller: controller.tag),
                     AppInput(title: "Duration in Month", controller: controller.duration,inputType: TextInputType.number),
+                    AppDropdown(title: "Select Branch", options: controller.branchNames, selectedOption: controller.selectedBranchName, onChanged: (value, index){
+                      controller.setSelectedBranchID(index ?? 0);
+                    }),
                     AppMultilineInput(title: "Description", controller: controller.desc),
                     SizedBox(height: 10,),
                     Padding(

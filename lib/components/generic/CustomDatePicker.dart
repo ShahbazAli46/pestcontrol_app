@@ -1,14 +1,21 @@
 import 'package:accurate/utils/appColors.dart';
 import 'package:flutter/material.dart';
 
+import 'package:accurate/utils/appColors.dart';
+import 'package:flutter/material.dart';
+
 class CustomDatePicker extends StatefulWidget {
   final int maxSelections;
   final Function(List<int>) onDatesSelected;
+  final DateTime? initialDate;
+  final Function(int)? onMonthChanged; // Add this callback
 
   const CustomDatePicker({
     Key? key,
     this.maxSelections = 2,
     required this.onDatesSelected,
+    this.initialDate,
+    this.onMonthChanged, // Add this parameter
   }) : super(key: key);
 
   @override
@@ -17,22 +24,54 @@ class CustomDatePicker extends StatefulWidget {
 
 class _CustomDatePickerState extends State<CustomDatePicker> {
   final List<int> selectedDates = [];
+  late DateTime _currentDate;
+  late int _daysInMonth;
+  final List<String> _months = [
+    'January', 'February', 'March', 'April',
+    'May', 'June', 'July', 'August',
+    'September', 'October', 'November', 'December'
+  ];
+  final List<int> _years = List.generate(10, (index) => DateTime.now().year + index - 5);
 
-  // Calendar grid layout
-  final int daysInMonth = 31;
-  final int columnsPerRow = 7;
+  @override
+  void initState() {
+    super.initState();
+    _currentDate = widget.initialDate ?? DateTime.now();
+    _updateDaysInMonth();
+  }
+
+  void _updateDaysInMonth() {
+    _daysInMonth = DateTime(_currentDate.year, _currentDate.month + 1, 0).day;
+  }
 
   void _toggleDateSelection(int date) {
     setState(() {
       if (selectedDates.contains(date)) {
-        // Remove date if already selected
         selectedDates.remove(date);
       } else if (selectedDates.length < widget.maxSelections) {
-        // Add date if under max selections
         selectedDates.add(date);
-        selectedDates.sort(); // Optional: keep dates in order
+        selectedDates.sort();
       }
-      widget.onDatesSelected(List.from(selectedDates)); // Send a copy of the list
+      widget.onDatesSelected(List.from(selectedDates));
+    });
+  }
+
+  void _changeMonth(int month) {
+    setState(() {
+      _currentDate = DateTime(_currentDate.year, month, 1);
+      _updateDaysInMonth();
+      selectedDates.clear();
+      widget.onDatesSelected([]);
+    });
+    widget.onMonthChanged?.call(month);
+  }
+
+  void _changeYear(int year) {
+    setState(() {
+      _currentDate = DateTime(year, _currentDate.month, 1);
+      _updateDaysInMonth();
+      selectedDates.clear();
+      widget.onDatesSelected([]);
     });
   }
 
@@ -54,12 +93,42 @@ class _CustomDatePickerState extends State<CustomDatePicker> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
+          // Month/Year selector
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              // Month dropdown
+              DropdownButton<int>(
+                value: _currentDate.month,
+                items: List.generate(12, (index) => index + 1)
+                    .map((month) => DropdownMenuItem<int>(
+                  value: month,
+                  child: Text(_months[month - 1]),
+                ))
+                    .toList(),
+                onChanged: (month) => _changeMonth(month!),
+              ),
+
+              // Year dropdown
+              DropdownButton<int>(
+                value: _currentDate.year,
+                items: _years
+                    .map((year) => DropdownMenuItem<int>(
+                  value: year,
+                  child: Text(year.toString()),
+                ))
+                    .toList(),
+                onChanged: (year) => _changeYear(year!),
+              ),
+            ],
+          ),
+
           // Calendar header
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Select Dates (Max: ${widget.maxSelections})',
+                '${_months[_currentDate.month - 1]} ${_currentDate.year}',
                 style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
@@ -74,6 +143,7 @@ class _CustomDatePickerState extends State<CustomDatePicker> {
             ],
           ),
           const SizedBox(height: 16),
+
           // Weekday headers
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -83,17 +153,18 @@ class _CustomDatePickerState extends State<CustomDatePicker> {
             ],
           ),
           const SizedBox(height: 8),
+
           // Calendar grid
           GridView.builder(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: columnsPerRow,
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 7,
               childAspectRatio: 1,
               crossAxisSpacing: 8,
               mainAxisSpacing: 8,
             ),
-            itemCount: daysInMonth,
+            itemCount: _daysInMonth,
             itemBuilder: (context, index) {
               final date = index + 1;
               final isSelected = selectedDates.contains(date);

@@ -12,8 +12,22 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class ViewVisitsScreen extends StatefulWidget {
+
   @override
   State<ViewVisitsScreen> createState() => _ViewVisitsScreenState();
+
+
+
+  final String? agentID;      // Optional agent ID
+  final String? agentName;    // Optional agent name
+
+  const ViewVisitsScreen({
+    Key? key,
+    this.agentID,
+    this.agentName,
+  }) : super(key: key);
+
+
 }
 
 class _ViewVisitsScreenState extends State<ViewVisitsScreen> {
@@ -24,8 +38,9 @@ class _ViewVisitsScreenState extends State<ViewVisitsScreen> {
     // TODO: implement initState
     super.initState();
 
-    controller = Get.put(ViewVisitsController());
-  }
+    controller = Get.put(ViewVisitsController(
+        agentId: widget.agentID));
+    }
 
   @override
   void dispose() {
@@ -45,7 +60,12 @@ class _ViewVisitsScreenState extends State<ViewVisitsScreen> {
             SizedBox(
               height: 20,
             ),
-            AppTextLabels.boldTextShort(label: "View Visits", fontSize: 20),
+            AppTextLabels.boldTextShort(
+              label: widget.agentName?.isNotEmpty == true
+                  ? "${widget.agentName}'s Visits"  // With agent name
+                  : "View Visits",                 // Default text
+              fontSize: 20,
+            ),
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Row(

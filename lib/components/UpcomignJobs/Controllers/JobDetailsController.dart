@@ -12,6 +12,8 @@ class JobDetailsController extends GetxController {
     JobDetailsResponse? jobData;
     bool fetched = false;
     Captain? loggedInCaptain;
+    List<Captain> allCaptain  = [];
+    var allCompleted = 0;
 
 
     final apiCall = APICall();
@@ -27,9 +29,11 @@ class JobDetailsController extends GetxController {
         String url = Urls.singleJobDetails + "${jobId}";
         var response = await apiCall.getDataWithToken(url);
         jobData = JobDetailsResponse.fromJson(response);
-        
-        
+        allCaptain.clear();
+        jobCaptains.clear();
         jobData?.data?.captains.forEach((item){
+          allCaptain.add(item);
+          allCompleted = item.isCompleted ?? 0;
           if ((item.captainId ?? 0) == userObj?.data?.id){
             loggedInCaptain = item;
           }
@@ -44,13 +48,14 @@ class JobDetailsController extends GetxController {
           jobCaptains.add(cap);
         });
         fetched = true;
-      } catch (e) {
+      } catch (e, stackTrace) {
         print('Error fetching job details: $e');
+        print('Stack trace: $stackTrace');
+
       } finally {
         fetchingData.value = false;
       }
     }
-
 }
 
 

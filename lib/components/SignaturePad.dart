@@ -22,6 +22,16 @@ class SignaturePadState extends State<SignaturePad> {
   List<List<Offset>> _strokes = [];
   List<Offset>? _currentStroke;
 
+  // Public method to check if signature exists
+  bool hasSignature() {
+    return _strokes.isNotEmpty;
+  }
+
+  // Public method to get stroke count
+  int getStrokeCount() {
+    return _strokes.length;
+  }
+
   void _onPanStart(DragStartDetails details) {
     _currentStroke = [details.localPosition];
     setState(() {
@@ -37,6 +47,14 @@ class SignaturePadState extends State<SignaturePad> {
 
   void _onPanEnd(DragEndDetails details) {
     _currentStroke = null;
+    // Call the callback if provided
+    if (widget.onSignatureCapture != null && hasSignature()) {
+      captureSignature().then((bytes) {
+        if (bytes != null) {
+          widget.onSignatureCapture!(bytes);
+        }
+      });
+    }
   }
 
   Future<Uint8List?> captureSignature() async {
@@ -84,6 +102,20 @@ class SignaturePadState extends State<SignaturePad> {
     });
   }
 
+  // Method to check if signature pad is empty
+  bool isEmpty() {
+    return _strokes.isEmpty;
+  }
+
+  // Method to undo last stroke
+  void undoLastStroke() {
+    if (_strokes.isNotEmpty) {
+      setState(() {
+        _strokes.removeLast();
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -92,7 +124,7 @@ class SignaturePadState extends State<SignaturePad> {
       decoration: BoxDecoration(
         border: Border.all(color: Colors.grey),
         color: Colors.white,
-        borderRadius: BorderRadius.circular(8)
+        borderRadius: BorderRadius.circular(8),
       ),
       child: GestureDetector(
         onPanStart: _onPanStart,
@@ -104,6 +136,7 @@ class SignaturePadState extends State<SignaturePad> {
             strokeColor: widget.strokeColor,
             strokeWidth: widget.strokeWidth,
           ),
+          child: Container(), // Add this to ensure proper sizing
         ),
       ),
     );
@@ -144,5 +177,7 @@ class SignaturePainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(SignaturePainter oldDelegate) => true;
+  bool shouldRepaint(SignaturePainter oldDelegate) {
+    return true; // Always repaint for simplicity
+  }
 }

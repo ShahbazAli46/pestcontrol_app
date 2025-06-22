@@ -199,7 +199,7 @@ class _QuoteScreenState extends State<QuoteScreen> {
 
   Widget dataItem(index) {
     Future<void> handleView() async {
-      final url = 'https://www.apcs.ae/quotePdf/?id=${controller.list?[index].id ?? 0}';
+      final url = '${controller.list?[index].pdfUrl ?? 0}';
       if (await canLaunch(url)) {
         await launch(
           url,
@@ -270,12 +270,8 @@ class _QuoteScreenState extends State<QuoteScreen> {
                   } else if (value == 'edit') {
                     handleEdit(controller.list?[index].id ?? 0);
                   } else if (value == 'Approve'){
-                    if (controller.list![index].quoteServices!.length > 1){
-                      AlertService.showAlert("Alert", "One Contract can have one Service only, Please Edit Quote, remove extra service ");
-                    }
-                    else{
+
                       approveBtnPressed(controller.list?[index].id ?? 0);
-                    }
 
                   } else if (value == 'cancel'){
                     UiHelper.navigateToNextScreen(context, CancelQuoteScreen(quoteId: controller.list?[index].id ?? 0,));

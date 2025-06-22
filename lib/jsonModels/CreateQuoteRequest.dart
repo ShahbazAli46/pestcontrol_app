@@ -17,31 +17,33 @@ class CreateQuoteRequest {
   int? dis_amt;
   int? vatPer;
   int? termAndConditionId;
-  String? service_ids;
+  int? is_enable_scope_of_work;
+  List<int>? service_agreement_ids;
   String? branch_id;
   List<QuoteServices>? services;
 
-  CreateQuoteRequest(
-      {this.manageType,
-        this.userId,
-        this.quoteTitle,
-        this.clientAddressId,
-        this.subject,
-        this.tmIds,
-        this.description,
-        this.trn,
-        this.tag,
-        this.durationInMonths,
-        this.isFoodWatchAccount,
-        this.billingMethod,
-        this.dis_amt,
-        this.vatPer,
-        this.termAndConditionId,
-        this.services,
-        this.service_ids,
-        this.quote_id,
-        this.branch_id
-      });
+  CreateQuoteRequest({
+    this.manageType,
+    this.userId,
+    this.quoteTitle,
+    this.clientAddressId,
+    this.subject,
+    this.tmIds,
+    this.description,
+    this.trn,
+    this.tag,
+    this.durationInMonths,
+    this.isFoodWatchAccount,
+    this.billingMethod,
+    this.dis_amt,
+    this.vatPer,
+    this.termAndConditionId,
+    this.service_agreement_ids,
+    this.quote_id,
+    this.branch_id,
+    this.services,
+    this.is_enable_scope_of_work
+  });
 
   CreateQuoteRequest.fromJson(Map<String, dynamic> json) {
     manageType = json['manage_type'];
@@ -49,7 +51,7 @@ class CreateQuoteRequest {
     quoteTitle = json['quote_title'];
     clientAddressId = json['client_address_id'];
     subject = json['subject'];
-    tmIds = json['tm_ids'].cast<int>();
+    tmIds = json['tm_ids']?.cast<int>();
     description = json['description'];
     trn = json['trn'];
     tag = json['tag'];
@@ -59,6 +61,10 @@ class CreateQuoteRequest {
     dis_amt = json['dis_amt'];
     vatPer = json['vat_per'];
     termAndConditionId = json['term_and_condition_id'];
+    service_agreement_ids = json['service_agreement_ids']?.cast<int>();
+    quote_id = json['quote_id'];
+    branch_id = json['branch_id'];
+    is_enable_scope_of_work = json['is_enable_scope_of_work'];
     if (json['services'] != null) {
       services = <QuoteServices>[];
       json['services'].forEach((v) {
@@ -75,8 +81,6 @@ class CreateQuoteRequest {
     data['client_address_id'] = this.clientAddressId;
     data['subject'] = this.subject;
     data['tm_ids'] = this.tmIds;
-    data['branch_id'] = this.branch_id;
-    data['service_ids'] = this.service_ids;
     data['description'] = this.description;
     data['trn'] = this.trn;
     data['tag'] = this.tag;
@@ -87,12 +91,16 @@ class CreateQuoteRequest {
     data['dis_amt'] = this.dis_amt;
     data['vat_per'] = this.vatPer;
     data['term_and_condition_id'] = this.termAndConditionId;
+    data['service_agreement_ids'] = this.service_agreement_ids;
+    data['branch_id'] = this.branch_id;
+    data['is_enable_scope_of_work'] = this.is_enable_scope_of_work;
     if (this.services != null) {
       data['services'] = this.services!.map((v) => v.toJson()).toList();
     }
     return data;
   }
 }
+
 
 class Services {
   int? serviceId;

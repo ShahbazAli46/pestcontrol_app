@@ -57,7 +57,7 @@ class AllQuotesResponseData {
   List<TreatmentMethods>? treatmentMethods;
   User? user;
   List<QuoteServices>? quoteServices;
-
+  String? pdfUrl;
   AllQuotesResponseData(
       {this.id,
         this.userId,
@@ -90,6 +90,7 @@ class AllQuotesResponseData {
         this.contractCancelReason,
         this.treatmentMethods,
         this.user,
+        this.pdfUrl,
         this.quoteServices});
 
   AllQuotesResponseData.fromJson(Map<String, dynamic> json) {
@@ -122,6 +123,7 @@ class AllQuotesResponseData {
     clientId = json['client_id'];
     contractCancelledAt = json['contract_cancelled_at'];
     contractCancelReason = json['contract_cancel_reason'];
+    pdfUrl = json['pdf_url'];
     if (json['treatment_methods'] != null) {
       treatmentMethods = <TreatmentMethods>[];
       json['treatment_methods'].forEach((v) {
@@ -187,7 +189,7 @@ class AllQuotesResponseData {
 class TreatmentMethods {
   int? id;
   String? name;
-  Null? deletedAt;
+  String? deletedAt;
   String? createdAt;
   String? updatedAt;
 
@@ -217,13 +219,13 @@ class User {
   int? id;
   String? name;
   String? email;
-  Null? emailVerifiedAt;
+  String? emailVerifiedAt;
   int? roleId;
   int? isActive;
-  Null? deletedAt;
+  String? deletedAt;
   String? createdAt;
   String? updatedAt;
-  Null? firedAt;
+  String? firedAt;
   Client? client;
 
   User(
@@ -284,7 +286,7 @@ class Client {
   String? referencableType;
   int? referencableId;
   String? openingBalance;
-  Null? deletedAt;
+  String? deletedAt;
   String? createdAt;
   String? updatedAt;
   Referencable? referencable;
@@ -350,13 +352,13 @@ class Referencable {
   int? id;
   String? name;
   String? email;
-  Null? emailVerifiedAt;
+  String? emailVerifiedAt;
   int? roleId;
   int? isActive;
-  Null? deletedAt;
+  String? deletedAt;
   String? createdAt;
   String? updatedAt;
-  Null? firedAt;
+  String? firedAt;
 
   Referencable(
       {this.id,
@@ -472,7 +474,7 @@ class Service {
   String? pestName;
   String? serviceTitle;
   String? termAndConditions;
-  Null? deletedAt;
+  String? deletedAt;
   String? createdAt;
   String? updatedAt;
 

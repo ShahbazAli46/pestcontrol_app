@@ -60,6 +60,7 @@ class HistoryData {
   String? jobEndTime;
   User? user;
   Referencable? captain;
+  String? service_report_pdf;
   Report? report;
 
   HistoryData(
@@ -95,6 +96,7 @@ class HistoryData {
         this.jobEndTime,
         this.user,
         this.captain,
+        this.service_report_pdf,
         this.report});
 
   HistoryData.fromJson(Map<String, dynamic> json) {
@@ -127,6 +129,7 @@ class HistoryData {
     createdAt = json['created_at'];
     updatedAt = json['updated_at'];
     jobStartTime = json['job_start_time'];
+    service_report_pdf = json['service_report_pdf'];
     jobEndTime = json['job_end_time'];
     user = json['user'] != null ? new User.fromJson(json['user']) : null;
     captain = json['captain'] != null

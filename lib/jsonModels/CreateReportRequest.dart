@@ -6,6 +6,7 @@ class CreateReportRequest {
   String? recommendationsAndRemarks;
   List<Addresses>? addresses;
   List<UsedProducts>? usedProducts;
+  int? jobCaptainId;
 
   CreateReportRequest(
       {this.jobId,
@@ -14,7 +15,8 @@ class CreateReportRequest {
         this.pestFoundIds,
         this.recommendationsAndRemarks,
         this.addresses,
-        this.usedProducts});
+        this.usedProducts,
+        this.jobCaptainId});
 
   CreateReportRequest.fromJson(Map<String, dynamic> json) {
     jobId = json['job_id'];
@@ -22,6 +24,7 @@ class CreateReportRequest {
     tmIds = json['tm_ids'].cast<int>();
     pestFoundIds = json['pest_found_ids'].cast<int>();
     recommendationsAndRemarks = json['recommendations_and_remarks'];
+    jobCaptainId = json['job_captain_id'];
     if (json['addresses'] != null) {
       addresses = <Addresses>[];
       json['addresses'].forEach((v) {
@@ -35,22 +38,23 @@ class CreateReportRequest {
       });
     }
   }
+
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['job_id'] = this.jobId;
     data['type_of_visit'] = this.typeOfVisit;
-    data['tm_ids'] = this.tmIds; // This should be a List<int>
-    data['pest_found_ids'] = this.pestFoundIds; // This should be a List<int>
+    data['tm_ids'] = this.tmIds;
+    data['pest_found_ids'] = this.pestFoundIds;
     data['recommendations_and_remarks'] = this.recommendationsAndRemarks;
+    data['job_captain_id'] = this.jobCaptainId;
     if (this.addresses != null) {
-      data['addresses'] = this.addresses!.map((v) => v.toJson()).toList(); // This should be a List<Map<String, dynamic>>
+      data['addresses'] = this.addresses!.map((v) => v.toJson()).toList();
     }
     if (this.usedProducts != null) {
-      data['used_products'] = this.usedProducts!.map((v) => v.toJson()).toList(); // This should be a List<Map<String, dynamic>>
+      data['used_products'] = this.usedProducts!.map((v) => v.toJson()).toList();
     }
     return data;
   }
-
 }
 
 class Addresses {

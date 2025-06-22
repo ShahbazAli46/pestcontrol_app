@@ -10,6 +10,8 @@ import '../utils/TextStyle.dart';
 import '../utils/appColors.dart';
 
 class PestFoundScreen extends StatefulWidget {
+  int captainJobId;
+  PestFoundScreen({required this.captainJobId});
   @override
   State<PestFoundScreen> createState() => _PestFoundScreenState();
 }
@@ -49,7 +51,7 @@ class _PestFoundScreenState extends State<PestFoundScreen> {
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: GreenButton(title: "Next", sendingData: false.obs, onTap: (){
-                      UiHelper.navigateToNextScreen(context, TreatmentMethodScreen());
+                      UiHelper.navigateToNextScreen(context, TreatmentMethodScreen(captainJobId: widget.captainJobId,));
                     }),
                   )
                 ],

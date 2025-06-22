@@ -3,6 +3,7 @@ import 'package:accurate/QualityInspector/QualityInspectorDashboard.dart';
 import 'package:accurate/RecoveryOfficeDashboard/RecoverOfficerDashboard.dart';
 import 'package:accurate/SalesManagerAndSalesMan/SalesMan/SalesOfficerDashboard.dart';
 import 'package:accurate/components/generic/DashedSeparatorPainter.dart';
+import 'package:accurate/main.dart';
 import 'package:accurate/sales_man/salesManDashboard.dart';
 import 'package:accurate/superadmin/SuperAdminDashboard.dart';
 import 'package:accurate/user/login.dart';
@@ -54,6 +55,16 @@ class UiHelper {
   static void navigateToNextScreen(BuildContext context, nextScreen) {
     Navigator.of(context).push(MaterialPageRoute(builder: (context) => nextScreen));
   }
+
+
+  static void backToDashboard(context){
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (context) => UiHelper.goToUserDashboardAsPerUserRole(userObj?.data?.roleId ?? 0)),
+          (route) => false, // This removes all previous routes
+    );
+  }
+
 
   static void navigateToNextScreenGetX(Widget nextScreen) {
     Get.to(() => nextScreen,

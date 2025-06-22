@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:accurate/components/MultiSelectCheckbox.dart';
 import 'package:accurate/components/generic/SearchableDropdownWithID.dart';
 import 'package:accurate/components/generic/UIHelper.dart';
+import 'package:accurate/jsonModels/AllBranchesResponse.dart';
 import 'package:accurate/jsonModels/CilentsResponse.dart';
 import 'package:accurate/jsonModels/EditQuoteResponse.dart';
 import 'package:accurate/jsonModels/QuoteServices.dart';
@@ -39,6 +40,8 @@ class EditQuoteController extends GetxController {
   var selectedTermAndConditionID = 0;
 
   int quoteID = 0;
+  List<String> branchNames = [];
+  String? selectedBranchName = "";
 
 
   TextEditingController subject = TextEditingController();
@@ -75,6 +78,8 @@ class EditQuoteController extends GetxController {
   String serviceTime = "";
   bool isMonthly = true;
   var selectedTermName = "";
+  List<AllBranchesResponseData>? allBranches;
+  var selectedBranched = -1;
 
 
 
@@ -82,14 +87,16 @@ class EditQuoteController extends GetxController {
   void onInit() {
     super.onInit();
 
-    getClients();
+    getBranches();
+
     getServices();
     getTreatmentMethods();
     getTermsAndConditions();
 
+
   }
 
-  void getClients() async {
+  void getClients(AllBranchesResponse branchesResponse) async {
     firmNames.clear();
     addresses.clear();
     allClients?.clear();
@@ -117,12 +124,24 @@ class EditQuoteController extends GetxController {
     duration.text = "${editQuoteResponse.data?.durationInMonths}";
     desc.text = editQuoteResponse.data?.description ?? "";
     List<int> intList = List<int>.from(jsonDecode(editQuoteResponse.data?.serviceIds ?? ""));
-    selectedAnimals =  intList;
+    selectedAnimals =  editQuoteResponse.data?.service_agreement_ids ??[];
     editQuoteResponse.data?.treatmentMethods?.forEach((item){
       selectedTreatmentMethods.add(item.id ?? 0);
     });
     selectedTermAndConditionID = editQuoteResponse.data?.termAndConditionId ?? 0;
     selectedTermName = editQuoteResponse.data?.termAndCondition?.name ?? "" ;
+    selectedBranched = editQuoteResponse.data?.branch_id ?? -1;
+    vat.text = "${editQuoteResponse.data?.vatAmt}";
+    discount.text = "${editQuoteResponse.data?.disAmt}";
+
+   for (int i = 0; i < (branchesResponse?.data!.length ?? 0); i++){
+     if (branchesResponse?.data?[i].id == selectedBranched){
+       selectedBranchName = branchesResponse?.data?[i].name;
+
+     }
+
+   }
+
 
     editQuoteResponse.data?.quoteServices?.forEach((listItem){
       QuoteServices service  = QuoteServices();
@@ -159,6 +178,7 @@ class EditQuoteController extends GetxController {
     discount.text = "${double.parse(editQuoteResponse.data?.disAmt ?? "0").toInt()}";
     addVat(vat.text == "" ? "0" : vat.text);
     calculateDiscount(discount.text == "" ? "0"  : discount.text);
+    setBranchName();
     fetchingData.value = false;
 
   }
@@ -316,6 +336,37 @@ class EditQuoteController extends GetxController {
 
   int calculateJobNumber(int duration) {
     return (duration / 3).floor();
+  }
+
+  void getBranches()async{
+    fetchingData.value = true;
+    String url = Urls.baseURL + "branch";
+    var response = await api.getDataWithToken(url);
+    AllBranchesResponse branchesResponse = AllBranchesResponse.fromJson(response);
+    getClients(branchesResponse);
+    allBranches = branchesResponse.data;
+    allBranches?.forEach((item){
+      branchNames.add(item.name ?? "");
+    });
+
+
+
+  }
+  setSelectedBranchID(int index){
+    selectedBranched = allBranches?[index].id ?? 0;
+  }
+
+
+  setBranchName(){
+    fetchingData.value = true;
+    allBranches?.map((branch){
+      if (branch.id == selectedBranched){
+        selectedBranchName = branch.name;
+        print("**************************************");
+        print(selectedBranchName);
+      }
+    });
+    fetchingData.value = false;
   }
 
 }

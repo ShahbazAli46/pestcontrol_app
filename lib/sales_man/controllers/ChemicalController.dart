@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 class ChemicalController extends GetxController {
   var list = RxList<UsedChemicals>();
   TextEditingController quantityController = TextEditingController();
+  TextEditingController doseController = TextEditingController();
   TextEditingController price = TextEditingController();
 
   @override
@@ -32,6 +33,7 @@ class UsedChemicals {
   late String price;
   late bool isExtra;
   late String unit;
+  late String does;
 
   UsedChemicals(
       {required this.name,
@@ -39,6 +41,7 @@ class UsedChemicals {
       required this.price,
       required this.isExtra,
       required this.quantity,
-      required this.unit
+      required this.unit,
+        required this.does
       });
 }

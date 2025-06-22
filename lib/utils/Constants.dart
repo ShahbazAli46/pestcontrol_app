@@ -8,7 +8,7 @@ class Urls {
   static String services = "${Urls.baseURL}service";
   static String treatmentMethod = "${Urls.baseURL}treatment_method";
   static String employeeInfo = "${Urls.baseURL}employee/";
-  static String createServiceReport = "${Urls.baseURL}job/service_report/create";
+  static String createServiceReport = "${Urls.baseURL}job/move/complete/sales_manager";
   static String allClients = "${Urls.baseURL}client";
   static String allInvoices = "${Urls.baseURL}service_invoices?user_id=";
   static String bank = "${Urls.baseURL}bank";
@@ -48,5 +48,6 @@ class Constants {
   static String notInterested = "Not-Interested";
   static String quoted = "Quoted";
   static String salesMan = "salesMan";
+  static String completeJob = "salesMan";
 
 }

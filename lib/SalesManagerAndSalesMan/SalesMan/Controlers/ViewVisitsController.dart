@@ -13,6 +13,11 @@ class ViewVisitsController extends GetxController {
   List<FollowUpsResponseData>? visits = [];
 
 
+  final String? agentId;  // Optional agent ID
+
+  ViewVisitsController({this.agentId});
+
+
   var total = 0;
   var interested = 0;
   var notInterested = 0;
@@ -32,13 +37,14 @@ class ViewVisitsController extends GetxController {
   }
 
   getData(String start, String end)async{
+    final userId = agentId ?? userObj?.data?.id?.toString() ?? '0';
+    String url =  '${Urls.baseURL}visit/get/$userId?start_date=$start&end_date=$end';
     fetchingData.value = true;
     total = 0;
     interested = 0;
     notInterested = 0;
     contracted = 0;
     quoted = 0;
-    String url = Urls.baseURL + "visit/get/${userObj?.data?.id ?? 0}?start_date=${start}&end_date=${end}";
     var response = await api.getDataWithToken(url);
     FollowUpsResponse followUpsResponse = FollowUpsResponse.fromJson(response);
     visits = followUpsResponse.data ?? [];

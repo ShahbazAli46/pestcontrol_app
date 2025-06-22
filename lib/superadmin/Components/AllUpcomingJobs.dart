@@ -29,23 +29,23 @@ class _AllUpComingJobsState extends State<AllUpComingJobs> {
 
   TextEditingController filterController = TextEditingController();
   final buttonGroupKey = GlobalKey<SelectableButtonGroupState>();
-  final AllUpComingJobsController controller = Get.put(
-      AllUpComingJobsController(),
-      permanent: true,
-      tag: Constants.allJobs
-  );
+  late AllUpComingJobsController controller;
 
   @override
   void initState() {
     super.initState();
-    // Initialize the controller here
+    controller = Get.put(
+        AllUpComingJobsController(),
+        permanent: false,
+        tag: Constants.allJobs
+    );
   }
 
   @override
   void dispose() {
     filterController.dispose();
     super.dispose();
-    Get.delete<AllUpComingJobsController>(tag: Constants.allJobs);
+    Get.delete<AllUpComingJobsController>(tag: Constants.allJobs, force: true);
   }
 
   @override

@@ -22,8 +22,8 @@ import 'controllers/AddInspectedAreasController.dart';
 import 'controllers/ChemicalController.dart';
 
 class AddChemicalsScreen extends StatefulWidget {
-  const AddChemicalsScreen({Key? key}) : super(key: key);
-
+  int captainJobId;
+  AddChemicalsScreen({required this.captainJobId});
   @override
   State<AddChemicalsScreen> createState() => _AddChemicalsScreenState();
 }
@@ -123,6 +123,7 @@ class _AddChemicalsScreenState extends State<AddChemicalsScreen> {
 
             _buildRow('Chemical Name', item.name),
             _buildRow('Qunatity', "${item.quantity} ${item.unit}"),
+            _buildRow('Dose', "${item.does}"),
           ],
         ),
       ),
@@ -193,7 +194,9 @@ class _AddChemicalsScreenState extends State<AddChemicalsScreen> {
                         title: userInfoController.currentUnit,
                         controller: usedController.quantityController
                     ),
-                    SizedBox(height: 20),
+                    SizedBox(height: 10),
+                    AppInput(title: "Dose", controller: usedController.doseController),
+                    SizedBox(height: 10),
                     // Fixed Row structure
                     Container(
                       child: Row(
@@ -214,25 +217,44 @@ class _AddChemicalsScreenState extends State<AddChemicalsScreen> {
                               title: "Submit",
                               sendingData: false.obs,
                               onTap: () {
-                                print(userInfoController.currentStock.value);
+                                // Validation checks
+                                if (chemicalName == null || chemicalName.isEmpty) {
+                                  AlertService.showAlert("Alert", "Please select a chemical");
+                                  return;
+                                }
+
+                                if (usedController.quantityController.text.isEmpty) {
+                                  AlertService.showAlert("Alert", "Please enter quantity");
+                                  return;
+                                }
+
+                                if (usedController.doseController.text.isEmpty) {
+                                  AlertService.showAlert("Alert", "Please enter dose");
+                                  return;
+                                }
+
+                                // Stock validation
                                 if (double.parse(usedController.quantityController.text ?? "") > userInfoController.currentStock.value){
                                   AlertService.showAlert("Alert", "Your Stock is less");
                                 }
                                 else{
                                   Navigator.pop(context);
+
                                   UsedChemicals usedItem = UsedChemicals(
                                       name: chemicalName,
                                       product_id: product_id,
                                       price: isExtra ? usedController.price.text : "0",
                                       isExtra: isExtra,
                                       quantity: usedController.quantityController.text,
+                                      does: usedController.doseController.text,
                                       unit: userInfoController.currentUnit.value
                                   );
+                                  usedController.quantityController.text = "";
+                                  usedController.doseController.text = "";
                                   usedController.addItem(usedItem, () {
                                     Navigator.pop(context);
                                   });
                                 }
-
                               },
                             ),
                           ),
@@ -254,7 +276,6 @@ class _AddChemicalsScreenState extends State<AddChemicalsScreen> {
       },
     );
   }
-
   chemicalChanged(value, index){
     product_id = userInfoController.getProductId(index);
     chemicalName = value;

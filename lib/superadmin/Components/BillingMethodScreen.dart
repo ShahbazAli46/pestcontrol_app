@@ -1,6 +1,7 @@
 import 'package:accurate/components/MultiSelectCheckbox.dart';
 import 'package:accurate/components/generic/AppInput.dart';
 import 'package:accurate/components/generic/GreenButton.dart';
+import 'package:accurate/components/generic/SelectableButtonGroup.dart';
 import 'package:accurate/components/generic/UIHelper.dart';
 import 'package:accurate/components/generic/navWithBack.dart';
 import 'package:accurate/controllers/generic/AppRadioSelection.dart';
@@ -25,6 +26,7 @@ class BillingMethodScreen extends StatefulWidget {
 class _BillingMethodScreenState extends State<BillingMethodScreen> {
   late CreateQuoteController controller;
   String billingMethod = "service";
+  int scopeOfWork = 0;
 
   @override
   void initState() {
@@ -82,6 +84,14 @@ class _BillingMethodScreenState extends State<BillingMethodScreen> {
                       onChange: controller.calculateDiscount,
                       inputType: TextInputType.number,
                     ),
+
+                    SizedBox(height: 20,),
+                    AppTextLabels.boldTextShort(label: "Scope of Work", fontSize: 15),
+                    SelectableButtonGroup(
+                        titles: ["Disabled", "Enabled"], onSelect: buttonTypeChanged),
+                    SizedBox(height: 20,),
+
+
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: GreenButton(title: "Create Quote", sendingData: controller.sendingData, onTap: ()async{
@@ -96,7 +106,7 @@ class _BillingMethodScreenState extends State<BillingMethodScreen> {
                             CreateQuoteRequest request = CreateQuoteRequest();
                             request.manageType = "create";
                             String serviceIdsString = '[' + controller.selectedAnimals.join(',') + ']';
-                            request.service_ids = serviceIdsString;
+                            request.service_agreement_ids = controller.selectedAnimals;
                             request.userId = controller.selectedClientID;
                             request.quoteTitle = controller.title.text;
                             request.clientAddressId = controller
@@ -118,6 +128,7 @@ class _BillingMethodScreenState extends State<BillingMethodScreen> {
                             request.termAndConditionId = controller
                                 .selectedTermAndConditionID;
                             request.services = controller.quoteServices;
+                            request.is_enable_scope_of_work = scopeOfWork;
                             String url = Urls.baseURL + "quote/manage";
                             var api = APICall();
                             var response = await api.postDataWithToken(
@@ -150,6 +161,10 @@ class _BillingMethodScreenState extends State<BillingMethodScreen> {
 
               ],
             )));
+  }
+
+  buttonTypeChanged(index){
+    scopeOfWork = index;
   }
 
 }

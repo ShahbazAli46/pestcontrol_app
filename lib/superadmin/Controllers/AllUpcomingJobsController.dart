@@ -17,11 +17,14 @@ class AllUpComingJobsController extends GetxController {
 
   List<String> captains = [];
   final RxList<CheckboxItem> teamMembers = <CheckboxItem>[].obs;
+  final RxList<CheckboxItem> allTeamMembers = <CheckboxItem>[].obs;
 
   List<CaptainJobs>? data;
   List<CaptainJobs>? allData;
   late TeamListResponse list;
   int captainId = -1;
+
+  final List<TeamIds> teamAssignments = [TeamIds()];
 
   @override
   void onInit() {
@@ -118,7 +121,62 @@ class AllUpComingJobsController extends GetxController {
         );
       }
     });
+    allTeamMembers.assignAll(team);
     teamMembers.assignAll(team);
   }
+
+
+  void getCaptainIdFromList(int selectionIndex, int listIndex) {
+    if (listIndex >= 0 &&
+        listIndex < teamAssignments.length &&
+        selectionIndex >= 0 &&
+        selectionIndex < (list?.data?.length ?? 0)) {
+
+      // Get the selected captain's ID
+      final selectedCaptainId = list?.data?[selectionIndex]?.id;
+
+      // Set the ID in the specified team assignment
+      teamAssignments[listIndex].captainId = selectedCaptainId?.toString();
+
+      // Optional: Also store the captain name if needed
+      teamAssignments[listIndex].captainName = list?.data?[selectionIndex]?.name;
+
+      update(); // Notify listeners if using GetX
+    }
+  }
+  void setTeamMembersFromList(List<String> selectedTeamIds, int listIndex) {
+    if (listIndex >= 0 && listIndex < teamAssignments.length) {
+      // Convert List<String> to List<int>
+      List<int> intTeamIds = selectedTeamIds.map((id) => int.tryParse(id)).whereType<int>().toList();
+
+      teamAssignments[listIndex].teamMemberIds = intTeamIds;
+      update(); // Notify listeners if using GetX
+    }
+  }
+
+  List<CheckboxItem> getAvailableMembers(int forAssignmentIndex) {
+    // Get all currently assigned member IDs EXCEPT those in current assignment
+    final assignedElsewhere = teamAssignments
+        .asMap()
+        .entries
+        .where((entry) => entry.key != forAssignmentIndex)
+        .expand((entry) => entry.value.teamMemberIds)
+        .toSet();
+    return allTeamMembers.where((member) =>
+    !assignedElsewhere.contains(member.id)).toList();
+  }
+
+
 }
+
+
+class TeamIds {
+  String? captainId;
+  String? captainName;
+  List<int> teamMemberIds = [];
+  String? instructions;
+  TextEditingController instructionController =  TextEditingController();
+}
+
+
 

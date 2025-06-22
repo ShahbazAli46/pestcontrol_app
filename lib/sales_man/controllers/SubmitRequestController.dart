@@ -3,6 +3,7 @@ import 'package:accurate/jsonModels/CreateReportResponse.dart';
 import 'package:accurate/jsonModels/GeneralErrorResponse.dart';
 import 'package:accurate/sales_man/salesManDashboard.dart';
 import 'package:accurate/utils/AlertService.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'dart:io';
 import '../../components/UpcomignJobs/Controllers/JobDetailsController.dart';
@@ -19,10 +20,11 @@ import 'VisitController.dart';
 
 class SubmitRequestController extends GetxController {
   var sendingData = false.obs;
-
+  late BuildContext context;
   APICall api = APICall();
 
-  void sendData(String recomendation, File image) async {
+
+  void sendData(String recomendation) async {
     sendingData.value = true;
     JobDetailsController jobController = Get.find(tag: Constants.jobController);
     VisitController visitController =
@@ -70,7 +72,7 @@ class SubmitRequestController extends GetxController {
     usedController.list.forEach((item) {
       used_products.add(UsedProducts(
           productId: item.product_id,
-          dose: 1,
+          dose: int.parse(item.does),
           qty: int.parse(item.quantity),
           price: int.tryParse(item.price),
           isExtra: item.isExtra ? 1 : 0));
@@ -82,16 +84,16 @@ class SubmitRequestController extends GetxController {
         addresses: addresses,
         usedProducts: used_products,
         pestFoundIds: pest_found_ids,
+        jobCaptainId: jobController.loggedInCaptain?.id,
         recommendationsAndRemarks: recomendation);
     Map<String, dynamic> map = reportRequest.toJson().cast<String, dynamic>();
-    print(map);
-    final response = await api.postDataWithTokenWithImageAndArrays(Urls.createServiceReport, map, image,);
+    final response = await api.postDataWithTokenAndArrays(Urls.createServiceReport, map);
 
     CreateReportResponse errorResponse = CreateReportResponse.fromJson(response);
     if (errorResponse.status == "success") {
       AlertService.showAlertWithAction("Alert", errorResponse.message ?? "",
           onOkPressed: () {
-        Get.offAll(AddFeedBackScreen(reportID: errorResponse.data?.id ?? "0",));
+        UiHelper.backToDashboard(context);
       });
     } else {
       AlertService.showAlert("Alert", errorResponse.message ?? "");

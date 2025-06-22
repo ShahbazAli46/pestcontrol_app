@@ -15,7 +15,16 @@ class SalesmanJobsScreen extends StatefulWidget {
   bool isSingleClient = false;
   int clientID = 0;
 
-  SalesmanJobsScreen({required this.isSingleClient, this.clientID = 0});
+  final String? agentID;      // New optional parameter
+  final String? agentName;    // New optional parameter
+
+  SalesmanJobsScreen({
+    Key? key,
+    required this.isSingleClient,
+    this.clientID = 0,
+    this.agentID,
+    this.agentName,
+  }) : super(key: key);
 
   @override
   State<SalesmanJobsScreen> createState() => _SalesmanJobsScreenState();
@@ -28,7 +37,11 @@ class _SalesmanJobsScreenState extends State<SalesmanJobsScreen> {
   @override
   void initState() {
     super.initState();
-    controller = Get.put(SalesManJobsController(isSingleClient: widget.isSingleClient, clientId: widget.clientID));
+
+    controller = Get.put(SalesManJobsController(
+        isSingleClient: widget.isSingleClient,
+        clientId: widget.clientID,
+        agentID: widget.agentID));
   }
 
   @override
@@ -46,7 +59,12 @@ class _SalesmanJobsScreenState extends State<SalesmanJobsScreen> {
             children: [
               NavWithBack(),
               SizedBox(height: 20,),
-              AppTextLabels.boldTextShort(label: "My Client Jobs", fontSize: 20),
+              AppTextLabels.boldTextShort(
+                label: widget.agentName?.isNotEmpty == true
+                    ? "${widget.agentName}'s Jobs"
+                    : "My Client Jobs",
+                fontSize: 20,
+              ),
               SizedBox(height: 10,),
               Padding(
                 padding: const EdgeInsets.all(8.0),

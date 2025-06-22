@@ -12,6 +12,15 @@ import 'package:get/get.dart';
 import '../../utils/appColors.dart';
 
 class SalesmanIncomeScreen extends StatefulWidget {
+  final String? agentID;
+  final String? agentName;
+
+  const SalesmanIncomeScreen({
+    Key? key,
+    this.agentID,
+    this.agentName,
+  }) : super(key: key);
+
 
 
   @override
@@ -20,6 +29,9 @@ class SalesmanIncomeScreen extends StatefulWidget {
 
 class _SalesmanIncomeScreenState extends State<SalesmanIncomeScreen> {
 
+
+
+
   late SalesmanIncomeController controller;
 
 
@@ -27,7 +39,10 @@ class _SalesmanIncomeScreenState extends State<SalesmanIncomeScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    controller = Get.put(SalesmanIncomeController(userId: userObj?.data?.id ?? 0));
+    final userId = widget.agentID?.isNotEmpty == true
+        ? int.tryParse(widget.agentID!) ?? 0  // Convert string to int if needed
+        : userObj?.data?.id ?? 0;
+    controller = Get.put(SalesmanIncomeController(userId: userId));
   }
 
   @override
@@ -47,7 +62,12 @@ class _SalesmanIncomeScreenState extends State<SalesmanIncomeScreen> {
           children: [
             NavWithBack(),
             SizedBox(height: 20,),
-            AppTextLabels.boldTextShort(label: "My Client Income Report", fontSize: 20),
+            AppTextLabels.boldTextShort(
+              label: widget.agentName?.isNotEmpty == true
+                  ? "${widget.agentName}'s Client Income Report"
+                  : "My Client Income Report",
+              fontSize: 20,
+            ),
             SizedBox(height: 20,),
 
             Padding(

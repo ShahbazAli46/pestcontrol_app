@@ -51,7 +51,9 @@ class EditQuoteResponseData {
   User? user;
   TermAndCondition? termAndCondition;
   List<EditQuoteResponseQuoteServices>? quoteServices;
-
+  List<int>? service_agreement_ids;
+  String? pdfUrl;
+  int? branch_id;
   EditQuoteResponseData(
       {this.id,
         this.userId,
@@ -64,6 +66,7 @@ class EditQuoteResponseData {
         this.trn,
         this.tag,
         this.durationInMonths,
+        this.service_agreement_ids,
         this.isFoodWatchAccount,
         this.billingMethod,
         this.noOfInstallments,
@@ -86,6 +89,8 @@ class EditQuoteResponseData {
         this.treatmentMethods,
         this.user,
         this.termAndCondition,
+        this.pdfUrl,
+        this.branch_id,
         this.quoteServices});
 
   EditQuoteResponseData.fromJson(Map<String, dynamic> json) {
@@ -103,6 +108,7 @@ class EditQuoteResponseData {
     isFoodWatchAccount = json['is_food_watch_account'];
     billingMethod = json['billing_method'];
     noOfInstallments = json['no_of_installments'];
+    service_agreement_ids = json['service_agreement_ids']?.cast<int>();
     subTotal = json['sub_total'];
     disPer = json['dis_per'];
     disAmt = json['dis_amt'];
@@ -117,6 +123,8 @@ class EditQuoteResponseData {
     updatedAt = json['updated_at'];
     clientId = json['client_id'];
     licenseNo = json['license_no'];
+    pdfUrl = json['pdf_url'];
+    branch_id = json['branch_id'];
     contractCancelledAt = json['contract_cancelled_at'];
     contractCancelReason = json['contract_cancel_reason'];
     if (json['treatment_methods'] != null) {

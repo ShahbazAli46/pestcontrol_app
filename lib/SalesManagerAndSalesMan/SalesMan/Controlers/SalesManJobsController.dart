@@ -14,7 +14,9 @@ class SalesManJobsController extends GetxController {
   var isSingleClient = false;
   var clientId = 0;
 
-  SalesManJobsController({required this.isSingleClient, this.clientId = 0});
+  String? agentID;
+
+  SalesManJobsController({required this.isSingleClient, this.clientId = 0, this.agentID});
 
   var api  = APICall();
 
@@ -51,7 +53,7 @@ class SalesManJobsController extends GetxController {
       url = Urls.baseURL + "job/all?start_date=${start}&user_id=${clientId}&end_date=$end";
     }
     else{
-      url = Urls.baseURL + "employee/reference/jobs/get/${userObj?.data?.id}?start_date=${start}&end_date=${end}";
+      url = Urls.baseURL + "employee/reference/jobs/get/${get_employeeId()}?start_date=${start}&end_date=${end}";
     }
     var response = await api.getDataWithToken(url);
     AllJobsResponse res = AllJobsResponse.fromJson(response);
@@ -81,6 +83,15 @@ class SalesManJobsController extends GetxController {
     fetchingData.value = false;
 
   }
+
+
+  String get_employeeId (){
+  return agentID?.isNotEmpty == true
+  ? agentID!
+      : userObj?.data?.id?.toString() ?? '0';
+}
+
+
 }
 
 enum JobsView {

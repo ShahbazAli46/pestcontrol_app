@@ -286,7 +286,73 @@ class APICall {
     }
   }
 
+  Future<Map<String, dynamic>> postDataWithTokenAndArrays(
+      String url,
+      Map<String, dynamic> data) async {
 
+    print(url);
+    if (!await checkInternetConnection()) {
+      await showNoInternetDialog();
+      return postDataWithTokenAndArrays(url, data);
+    }
+
+    // Get authorization token
+    final token = await LoginResponseStorage.getToken();
+
+    // Prepare form data
+    Map<String, String> formFields = {};
+
+    // Process the data map
+    if (data != null) {
+      data.forEach((key, value) {
+        if (value is List) {
+          // Handle arrays of objects
+          if (value.isNotEmpty && value[0] is Map) {
+            for (var i = 0; i < value.length; i++) {
+              Map<String, dynamic> item = value[i];
+              item.forEach((itemKey, itemValue) {
+                formFields['$key[$i][$itemKey]'] = itemValue.toString();
+              });
+            }
+          }
+          // Handle simple arrays (like tm_ids and pest_found_ids)
+          else {
+            for (var i = 0; i < value.length; i++) {
+              formFields['$key[$i]'] = value[i].toString();
+            }
+          }
+        } else {
+          formFields[key] = value.toString();
+        }
+      });
+    }
+
+    print('Form fields: $formFields'); // For debugging
+
+    try {
+      final response = await http.post(
+        Uri.parse(url),
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: formFields,
+      );
+
+      print('Response status: ${response.statusCode}');
+      print('Response body: ${response.body}');
+
+      if (response.statusCode == 200 || response.statusCode == 204) {
+        return jsonDecode(response.body);
+      } else {
+        print('Error response: ${response.body}');
+        return jsonDecode(response.body);
+      }
+    } catch (e) {
+      print('Exception occurred: $e');
+      throw e;
+    }
+  }
 
 
   Future<Map<String, dynamic>> postData(String url, dynamic data) async {

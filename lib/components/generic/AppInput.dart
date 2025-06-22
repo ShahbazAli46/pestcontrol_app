@@ -9,6 +9,8 @@ class AppInput extends StatefulWidget {
   final TextInputType inputType;
   final bool enabled;
   final Function(String)? onChange; // Added onChange callback
+  final FocusNode? focusNode;  // Add focusNode parameter
+
 
   AppInput({
     required this.title,
@@ -16,6 +18,7 @@ class AppInput extends StatefulWidget {
     this.inputType = TextInputType.text,
     this.enabled = true,
     this.onChange, // New parameter
+  this.focusNode,
   });
 
   @override
@@ -28,6 +31,8 @@ class _AppInputState extends State<AppInput> {
   @override
   void initState() {
     super.initState();
+    // Use provided focus node or create new one
+    _focusNode = widget.focusNode ?? FocusNode();
     _focusNode.addListener(() {
       setState(() {});
     });
@@ -35,7 +40,10 @@ class _AppInputState extends State<AppInput> {
 
   @override
   void dispose() {
-    _focusNode.dispose();
+    // Only dispose if we created the focus node ourselves
+    if (widget.focusNode == null) {
+      _focusNode.dispose();
+    }
     super.dispose();
   }
 

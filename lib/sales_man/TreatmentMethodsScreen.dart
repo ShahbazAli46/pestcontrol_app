@@ -11,8 +11,8 @@ import '../utils/TextStyle.dart';
 import '../utils/appColors.dart';
 
 class TreatmentMethodScreen extends StatefulWidget {
-  const TreatmentMethodScreen({Key? key}) : super(key: key);
-
+  int captainJobId;
+  TreatmentMethodScreen({required this.captainJobId});
   @override
   State<TreatmentMethodScreen> createState() => _TreatmentMethodScreenState();
 }
@@ -60,7 +60,7 @@ class _TreatmentMethodScreenState extends State<TreatmentMethodScreen> {
                     padding: const EdgeInsets.all(8.0),
                     child: GreenButton(
                         title: "Next", sendingData: false.obs, onTap: () {
-                      UiHelper.navigateToNextScreen(context, AddChemicalsScreen());
+                      UiHelper.navigateToNextScreen(context, AddChemicalsScreen(captainJobId: widget.captainJobId,));
                     }),
                   )
                 ],

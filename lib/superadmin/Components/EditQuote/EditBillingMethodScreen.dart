@@ -1,6 +1,7 @@
 import 'package:accurate/components/MultiSelectCheckbox.dart';
 import 'package:accurate/components/generic/AppInput.dart';
 import 'package:accurate/components/generic/GreenButton.dart';
+import 'package:accurate/components/generic/SelectableButtonGroup.dart';
 import 'package:accurate/components/generic/UIHelper.dart';
 import 'package:accurate/components/generic/navWithBack.dart';
 import 'package:accurate/controllers/generic/AppRadioSelection.dart';
@@ -26,6 +27,7 @@ class EditBillingMethodScreen extends StatefulWidget {
 class _EditBillingMethodScreenState extends State<EditBillingMethodScreen> {
   late EditQuoteController controller;
   String billingMethod = "service";
+  int scopeOfWork = 0;
 
   @override
   void initState() {
@@ -79,6 +81,13 @@ class _EditBillingMethodScreenState extends State<EditBillingMethodScreen> {
                       onChange: controller.calculateDiscount,
                       inputType: TextInputType.number,
                     ),
+
+                    SizedBox(height: 20,),
+                    AppTextLabels.boldTextShort(label: "Scope of Work", fontSize: 15),
+                    SelectableButtonGroup(
+                        titles: ["Disabled", "Enabled"], onSelect: buttonTypeChanged),
+                    SizedBox(height: 20,),
+
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: GreenButton(title: "Update Quote", sendingData: controller.sendingData, onTap: ()async{
@@ -94,7 +103,7 @@ class _EditBillingMethodScreenState extends State<EditBillingMethodScreen> {
                             request.quote_id = controller.quoteID;
                             request.manageType = "update";
                             String serviceIdsString = '[' + controller.selectedAnimals.join(',') + ']';
-                            request.service_ids = serviceIdsString;
+                            request.service_agreement_ids = controller.selectedAnimals;
                             request.userId = controller.selectedClientID;
                             request.quoteTitle = controller.title.text;
                             request.clientAddressId = controller
@@ -115,10 +124,13 @@ class _EditBillingMethodScreenState extends State<EditBillingMethodScreen> {
                             request.termAndConditionId = controller
                                 .selectedTermAndConditionID;
                             request.services = controller.quoteServices;
+                            request.is_enable_scope_of_work = scopeOfWork;
+                            request.branch_id  ="${controller.selectedBranched}";
                             String url = Urls.baseURL + "quote/manage";
                             var api = APICall();
                             var response = await api.postDataWithToken(
                                 url, request.toJson());
+                            controller.sendingData.value = false;
                             GeneralErrorResponse errorResponse = GeneralErrorResponse
                                 .fromJson(response);
                             if (errorResponse.status == "success") {
@@ -146,5 +158,8 @@ class _EditBillingMethodScreenState extends State<EditBillingMethodScreen> {
 
               ],
             )));
+  }
+  buttonTypeChanged(index){
+    scopeOfWork = index;
   }
 }

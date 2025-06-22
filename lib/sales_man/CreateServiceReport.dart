@@ -16,8 +16,9 @@ import 'controllers/VisitController.dart';
 class CreateServiceReport extends StatefulWidget {
   late int jobId = 0;
   bool fromJob;
+  int jobCaptainId;
 
-  CreateServiceReport({required this.jobId, required  this.fromJob});
+  CreateServiceReport({required this.jobId, required  this.fromJob, required this.jobCaptainId});
 
   @override
   State<CreateServiceReport> createState() => _CreateservicereportState();
@@ -91,7 +92,7 @@ class _CreateservicereportState extends State<CreateServiceReport> {
                   SizedBox(height: 20),
                   buildInfoRow(
                       "Service Name",
-                      "getServiceTitles(jobController?.jobData?.data?.jobServices) ??"),
+                      getServiceTitles(jobController?.jobData?.data?.jobServices) ?? ""),
                   typesOfServices(),
                   // buildInfoRow("Time In", "12 : 40 PM"),
                   // buildInfoRow("Time Out", "12 : 40 PM"),
@@ -100,7 +101,7 @@ class _CreateservicereportState extends State<CreateServiceReport> {
                       title: "Next",
                       sendingData: false.obs,
                       onTap: () {
-                        UiHelper.navigateToNextScreen(context, AddAreas());
+                        // UiHelper.navigateToNextScreen(context, AddAreas(captainJobId: widget.jobCaptainId,));
                       }),
                   SizedBox(height: 10),
                 ],
@@ -157,10 +158,10 @@ class _CreateservicereportState extends State<CreateServiceReport> {
     );
   }
 
-  // String? getServiceTitles(List<JobServices>? jobServices) {
-  //   return jobServices
-  //       ?.map((jobService) => jobService?.service?.serviceTitle)
-  //       .where((title) => title != null)
-  //       .join(',');
-  // }
+  String? getServiceTitles(List<JobService>? jobServices) {
+    return jobServices
+        ?.map((jobService) => jobService?.service?.serviceTitle)
+        .where((title) => title != null)
+        .join(',');
+  }
 }

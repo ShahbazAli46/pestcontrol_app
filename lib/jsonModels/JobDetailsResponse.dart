@@ -207,7 +207,6 @@ class JobDetailsResponseData {
     return "$id, $userId, $jobTitle, $clientAddressId, $subject, $serviceIds, $tmIds, $description, $trn, $tag, $isFoodWatchAccount, $jobDate, $priority, $subTotal, $disPer, $disAmt, $vatPer, $vatAmt, $grandTotal, $isCompleted, $isModified, $captainId, $teamMemberIds, $jobInstructions, $termAndConditionId, $quoteId, $createdAt, $updatedAt, $jobStartTime, $jobEndTime, $deletedAt, $isAssigned, $captainIds, $treatmentMethods, $serviceReportPdf, $user, $termAndCondition, $jobServices, $rescheduleDates, $clientAddress, $captains, $report, ";
   }
 }
-
 class Captain {
   Captain({
     required this.id,
@@ -230,7 +229,7 @@ class Captain {
   final int? captainId;
   final int? jobId;
   final String? teamMemberIds;
-  final dynamic jobInstruction;
+  final String? jobInstruction;
   final int? isCompleted;
   final dynamic deletedAt;
   final DateTime? createdAt;
@@ -278,10 +277,11 @@ class Captain {
   };
 
   @override
-  String toString(){
+  String toString() {
     return "$id, $captainId, $jobId, $teamMemberIds, $jobInstruction, $isCompleted, $deletedAt, $createdAt, $updatedAt, $teamMembers, $captainProducts, $captainAreas, $reportCaptain, $captain, ";
   }
 }
+
 
 class Client {
   Client({
@@ -815,8 +815,8 @@ class ReportCaptain {
     required this.captainId,
     required this.jobId,
     required this.jobServiceReportId,
-    required this.pestFoundIds,
-    required this.tmIds,
+    // required this.pestFoundIds,
+    // required this.tmIds,
     required this.createdAt,
     required this.updatedAt,
     required this.jobCaptainId,
@@ -828,8 +828,8 @@ class ReportCaptain {
   final int? captainId;
   final int? jobId;
   final int? jobServiceReportId;
-  final List<int> pestFoundIds;
-  final List<int> tmIds;
+  // final List<int> pestFoundIds;
+  // final List<String> tmIds;
   final DateTime? createdAt;
   final DateTime? updatedAt;
   final int? jobCaptainId;
@@ -842,8 +842,8 @@ class ReportCaptain {
       captainId: json["captain_id"],
       jobId: json["job_id"],
       jobServiceReportId: json["job_service_report_id"],
-      pestFoundIds: json["pest_found_ids"] == null ? [] : List<int>.from(json["pest_found_ids"]!.map((x) => x)),
-      tmIds: json["tm_ids"] == null ? [] : List<int>.from(json["tm_ids"]!.map((x) => x)),
+      // pestFoundIds: json["pest_found_ids"] == null ? [] : List<int>.from(json["pest_found_ids"]!.map((x) => x)),
+      // tmIds: json["tm_ids"] == null ? [] : List<String>.from(json["tm_ids"]!.map((x) => x)),
       createdAt: DateTime.tryParse(json["created_at"] ?? ""),
       updatedAt: DateTime.tryParse(json["updated_at"] ?? ""),
       jobCaptainId: json["job_captain_id"],
@@ -857,8 +857,8 @@ class ReportCaptain {
     "captain_id": captainId,
     "job_id": jobId,
     "job_service_report_id": jobServiceReportId,
-    "pest_found_ids": pestFoundIds.map((x) => x).toList(),
-    "tm_ids": tmIds.map((x) => x).toList(),
+    // "pest_found_ids": pestFoundIds.map((x) => x).toList(),
+    // "tm_ids": tmIds.map((x) => x).toList(),
     "created_at": createdAt?.toIso8601String(),
     "updated_at": updatedAt?.toIso8601String(),
     "job_captain_id": jobCaptainId,
@@ -866,10 +866,6 @@ class ReportCaptain {
     "pest_found_services": pestFoundServices.map((x) => x?.toJson()).toList(),
   };
 
-  @override
-  String toString(){
-    return "$id, $captainId, $jobId, $jobServiceReportId, $pestFoundIds, $tmIds, $createdAt, $updatedAt, $jobCaptainId, $treatmentMethods, $pestFoundServices, ";
-  }
 }
 
 class Service {
