@@ -27,15 +27,15 @@ class AddPaymentRequest {
     is_settlement = json['is_settlement'];
   }
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['service_invoice_id'] = this.serviceInvoiceId;
-    data['paid_amt'] = this.paidAmt;
-    data['description'] = this.description;
-    data['payment_type'] = this.paymentType;
-    data['bank_id'] = this.bankId;
-    data['transection_id'] = this.transectionId;
-    data['is_settlement'] = this.is_settlement;
+  Map<String, String> toJson() {
+    final Map<String, String> data = new Map<String, String>();
+    data['service_invoice_id'] = this.serviceInvoiceId ?? "";
+    data['paid_amt'] = this.paidAmt ?? "";
+    data['description'] = this.description ?? "";
+    data['payment_type'] = this.paymentType ?? "";
+    data['bank_id'] = this.bankId ?? "";
+    data['transection_id'] = this.transectionId ?? "";
+    data['is_settlement'] = "${this.is_settlement}" ;
     return data;
   }
 }

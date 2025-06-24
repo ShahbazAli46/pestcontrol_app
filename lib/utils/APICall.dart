@@ -354,6 +354,70 @@ class APICall {
     }
   }
 
+  Future<Map<String, dynamic>> postDataWithTokenWithTwoImages(
+      String url,
+      Map<String, String> data,
+      File firstImageFile,
+      String firstImageName,
+      File secondImageFile,
+      String secondImageName,
+      ) async {
+    if (!await checkInternetConnection()) {
+      await showNoInternetDialog();
+      return postDataWithTokenWithTwoImages(
+        url,
+        data,
+        firstImageFile,
+        firstImageName,
+        secondImageFile,
+        secondImageName,
+      );
+    }
+
+    print(url);
+
+    var request = http.MultipartRequest('POST', Uri.parse(url));
+
+    // Add authorization token
+    final token = await LoginResponseStorage.getToken();
+    request.headers['Authorization'] = 'Bearer $token';
+
+    // Add first image
+    request.files.add(
+      await http.MultipartFile.fromPath(
+        firstImageName,
+        firstImageFile.path,
+      ),
+    );
+
+    // Add second image
+    request.files.add(
+      await http.MultipartFile.fromPath(
+        secondImageName,
+        secondImageFile.path,
+      ),
+    );
+
+    // Add other form fields if they exist
+    if (data != null) {
+      data.forEach((key, value) {
+        request.fields[key] = value.toString();
+      });
+    }
+
+    var response = await request.send();
+    final res = await response.stream.bytesToString();
+
+    if (response.statusCode == 200 || response.statusCode == 204) {
+      return jsonDecode(res);
+    } else {
+      print('Error response: $res');
+      return jsonDecode(res);
+    }
+  }
+
+
+
 
   Future<Map<String, dynamic>> postData(String url, dynamic data) async {
     return makeRequest('POST', url, data: data);

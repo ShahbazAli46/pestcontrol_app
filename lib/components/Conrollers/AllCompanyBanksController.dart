@@ -1,3 +1,6 @@
+import 'dart:io';
+import 'dart:typed_data';
+
 import 'package:accurate/components/generic/UIHelper.dart';
 import 'package:accurate/jsonModels/AddPaymentRequest.dart';
 import 'package:accurate/jsonModels/AddSupplierPaymentRequest.dart';
@@ -11,6 +14,7 @@ import 'package:accurate/utils/AlertService.dart';
 import 'package:accurate/utils/Constants.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:path_provider/path_provider.dart';
 
 class AllCompanyBanksController extends GetxController {
   var fetchingBanks = false.obs;
@@ -70,10 +74,15 @@ class AllCompanyBanksController extends GetxController {
     fetchingBranches.value = false;
   }
 
-  addPaymentRequest (AddPaymentRequest request) async{
+  addPaymentRequest (AddPaymentRequest request, clientSig, receiverSign ) async{
     addingPayment.value = true;
     String url = Urls.addPaymentForInvoices;
-    var response  = await api.postDataWithToken(url, request.toJson());
+
+    File clientFile = await uint8ListToFile(clientSig);
+    File receiverFile = await uint8ListToFile(receiverSign);
+
+
+    var response  = await api.postDataWithTokenWithTwoImages(url, request.toJson(), clientFile, "client_signature_img", receiverFile, "employee_signature_img");
     try {
         GeneralErrorResponse generalErrorResponse = GeneralErrorResponse.fromJson(response);
         print(generalErrorResponse.status);
@@ -113,5 +122,12 @@ class AllCompanyBanksController extends GetxController {
     AlertService.showAlert("Error", errorResponse.message ?? "");
     }
     addingPayment.value = false;
+  }
+
+  Future<File> uint8ListToFile(Uint8List uint8list) async {
+    final tempDir = await getTemporaryDirectory();
+    final file = File('${tempDir.path}/signature_${DateTime.now().millisecondsSinceEpoch}.png');
+    await file.writeAsBytes(uint8list);
+    return file;
   }
 }

@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:accurate/components/DualSignatureWidget.dart';
 import 'package:accurate/components/MultiSelectCheckbox.dart';
 import 'package:accurate/components/generic/AppDatePicker.dart';
 import 'package:accurate/components/generic/AppDropdown.dart';
@@ -11,10 +14,12 @@ import 'package:accurate/utils/TextStyle.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:path_provider/path_provider.dart';
 import '../jsonModels/AllInvoicesResponse.dart';
 import '../utils/appColors.dart';
 import 'Conrollers/AllCompanyBanksController.dart';
 import 'generic/GreenButton.dart';
+import 'dart:typed_data';
 
 class MakePaymentScreen extends StatefulWidget {
   InvoicesData item;
@@ -33,8 +38,15 @@ class _MakePaymentScreenState extends State<MakePaymentScreen> {
   late AllCompanyBanksController banksController;
   TextEditingController transactionNumber = TextEditingController();
   List<String> settlementOptions = [];
+  final GlobalKey<DualSignatureWidgetState> _dualSignatureKey = GlobalKey<DualSignatureWidgetState>();
 
   DateTime? chequeDate;
+
+
+  late Uint8List clientSig;
+  late Uint8List receiverSig;
+
+  var bothSignatures = false;
 
   @override
   void initState() {
@@ -92,6 +104,7 @@ class _MakePaymentScreenState extends State<MakePaymentScreen> {
                   setViewAsPerSelectedPaymentType()
                 ],
               )),
+
             ],
           ),
         ),
@@ -176,12 +189,37 @@ class _MakePaymentScreenState extends State<MakePaymentScreen> {
           children: [
             AppInput(title: "Enter Amount", controller: cashAmount, inputType: TextInputType.number,),
             SizedBox(height: 10,),
-            Padding(
+            DualSignatureWidget(
+              key: _dualSignatureKey,
+              onBothSignaturesComplete: (clientBytes, receiverBytes) {
+                bothSignatures = true;
+                setState(() {
+
+                });
+                clientSig = clientBytes;
+                receiverSig = receiverBytes;
+                              },
+              onValidationFailed: () {
+                bothSignatures = false;
+                setState(() {
+
+                });
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Please complete both signatures before proceeding.'),
+                    backgroundColor: Colors.red,
+                  ),
+                );
+              },
+            ),
+
+
+            bothSignatures ?  Padding(
               padding: const EdgeInsets.all(8.0),
-              child: GreenButton(title: "Submit", sendingData: banksController.addingPayment, onTap: (){
+              child: GreenButton(title: "Submit Payment", sendingData: banksController.addingPayment, onTap: (){
                 submitPayment();
               }),
-            )
+            ): SizedBox.shrink()
           ],
         ),
       );
@@ -195,11 +233,40 @@ class _MakePaymentScreenState extends State<MakePaymentScreen> {
           SizedBox(height: 10,),
           AppInput(title: "Amount", controller: cashAmount, inputType: TextInputType.number,),
           SizedBox(height: 20,),
-          Container(
-            margin: EdgeInsets.only(left: 10, right: 10),
-              child: GreenButton(title: "Submit Payment", sendingData: banksController.addingPayment, onTap: (){
-                submitPayment();
-              }))
+          DualSignatureWidget(
+            key: _dualSignatureKey,
+            onBothSignaturesComplete: (clientBytes, receiverBytes) {
+              // Handle when both signatures are completed
+              bothSignatures = true;
+              setState(() {
+
+              });
+              clientSig = clientBytes;
+              receiverSig = receiverBytes;
+
+
+            },
+            onValidationFailed: () {
+              bothSignatures = false;
+              setState(() {
+
+              });
+
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Please complete both signatures before proceeding.'),
+                  backgroundColor: Colors.red,
+                ),
+              );
+            },
+          ),
+
+          bothSignatures ?  Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: GreenButton(title: "Submit Payment", sendingData: banksController.addingPayment, onTap: (){
+              submitPayment();
+            }),
+          ): SizedBox.shrink()
 
         ],
       );
@@ -209,11 +276,38 @@ class _MakePaymentScreenState extends State<MakePaymentScreen> {
           AppInput(title: "Transaction Number", controller: transactionNumber),
           AppInput(title: "Amount", controller: cashAmount ,inputType: TextInputType.number,),
           SizedBox(height: 20,),
-          Container(
-              margin: EdgeInsets.only(left: 10, right: 10),
-              child: GreenButton(title: "Submit Payment", sendingData: banksController.addingPayment, onTap: (){
-                submitPayment();
-              }))
+          DualSignatureWidget(
+            key: _dualSignatureKey,
+            onBothSignaturesComplete: (clientBytes, receiverBytes) {
+              // Handle when both signatures are completed
+              bothSignatures = true;
+              setState(() {
+
+              });
+
+              clientSig = clientBytes;
+              receiverSig = receiverBytes;
+            },
+            onValidationFailed: () {
+              bothSignatures = false;
+              setState(() {
+
+              });
+
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Please complete both signatures before proceeding.'),
+                  backgroundColor: Colors.red,
+                ),
+              );
+            },
+          ),
+          bothSignatures ?  Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: GreenButton(title: "Submit Payment", sendingData: banksController.addingPayment, onTap: (){
+              submitPayment();
+            }),
+          ): SizedBox.shrink()
         ],
       );
     }
@@ -233,7 +327,7 @@ class _MakePaymentScreenState extends State<MakePaymentScreen> {
             is_settlement: settlementOptions.length > 0 ? 1 : 0,
               serviceInvoiceId: "${widget.item.id ?? 0}",
               paidAmt: "${cashAmount.text}", description: "desc", bankId: null, transectionId: null, paymentType: "cash" );
-          banksController.addPaymentRequest(request);
+          banksController.addPaymentRequest(request, clientSig, receiverSig);
         }
       } else if (paymentType == 1){
         if (bankId == -1){
@@ -249,7 +343,7 @@ class _MakePaymentScreenState extends State<MakePaymentScreen> {
               is_settlement: settlementOptions.length > 0 ? 1 : 0,
               serviceInvoiceId: "${widget.item.id ?? 0}",
               paidAmt: "${cashAmount.text}", description: "desc", bankId: "${bankId}", transectionId: transactionNumber.text, paymentType: "online" );
-          banksController.addPaymentRequest(request);
+          banksController.addPaymentRequest(request, clientSig, receiverSig);
         }
       } else if (paymentType == 2){
         if (transactionNumber.text.isEmpty){
@@ -261,7 +355,7 @@ class _MakePaymentScreenState extends State<MakePaymentScreen> {
           AddPaymentRequest request = AddPaymentRequest(serviceInvoiceId: "${widget.item.id ?? 0}",
               is_settlement: settlementOptions.length > 0 ? 1 : 0,
               paidAmt: "${cashAmount.text}", description: "desc", bankId: "${bankId}", transectionId: transactionNumber.text , paymentType: "pos");
-          banksController.addPaymentRequest(request);
+          banksController.addPaymentRequest(request, clientSig, receiverSig);
         }
       }
   }
@@ -269,4 +363,12 @@ class _MakePaymentScreenState extends State<MakePaymentScreen> {
   settlementChanged(value){
     settlementOptions = value;
   }
+
+  Future<File> uint8ListToFile(Uint8List uint8list) async {
+    final tempDir = await getTemporaryDirectory();
+    final file = File('${tempDir.path}/signature_${DateTime.now().millisecondsSinceEpoch}.png');
+    await file.writeAsBytes(uint8list);
+    return file;
+  }
+
 }
